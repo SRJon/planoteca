@@ -1,0 +1,321 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Work+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+  <style>
+    body { margin: 0; font-family: 'Work Sans', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+    a { color: #3A5578; } a:hover { color: #2B4059; }
+    * { box-sizing: border-box; }
+    button { font: inherit; cursor: pointer; }
+    :focus-visible { outline: 3px solid #3A5578; outline-offset: 2px; }
+    @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+  </style>
+</helmet>
+
+<div style="width: 860px; min-height: 1580px; background: #F2F0EC; color: #14161C; font-family: 'Work Sans', system-ui, sans-serif; display: flex; flex-direction: column;">
+
+  <div style="background: #14161C; color: #F2F0EC; padding: 26px 34px 24px; display: flex; flex-direction: column; gap: 8px;">
+    <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: #A9AEC0;">Planoteca · sistema visual</div>
+    <div style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 34px; line-height: 1.1; letter-spacing: -0.02em;">Tokens</div>
+    <div style="font-size: 14.5px; line-height: 1.55; max-width: 70ch; color: #D5D1C8;">Direção B, modernista didático. Estes são os valores do sistema, não sugestões: o arquivo <span style="font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: #C9A54A;">tokens.css</span> é a fonte da verdade. Nenhum valor cru de cor, tipo, espaço ou traço deve aparecer em componente — se não existe token, ou vira token, ou não entra.</div>
+  </div>
+
+  <div style="padding: 26px 34px 34px; display: flex; flex-direction: column; gap: 30px;">
+
+    <div style="display: flex; flex-direction: column; gap: 13px;">
+      <div style="display: flex; align-items: baseline; gap: 11px; border-bottom: 3px solid #14161C; padding-bottom: 8px;">
+        <span style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 11px; color: #55596A;">01</span>
+        <span style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 19px; letter-spacing: -0.01em;">Cor primitiva</span>
+        <span style="margin-left: auto; font-size: 12.5px; color: #55596A;">rampas fechadas — sem degraus intermediários</span>
+      </div>
+      <sc-for list="{{rampas}}" as="r" hint-placeholder-count="4">
+        <div style="display: flex; flex-direction: column; gap: 5px;">
+          <div style="display: flex; align-items: baseline; gap: 9px;">
+            <span style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 14px;">{{r.nome}}</span>
+            <span style="font-size: 12.5px; color: #55596A;">{{r.papel}}</span>
+          </div>
+          <div style="display: flex; gap: 6px;">
+            <sc-for list="{{r.degraus}}" as="d" hint-placeholder-count="5">
+              <div style="flex-grow: 1; border: 2px solid #14161C; display: flex; flex-direction: column;">
+                <div style="height: 46px; background: {{d.hex}};"></div>
+                <div style="background: #FFFFFF; border-top: 2px solid #14161C; padding: 5px 6px 6px;">
+                  <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 9px; color: #14161C;">{{d.token}}</div>
+                  <div style="font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: #55596A; margin-top: 1px;">{{d.hex}}</div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 13px;">
+      <div style="display: flex; align-items: baseline; gap: 11px; border-bottom: 3px solid #14161C; padding-bottom: 8px;">
+        <span style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 11px; color: #55596A;">02</span>
+        <span style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 19px; letter-spacing: -0.01em;">Cor semântica</span>
+        <span style="margin-left: auto; font-size: 12.5px; color: #55596A;">o que componente consome</span>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px;">
+        <sc-for list="{{semanticas}}" as="s" hint-placeholder-count="8">
+          <div style="display: flex; align-items: center; gap: 10px; background: #FFFFFF; border: 2px solid #14161C; padding: 9px 11px;">
+            <span style="width: 30px; height: 30px; background: {{s.hex}}; border: 2px solid #14161C; flex-shrink: 0; display: block;"></span>
+            <div style="display: flex; flex-direction: column; gap: 1px; min-width: 0;">
+              <span style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 10.5px;">{{s.token}}</span>
+              <span style="font-size: 12px; color: #55596A; line-height: 1.35;">{{s.papel}}</span>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 13px;">
+      <div style="display: flex; align-items: baseline; gap: 11px; border-bottom: 3px solid #14161C; padding-bottom: 8px;">
+        <span style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 11px; color: #55596A;">03</span>
+        <span style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 19px; letter-spacing: -0.01em;">Componente curricular</span>
+        <span style="margin-left: auto; font-size: 12.5px; color: #55596A;">a assinatura: cor e sigla fixas por matéria</span>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px;">
+        <sc-for list="{{materias}}" as="m" hint-placeholder-count="8">
+          <div style="border: 2px solid #14161C; display: flex; flex-direction: column;">
+            <div style="height: 54px; background: {{m.hex}}; display: flex; align-items: center; justify-content: center;">
+              <span style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 21px; color: #FFFFFF;">{{m.sigla}}</span>
+            </div>
+            <div style="background: #FFFFFF; border-top: 2px solid #14161C; padding: 6px 8px 7px;">
+              <div style="font-size: 11.5px; font-weight: 600; line-height: 1.3;">{{m.nome}}</div>
+              <div style="font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: #55596A; margin-top: 2px;">{{m.hex}}</div>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 13px;">
+      <div style="display: flex; align-items: baseline; gap: 11px; border-bottom: 3px solid #14161C; padding-bottom: 8px;">
+        <span style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 11px; color: #55596A;">04</span>
+        <span style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 19px; letter-spacing: -0.01em;">Tipografia</span>
+        <span style="margin-left: auto; font-size: 12.5px; color: #55596A;">três famílias, três papéis</span>
+      </div>
+      <div style="background: #FFFFFF; border: 2px solid #14161C; padding: 16px 18px; display: flex; flex-direction: column; gap: 13px;">
+        <sc-for list="{{escala}}" as="e" hint-placeholder-count="7">
+          <div style="display: flex; align-items: baseline; gap: 16px; border-bottom: 1px solid #D5D1C8; padding-bottom: 11px;">
+            <div style="width: 128px; flex-shrink: 0; display: flex; flex-direction: column; gap: 1px;">
+              <span style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 10px;">{{e.token}}</span>
+              <span style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; color: #55596A;">{{e.px}}</span>
+            </div>
+            <div style="flex-grow: 1; min-width: 0;">
+              <span style="{{e.amostraEstilo}}">{{e.amostra}}</span>
+            </div>
+            <span style="font-size: 11.5px; color: #55596A; width: 132px; flex-shrink: 0; text-align: right; line-height: 1.35;">{{e.papel}}</span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 13px;">
+      <div style="display: flex; align-items: baseline; gap: 11px; border-bottom: 3px solid #14161C; padding-bottom: 8px;">
+        <span style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 11px; color: #55596A;">05</span>
+        <span style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 19px; letter-spacing: -0.01em;">Componentes e estados</span>
+        <span style="margin-left: auto; font-size: 12.5px; color: #55596A;">clique nos chips — o foco é desenhado</span>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px;">
+
+        <div style="background: #FFFFFF; border: 2px solid #14161C; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px;">
+          <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: #55596A;">Ação principal</div>
+          <button style="min-height: 44px; background: #A6522E; color: #FFFFFF; border: 2px solid #14161C; font-weight: 700; font-size: 14.5px; display: flex; align-items: center; justify-content: center; gap: 8px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11"/><path d="m7.5 11 4.5 4.5 4.5-4.5"/><path d="M5 19h14"/></svg>
+            Baixar plano
+          </button>
+          <button style="min-height: 44px; background: #7F3F23; color: #FFFFFF; border: 2px solid #14161C; font-weight: 700; font-size: 14.5px; display: flex; align-items: center; justify-content: center; gap: 8px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11"/><path d="m7.5 11 4.5 4.5 4.5-4.5"/><path d="M5 19h14"/></svg>
+            Baixar plano · hover
+          </button>
+          <button style="min-height: 44px; background: #E7E4DD; color: #55596A; border: 2px solid #A9AEC0; font-weight: 700; font-size: 14.5px; display: flex; align-items: center; justify-content: center; gap: 8px;" disabled>
+            Baixar plano · desabilitado
+          </button>
+          <div style="font-size: 12px; line-height: 1.5; color: #55596A;">A terracota é exclusiva da ação principal. Um botão por tela — se aparecem dois, um deles não é principal.</div>
+        </div>
+
+        <div style="background: #FFFFFF; border: 2px solid #14161C; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px;">
+          <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: #55596A;">Ação secundária e chip</div>
+          <button style="min-height: 44px; background: #FFFFFF; color: #14161C; border: 2px solid #14161C; font-weight: 600; font-size: 14px; padding: 0 14px;">Ver o plano inteiro</button>
+          <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+            <sc-for list="{{chips}}" as="c" hint-placeholder-count="4">
+              <button onClick="{{c.pick}}" style="{{c.style}}">{{c.label}}</button>
+            </sc-for>
+          </div>
+          <div style="display: flex; align-items: center; gap: 7px; flex-wrap: wrap;">
+            <span style="font-weight: 700; font-size: 11.5px; color: #14161C; background: #C9A54A; padding: 3px 7px; border-radius: 2px;">Sala de aula invertida</span>
+            <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #3A5578;">EF09MA05</span>
+          </div>
+          <div style="font-size: 12px; line-height: 1.5; color: #55596A;">Chip ativo usa caneta; a régua marca metodologia e nunca vira botão.</div>
+        </div>
+
+        <div style="background: #FFFFFF; border: 2px solid #14161C; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px;">
+          <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: #55596A;">Campo e foco</div>
+          <div style="display: flex; align-items: center; gap: 9px; background: #FFFFFF; border: 2px solid #14161C; padding: 12px 13px;">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#55596A" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6"/></svg>
+            <span style="font-size: 14.5px; color: #6A6E80;">Assunto ou código BNCC</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 9px; background: #FFFFFF; border: 2px solid #14161C; padding: 12px 13px; outline: 3px solid #3A5578; outline-offset: 2px;">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#55596A" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6"/></svg>
+            <span style="font-size: 14.5px; color: #14161C;">Juros compostos<span style="border-left: 2px solid #14161C; margin-left: 1px;"></span></span>
+          </div>
+          <div style="font-size: 12px; line-height: 1.5; color: #55596A;">Foco: 3&nbsp;px de caneta com 2&nbsp;px de folga. Vale para todo clicável, inclusive link dentro de texto.</div>
+        </div>
+
+        <div style="background: #FFFFFF; border: 2px solid #14161C; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px;">
+          <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: #55596A;">Mensagem de sistema</div>
+          <div style="border-left: 4px solid #2F6B4F; background: #F2F0EC; padding: 9px 12px; font-size: 13px; line-height: 1.45;"><strong>Publicado.</strong> Seu texto está no ar e já aparece na lista do blog.</div>
+          <div style="border-left: 4px solid #8A6E28; background: #F2F0EC; padding: 9px 12px; font-size: 13px; line-height: 1.45;"><strong>Em análise.</strong> Um administrador lê e responde — costuma levar alguns dias.</div>
+          <div style="border-left: 4px solid #96331F; background: #F2F0EC; padding: 9px 12px; font-size: 13px; line-height: 1.45;"><strong>O arquivo passou de 20&nbsp;MB.</strong> Comprima o PDF ou divida em duas partes e envie de novo.</div>
+          <div style="font-size: 12px; line-height: 1.5; color: #55596A;">Cores de sinal ficam fora da identidade e só aparecem aqui. Erro diz o que houve e o que fazer, sem pedir desculpa.</div>
+        </div>
+
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 13px;">
+      <div style="display: flex; align-items: baseline; gap: 11px; border-bottom: 3px solid #14161C; padding-bottom: 8px;">
+        <span style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 11px; color: #55596A;">06</span>
+        <span style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 19px; letter-spacing: -0.01em;">Espaço, traço e forma</span>
+      </div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+        <div style="background: #FFFFFF; border: 2px solid #14161C; padding: 14px 16px; display: flex; flex-direction: column; gap: 9px;">
+          <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: #55596A;">Escala de espaço · base 4</div>
+          <sc-for list="{{espacos}}" as="s" hint-placeholder-count="6">
+            <div style="display: flex; align-items: center; gap: 11px;">
+              <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; width: 76px; flex-shrink: 0;">{{s.token}}</span>
+              <span style="height: 13px; background: #3A5578; display: block; width: {{s.px}};"></span>
+              <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #55596A;">{{s.px}}</span>
+            </div>
+          </sc-for>
+        </div>
+        <div style="background: #FFFFFF; border: 2px solid #14161C; padding: 14px 16px; display: flex; flex-direction: column; gap: 11px;">
+          <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: #55596A;">Traço e raio</div>
+          <div style="display: flex; flex-direction: column; gap: 7px;">
+            <div style="border: 1px solid #14161C; padding: 7px 10px; font-size: 12px;">1&nbsp;px — divisória interna</div>
+            <div style="border: 2px solid #14161C; padding: 7px 10px; font-size: 12px;">2&nbsp;px — padrão: card, chip, campo, botão</div>
+            <div style="border: 3px solid #14161C; padding: 7px 10px; font-size: 12px;">3&nbsp;px — separador de seção, régua da nav</div>
+          </div>
+          <div style="font-size: 12px; line-height: 1.55; color: #55596A;">Raio máximo é 4&nbsp;px, e só em tag. Elevação se faz com traço, nunca com sombra difusa — esta direção é ortogonal por decisão.</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="border: 2px dashed #A9AEC0; padding: 15px 17px; display: flex; flex-direction: column; gap: 7px;">
+      <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: #55596A;">Decisões que eu tomei aqui</div>
+      <div style="font-size: 13.5px; line-height: 1.6; color: #3A3F4D;">O artboard low-fi cobria uma tela; um sistema precisa de mais. Defini por conta: as <strong>oito cores de componente curricular</strong> (a assinatura exige cor fixa por matéria, e só duas existiam), os <strong>estados</strong> de hover, foco e desabilitado, a <strong>escala tipográfica</strong> completa incluindo o corpo de leitura de 16&nbsp;px para o blog, e as <strong>cores de sinal</strong> para mensagens de sistema, deliberadamente fora da identidade. Todas passam AA. Se alguma discordar do que você tinha em mente, é ajuste de um valor.</div>
+    </div>
+
+  </div>
+</div>
+</x-dc>
+
+<script data-dc-script data-props='{"$preview":{"width":860,"height":1580}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { chip: 'Matemática' };
+  }
+  renderVals() {
+    const chipBase = 'min-height:44px;padding:10px 14px;font-family:\'Work Sans\',sans-serif;font-weight:600;font-size:13px;border:2px solid #14161C;';
+    const chips = ['9º ano', 'Matemática', 'Ciências', '2 aulas'].map((label) => ({
+      label,
+      style: this.state.chip === label
+        ? chipBase + 'background:#3A5578;color:#FFFFFF;'
+        : chipBase + 'background:#FFFFFF;color:#14161C;',
+      pick: () => this.setState({ chip: this.state.chip === label ? null : label }),
+    }));
+
+    const amostraDisplay = 'font-family:\'Space Grotesk\',sans-serif;font-weight:700;letter-spacing:-0.02em;line-height:1.15;';
+    const amostraCorpo = 'font-family:\'Work Sans\',sans-serif;font-weight:400;line-height:1.45;';
+    const amostraMono = 'font-family:\'IBM Plex Mono\',monospace;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;';
+
+    return {
+      rampas: [
+        {
+          nome: 'Caneta', papel: 'identidade e seleção',
+          degraus: [
+            { token: 'caneta-900', hex: '#1B2739' }, { token: 'caneta-700', hex: '#2B4059' },
+            { token: 'caneta-500', hex: '#3A5578' }, { token: 'caneta-300', hex: '#8496AF' },
+            { token: 'caneta-100', hex: '#E4E9F0' },
+          ],
+        },
+        {
+          nome: 'Mimeógrafo', papel: 'só a ação principal',
+          degraus: [
+            { token: 'mimeo-900', hex: '#5E2E19' }, { token: 'mimeo-700', hex: '#7F3F23' },
+            { token: 'mimeo-500', hex: '#A6522E' }, { token: 'mimeo-100', hex: '#F4E7E0' },
+          ],
+        },
+        {
+          nome: 'Régua', papel: 'destaque e metodologia',
+          degraus: [
+            { token: 'regua-700', hex: '#8A6E28' }, { token: 'regua-500', hex: '#C9A54A' },
+            { token: 'regua-100', hex: '#F7F0DC' },
+          ],
+        },
+        {
+          nome: 'Tinta', papel: 'texto, traço e superfície',
+          degraus: [
+            { token: 'tinta-900', hex: '#14161C' }, { token: 'tinta-700', hex: '#3A3F4D' },
+            { token: 'tinta-500', hex: '#55596A' }, { token: 'tinta-300', hex: '#A9AEC0' },
+            { token: 'tinta-200', hex: '#D5D1C8' }, { token: 'tinta-100', hex: '#E7E4DD' },
+            { token: 'tinta-050', hex: '#F2F0EC' },
+          ],
+        },
+      ],
+      semanticas: [
+        { token: '--pt-fundo', hex: '#F2F0EC', papel: 'fundo da página' },
+        { token: '--pt-fundo-elevado', hex: '#FFFFFF', papel: 'card, campo, superfície de conteúdo' },
+        { token: '--pt-texto', hex: '#14161C', papel: 'texto principal e traço estrutural' },
+        { token: '--pt-texto-secundario', hex: '#55596A', papel: 'metadado, apoio, legenda' },
+        { token: '--pt-acao', hex: '#A6522E', papel: 'baixar plano — e nada mais' },
+        { token: '--pt-selecao', hex: '#3A5578', papel: 'chip ativo, link, nav atual, foco' },
+        { token: '--pt-destaque', hex: '#C9A54A', papel: 'tag de metodologia' },
+        { token: '--pt-desabilitado', hex: '#E7E4DD', papel: 'controle indisponível' },
+      ],
+      materias: [
+        { sigla: 'LP', nome: 'Língua Portuguesa', hex: '#7A3B4E' },
+        { sigla: 'MA', nome: 'Matemática', hex: '#3A5578' },
+        { sigla: 'CI', nome: 'Ciências', hex: '#2F6B5E' },
+        { sigla: 'HI', nome: 'História', hex: '#8A5A2B' },
+        { sigla: 'GE', nome: 'Geografia', hex: '#4A6B33' },
+        { sigla: 'AR', nome: 'Arte', hex: '#6E4076' },
+        { sigla: 'EF', nome: 'Educação Física', hex: '#2C5F6B' },
+        { sigla: 'IN', nome: 'Inglês', hex: '#5B4A7A' },
+      ],
+      escala: [
+        { token: '--pt-tam-hero', px: '36px', amostra: 'Aula pronta para amanhã', amostraEstilo: amostraDisplay + 'font-size:36px;', papel: 'hero da landing' },
+        { token: '--pt-tam-xgr', px: '28px', amostra: 'Biblioteca de planos', amostraEstilo: amostraDisplay + 'font-size:28px;', papel: 'título de página' },
+        { token: '--pt-tam-gr', px: '22px', amostra: 'Metodologias ativas', amostraEstilo: amostraDisplay + 'font-size:22px;', papel: 'título de seção' },
+        { token: '--pt-tam-med', px: '18px', amostra: 'Juros compostos na conta do mercado', amostraEstilo: amostraDisplay + 'font-size:18px;line-height:1.24;', papel: 'título de card' },
+        { token: '--pt-tam-leitura', px: '16px', amostra: 'Corpo de texto longo, para o post do blog ler confortável.', amostraEstilo: amostraCorpo + 'font-size:16px;line-height:1.65;', papel: 'leitura longa · blog' },
+        { token: '--pt-tam-base', px: '14px', amostra: 'Corpo padrão de interface, o tamanho mais usado do sistema.', amostraEstilo: amostraCorpo + 'font-size:14px;', papel: 'corpo de interface' },
+        { token: '--pt-tam-peq', px: '13px', amostra: 'Chip de filtro, texto de apoio', amostraEstilo: amostraCorpo + 'font-size:13px;font-weight:600;', papel: 'chip, apoio' },
+        { token: '--pt-tam-mini', px: '12px', amostra: '2 aulas · sequência didática', amostraEstilo: amostraCorpo + 'font-size:12px;', papel: 'metadado' },
+        { token: '--pt-tam-mono', px: '10px', amostra: 'MATEMÁTICA · 9º ANO', amostraEstilo: amostraMono + 'font-size:10px;', papel: 'etiqueta, BNCC' },
+      ],
+      espacos: [
+        { token: '--pt-esp-1', px: '4px' },
+        { token: '--pt-esp-3', px: '8px' },
+        { token: '--pt-esp-6', px: '16px' },
+        { token: '--pt-esp-7', px: '18px' },
+        { token: '--pt-esp-8', px: '24px' },
+        { token: '--pt-esp-9', px: '32px' },
+        { token: '--pt-esp-10', px: '48px' },
+      ],
+      chips,
+    };
+  }
+}
+</script>
+</body>
+</html>

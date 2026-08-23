@@ -1,0 +1,20 @@
+# Configuração pessoal do Claude Code (caminhos absolutos da máquina local)
+.claude/settings.local.json
+
+# Área de trabalho do executor de planos (rascunho, não versionado)
+.superpowers/
+
+# Front-end
+node_modules/
+dist/
+coverage/
+*.local
+.env
+.env.*
+!.env.example
+
+# Playwright (Tarefa 21)
+playwright-report/
+test-results/
+blob-report/
+.vscode/settings.json

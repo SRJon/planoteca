@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Camada visual em Tailwind e shadcn — fotus-default-web</title>
+<style>
+:root{
+--st-bg:#FAF9F5;--st-bg-alt:#F0EEE6;--st-surface:#FFFFFF;--st-border:#E3DACC;--st-border-soft:#F0EEE6;
+--st-ink:#141413;--st-ink-soft:#3D3D3A;--st-ink-muted:#87867F;--st-ink-faint:#D1CFC5;
+--st-accent:#D97757;--st-accent-soft:#F5E1D4;--st-rose:#E0897A;--st-rose-soft:#F8DDD5;
+--st-olive:#788C5D;--st-olive-soft:#DCE3CC;--st-amber:#B47A3C;--st-amber-soft:#EDD9B7;
+--st-crimson:#B0533C;--st-crimson-soft:#F0CFC3;--st-azure:#3D6688;--st-azure-soft:#CDDAE6;
+--st-invert-bg:#141413;--st-invert-ink:#F0EEE6;
+--st-font-serif:ui-serif,"Iowan Old Style","Apple Garamond",Baskerville,"Times New Roman",Times,serif;
+--st-font-sans:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+--st-font-mono:ui-monospace,"SF Mono","Cascadia Code",Menlo,Consolas,monospace;
+--st-space-1:.25rem;--st-space-2:.5rem;--st-space-3:.75rem;--st-space-4:1rem;--st-space-5:1.25rem;
+--st-space-6:1.5rem;--st-space-8:2rem;--st-space-10:2.5rem;--st-space-12:3rem;--st-space-16:4rem;
+--st-radius-sm:4px;--st-radius:8px;--st-radius-lg:12px;
+--st-content-width:1100px;
+}
+*{box-sizing:border-box}
+body{margin:0;padding:0;font-family:var(--st-font-sans);font-size:16px;line-height:1.65;color:var(--st-ink);background:var(--st-bg);-webkit-font-smoothing:antialiased}
+.st-doc{max-width:var(--st-content-width);margin:0 auto;padding:var(--st-space-16) var(--st-space-6) var(--st-space-12)}
+.st-eyebrow{font-family:var(--st-font-mono);font-size:.75rem;font-weight:500;text-transform:uppercase;letter-spacing:.08em;color:var(--st-ink-muted);margin:0 0 var(--st-space-4)}
+.st-title{font-family:var(--st-font-serif);font-weight:500;font-size:clamp(2rem,5vw,2.75rem);line-height:1.15;letter-spacing:-.01em;margin:0 0 var(--st-space-6)}
+.st-title em.st-accent{font-style:italic;color:var(--st-accent);font-weight:500}
+.st-lede{font-size:1.1rem;line-height:1.6;color:var(--st-ink-soft);margin:0 0 var(--st-space-8);max-width:62ch}
+h2{font-family:var(--st-font-serif);font-weight:500;font-size:clamp(1.4rem,3vw,1.75rem);margin:var(--st-space-16) 0 var(--st-space-4);display:flex;align-items:center;gap:var(--st-space-3)}
+h3{font-family:var(--st-font-serif);font-weight:500;font-size:1.2rem;margin:var(--st-space-8) 0 var(--st-space-3)}
+h4{font-family:var(--st-font-sans);font-weight:600;font-size:1rem;margin:var(--st-space-6) 0 var(--st-space-2)}
+.st-section-num{display:inline-block;font-family:var(--st-font-mono);font-size:.7rem;font-weight:500;background:var(--st-bg-alt);color:var(--st-ink-muted);padding:3px var(--st-space-2);border-radius:var(--st-radius-sm);letter-spacing:.05em}
+p{margin:0 0 var(--st-space-4)}
+ul,ol{margin:0 0 var(--st-space-4);padding-left:var(--st-space-6)}
+li{margin-bottom:var(--st-space-2);line-height:1.6}
+li::marker{color:var(--st-accent)}
+strong{font-weight:600}
+em{color:var(--st-ink-soft);font-style:italic}
+code{font-family:var(--st-font-mono);font-size:.88em;background:var(--st-bg-alt);padding:2px 6px;border-radius:var(--st-radius-sm)}
+pre{background:var(--st-invert-bg);color:var(--st-invert-ink);padding:var(--st-space-4) var(--st-space-5);border-radius:var(--st-radius);overflow-x:auto;font-size:.85rem;line-height:1.55;margin:var(--st-space-4) 0;min-width:0;max-width:100%}
+pre code{background:none;padding:0;color:inherit;font-size:inherit}
+.st-pills{display:flex;gap:var(--st-space-2);flex-wrap:wrap;margin:0 0 var(--st-space-6)}
+.st-pill{display:inline-flex;align-items:center;gap:var(--st-space-2);padding:4px var(--st-space-3);border-radius:999px;font-family:var(--st-font-mono);font-size:.78rem;background:var(--st-bg-alt);color:var(--st-ink-soft);border:1px solid var(--st-border-soft)}
+.st-pill .st-pill-label{color:var(--st-ink-muted)}
+.st-pill .st-pill-value{color:var(--st-ink);font-weight:500}
+.st-pill--accent{background:var(--st-accent-soft);color:var(--st-accent);border-color:transparent}
+.st-pill--olive{background:var(--st-olive-soft);color:var(--st-olive);border-color:transparent}
+.st-pill--amber{background:var(--st-amber-soft);color:var(--st-amber);border-color:transparent}
+.st-tldr{background:var(--st-invert-bg);color:var(--st-invert-ink);padding:var(--st-space-6);border-radius:var(--st-radius);margin:0 0 var(--st-space-10);font-size:1.05rem;line-height:1.6}
+.st-tldr-label{font-family:var(--st-font-mono);font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--st-ink-muted);margin-bottom:var(--st-space-2)}
+.st-tldr p{margin:0 0 var(--st-space-3)}
+.st-tldr p:last-child{margin:0}
+.st-tldr strong{color:#FFFFFF}
+.st-tldr em{color:var(--st-accent-soft);font-style:italic}
+.st-tldr code{background:rgba(255,255,255,.1);color:var(--st-invert-ink)}
+.st-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:var(--st-space-3);margin:0 0 var(--st-space-10)}
+.st-stat{background:var(--st-surface);border:1px solid var(--st-border);border-radius:var(--st-radius);padding:var(--st-space-4)}
+.st-stat-label{font-family:var(--st-font-mono);font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:var(--st-ink-muted);margin-bottom:var(--st-space-2)}
+.st-stat-value{font-family:var(--st-font-serif);font-weight:500;font-size:1.15rem}
+.st-stat--accent .st-stat-value{color:var(--st-accent)}
+.st-tag{display:inline-block;font-family:var(--st-font-mono);font-size:.78rem;background:var(--st-bg-alt);color:var(--st-ink-soft);padding:2px var(--st-space-2);border-radius:var(--st-radius-sm);margin:2px 4px 2px 0}
+.st-callout{background:var(--st-bg-alt);border-radius:var(--st-radius);padding:var(--st-space-4) var(--st-space-5);margin:var(--st-space-4) 0}
+.st-callout-label{font-family:var(--st-font-mono);font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--st-ink-muted);margin-bottom:var(--st-space-2)}
+.st-callout p:last-child{margin-bottom:0}
+.st-callout--accent{background:var(--st-accent-soft)}
+.st-callout--accent .st-callout-label{color:var(--st-accent)}
+.st-callout--olive{background:var(--st-olive-soft)}
+.st-callout--olive .st-callout-label{color:var(--st-olive)}
+.st-callout--amber{background:var(--st-amber-soft)}
+.st-callout--amber .st-callout-label{color:var(--st-amber)}
+.st-callout--crimson{background:var(--st-crimson-soft)}
+.st-callout--crimson .st-callout-label{color:var(--st-crimson)}
+.st-callout--azure{background:var(--st-azure-soft)}
+.st-callout--azure .st-callout-label{color:var(--st-azure)}
+table{width:100%;border-collapse:collapse;margin:var(--st-space-4) 0;font-size:.92rem;background:var(--st-surface);border-radius:var(--st-radius);overflow:hidden;border:1px solid var(--st-border)}
+thead{background:var(--st-bg-alt)}
+th{text-align:left;padding:var(--st-space-3) var(--st-space-4);font-family:var(--st-font-mono);font-weight:500;font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--st-ink-muted);border-bottom:1px solid var(--st-border)}
+td{padding:var(--st-space-3) var(--st-space-4);border-bottom:1px solid var(--st-border-soft);vertical-align:top}
+tr:last-child td{border-bottom:none}
+.st-diagram{display:block;margin:var(--st-space-6) auto;max-width:100%;height:auto}
+.st-footer{text-align:center;padding:var(--st-space-8) var(--st-space-6) var(--st-space-12);color:var(--st-ink-muted);font-size:.85rem}
+.st-mono{font-family:var(--st-font-mono);font-size:.85em}
+@media (max-width:768px){.st-doc{padding:var(--st-space-8) var(--st-space-4)}}
+</style>
+</head>
+<body>
+<main class="st-doc">
+
+<p class="st-eyebrow">Spec · Grau 2 · fotus-default-web</p>
+<h1 class="st-title">A camada visual vira <em class="st-accent">Tailwind e shadcn</em></h1>
+
+<div class="st-pills">
+  <span class="st-pill"><span class="st-pill-label">branch</span><span class="st-pill-value">main</span></span>
+  <span class="st-pill"><span class="st-pill-label">plano</span><span class="st-pill-value">docs/plans/2026-08-22-camada-visual-shadcn.md</span></span>
+  <span class="st-pill st-pill--olive"><span class="st-pill-value">a fundação fica intacta</span></span>
+  <span class="st-pill st-pill--amber"><span class="st-pill-value">shared/ui sai inteiro</span></span>
+</div>
+
+<p class="st-lede">
+O boilerplate nasceu com 15 componentes próprios e 24 folhas de estilo. Eles servem, e
+custaram caro. Mas todo projeto novo quer Tailwind e shadcn, e reescrever a casca a cada vez
+desperdiça a fundação que está embaixo dela. Esta spec troca a casca e prova que a fundação
+sobrevive.
+</p>
+
+<div class="st-tldr">
+  <p class="st-tldr-label">Resumo</p>
+  <p>
+    O <code>shared/ui</code> sai inteiro: 15 componentes, 24 folhas de estilo, 32 exportações.
+    Entra o shadcn, com Tailwind v4 pelo plugin do Vite.
+  </p>
+  <p>
+    <strong>A fundação não é tocada.</strong> O <code>entities/</code>, o <code>shared/api</code>,
+    o <code>shared/lib</code> e o <code>shared/config</code> têm <em>zero</em> import de CSS hoje.
+    Isso foi medido, não suposto. São 94 testes que continuam válidos sem alteração.
+  </p>
+  <p>
+    A tela <code>/pessoas</code> é reescrita e continua verde. Ela é a prova de que a fundação
+    sobrevive à troca de interface.
+  </p>
+</div>
+
+<div class="st-stats">
+  <div class="st-stat"><div class="st-stat-label">componentes que saem</div><div class="st-stat-value">15</div></div>
+  <div class="st-stat"><div class="st-stat-label">folhas de estilo</div><div class="st-stat-value">24</div></div>
+  <div class="st-stat"><div class="st-stat-label">linhas removidas</div><div class="st-stat-value">3.065</div></div>
+  <div class="st-stat st-stat--accent"><div class="st-stat-label">testes preservados</div><div class="st-stat-value">94</div></div>
+  <div class="st-stat"><div class="st-stat-label">tasks no plano</div><div class="st-stat-value">9</div></div>
+</div>
+
+<h2><span class="st-section-num">01</span> Problema</h2>
+
+<p>
+O <code>shared/ui</code> do boilerplate tem 15 componentes escritos à mão, com 1.457 linhas de
+TypeScript e 1.608 de CSS. Eles têm teste, respeitam token e resolvem acessibilidade. Não são
+ruins.
+</p>
+
+<p>
+O problema é outro: eles são uma opinião visual que todo projeto novo herda sem escolher.
+Quem começa uma tela quer <code>npx shadcn add</code> e seguir. Em vez disso encontra um
+sistema próprio, com nomes próprios, que precisa aprender antes de escrever a primeira linha.
+</p>
+
+<div class="st-callout st-callout--azure">
+  <p class="st-callout-label">O que a medição mostrou</p>
+  <p>
+    A separação entre negócio e interface é real neste repositório. O <code>entities/</code>,
+    o <code>shared/api</code>, o <code>shared/lib</code> e o <code>shared/config</code> somam
+    <strong>zero</strong> import de CSS. O <code>features/</code> tem dois. Só o
+    <code>pages/</code> concentra o acoplamento, com vinte.
+  </p>
+  <p>
+    Isso não é promessa de arquitetura. É o que o <code>grep</code> devolve hoje, e é o que
+    torna esta troca viável.
+  </p>
+</div>
+
+<h2><span class="st-section-num">02</span> Escopo</h2>
+
+<h3>Dentro</h3>
+<ul>
+  <li>Instalar Tailwind v4 pelo <code>@tailwindcss/vite</code>, e inicializar o shadcn.</li>
+  <li>Remover os 15 componentes de <code>shared/ui</code> e as 24 folhas de estilo de módulo.</li>
+  <li>Traduzir os quatro arquivos de estilo global para o bloco <code>@theme</code>.</li>
+  <li>Reescrever o <code>shell</code>, a tela de entrada e a tela de pessoas com shadcn.</li>
+  <li>Apontar o <code>verifica-tokens.mjs</code> para o <code>@theme</code>.</li>
+  <li>Reescrever a página <code>/design-system</code> como catálogo do que o shadcn traz.</li>
+  <li>Atualizar o <code>README</code>, o <code>CLAUDE.md</code> e o <code>CONTRIBUTING.md</code>.</li>
+</ul>
+
+<h3>Fora</h3>
+<ul>
+  <li>Alterar <code>entities/</code>, <code>shared/api</code>, <code>shared/lib</code> ou <code>shared/config</code>. Eles não conhecem interface.</li>
+  <li>Alterar o contrato, o cliente HTTP, a sessão ou a permissão.</li>
+  <li>Alterar a ordem das camadas ou o <code>eslint.config.js</code> que a impõe.</li>
+  <li>Trocar o <code>@tanstack/react-table</code>. O shadcn usa o mesmo.</li>
+  <li>Criar branch. O trabalho acontece na <code>main</code>.</li>
+</ul>
+
+<h2><span class="st-section-num">03</span> Solução</h2>
+
+<p>
+A troca acontece de baixo para cima: primeiro a base de estilo, depois os componentes, depois
+as telas que os consomem. Cada etapa mantém a bateria verde.
+</p>
+
+<svg class="st-diagram" viewBox="0 0 900 300" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#87867F"/></marker>
+<marker id="arrow-accent" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#D97757"/></marker>
+</defs>
+
+<rect x="20" y="20" width="180" height="70" rx="10" fill="#141413"/>
+<text x="110" y="48" text-anchor="middle" font-family="ui-serif, Georgia, serif" font-size="14" font-weight="500" fill="#F0EEE6">fundação</text>
+<text x="110" y="68" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="11" fill="#D1CFC5">intacta · 94 testes</text>
+
+<rect x="20" y="120" width="180" height="70" rx="10" fill="#F5E1D4" stroke="#D97757" stroke-width="1.5"/>
+<text x="110" y="148" text-anchor="middle" font-family="ui-serif, Georgia, serif" font-size="14" font-weight="500" fill="#141413">base de estilo</text>
+<text x="110" y="168" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="11" fill="#87867F">Tailwind · @theme</text>
+
+<rect x="280" y="120" width="180" height="70" rx="10" fill="#FFFFFF" stroke="#E3DACC" stroke-width="1.5"/>
+<text x="370" y="148" text-anchor="middle" font-family="ui-serif, Georgia, serif" font-size="14" font-weight="500" fill="#141413">componentes</text>
+<text x="370" y="168" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="11" fill="#87867F">shadcn · components/ui</text>
+
+<rect x="540" y="120" width="180" height="70" rx="10" fill="#FFFFFF" stroke="#E3DACC" stroke-width="1.5"/>
+<text x="630" y="148" text-anchor="middle" font-family="ui-serif, Georgia, serif" font-size="14" font-weight="500" fill="#141413">telas</text>
+<text x="630" y="168" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="11" fill="#87867F">shell · entrar · pessoas</text>
+
+<rect x="740" y="20" width="140" height="70" rx="10" fill="#DCE3CC" stroke="#788C5D" stroke-width="1.5"/>
+<text x="810" y="48" text-anchor="middle" font-family="ui-serif, Georgia, serif" font-size="14" font-weight="500" fill="#141413">a prova</text>
+<text x="810" y="68" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="11" fill="#87867F">e2e verde</text>
+
+<line x1="200" y1="155" x2="275" y2="155" stroke="#87867F" stroke-width="1.5" marker-end="url(#arrow)"/>
+<line x1="460" y1="155" x2="535" y2="155" stroke="#87867F" stroke-width="1.5" marker-end="url(#arrow)"/>
+<line x1="720" y1="140" x2="790" y2="95" stroke="#D97757" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#arrow-accent)"/>
+<line x1="110" y1="120" x2="110" y2="95" stroke="#87867F" stroke-width="1.5" marker-end="url(#arrow)"/>
+<text x="130" y="112" font-family="ui-monospace, Menlo, monospace" font-size="11" fill="#87867F">não toca</text>
+
+<text x="240" y="240" font-family="ui-monospace, Menlo, monospace" font-size="11" fill="#87867F">Tasks 1 e 2</text>
+<text x="500" y="240" font-family="ui-monospace, Menlo, monospace" font-size="11" fill="#87867F">Tasks 3 e 4</text>
+<text x="700" y="240" font-family="ui-monospace, Menlo, monospace" font-size="11" fill="#87867F">Tasks 5 a 7</text>
+</svg>
+
+<h3>3.1 O que passa intacto</h3>
+
+<p>Nenhum destes arquivos importa CSS. A troca não os alcança.</p>
+
+<table>
+<thead><tr><th>Bloco</th><th>Conteúdo</th><th>Testes</th></tr></thead>
+<tbody>
+<tr><td><code>shared/api</code></td><td>cliente com prefixo <code>/api/v1</code>, <code>X-Total-Count</code>, o 204 absorvido</td><td>28</td></tr>
+<tr><td><code>shared/lib</code></td><td><code>cn</code>, <code>data</code>, <code>dinheiro</code></td><td>33</td></tr>
+<tr><td><code>shared/config</code></td><td>ambiente que lança erro quando falta <code>VITE_URL_API</code></td><td>—</td></tr>
+<tr><td><code>entities/pessoa</code></td><td>modelo, mapeador, acesso a dados, consulta</td><td>6</td></tr>
+<tr><td><code>entities/sessao</code></td><td><code>expires_in</code>, token opaco, <code>temGrupo</code></td><td>27</td></tr>
+<tr><td><code>features/filtrar-pessoas</code></td><td>o <code>ordenacaoApi.ts</code> e o <code>useFiltroPessoas.ts</code></td><td>18</td></tr>
+<tr><td>Ferramenta</td><td><code>api-sync.mjs</code>, os três <code>tsconfig</code>, Vitest, MSW, Playwright</td><td>—</td></tr>
+<tr><td><code>eslint.config.js</code></td><td>a ordem das camadas e o ponto de entrada de cada fatia</td><td>—</td></tr>
+</tbody>
+</table>
+
+<div class="st-callout st-callout--olive">
+  <p class="st-callout-label">Por que o cn sobrevive</p>
+  <p>
+    O <code>shared/lib/cn.ts</code> já faz o que o shadcn espera do <code>cn()</code> dele:
+    juntar classe condicional. O shadcn instala o próprio em <code>lib/utils</code>. Os dois
+    fazem a mesma coisa, e manter dois seria confusão — o que existe fica, e o do shadcn é
+    apontado para ele.
+  </p>
+</div>
+
+<h3>3.2 O que sai</h3>
+
+<p>
+Quinze componentes, 1.457 linhas de TypeScript. Vinte e quatro folhas de estilo de módulo,
+1.608 linhas. Os 32 testes que cobrem só a casca saem junto: o shadcn traz os dele.
+</p>
+
+<p>
+Saem também os cinco pacotes <code>@radix-ui/react-*</code> instalados hoje. O shadcn passou
+a usar o pacote unificado <code>radix-ui</code>, e manter os dois duplicaria a árvore de
+dependência.
+</p>
+
+<h3>3.3 A tradução dos tokens</h3>
+
+<p>
+O <code>tokens.css</code> tem 283 linhas em duas variantes, claro e escuro. Ele vira o bloco
+<code>@theme</code> do Tailwind v4, que é onde a v4 declara tema — não existe mais
+<code>tailwind.config</code> por padrão.
+</p>
+
+<table>
+<thead><tr><th>Hoje</th><th>Depois</th><th>Observação</th></tr></thead>
+<tbody>
+<tr><td><code>tokens.css</code>, 283 linhas</td><td>bloco <code>@theme</code></td><td>a paleta Fotus, azul e dourado, permanece</td></tr>
+<tr><td><code>tipografia.css</code>, 90 linhas</td><td><code>--font-*</code> e utilitário</td><td>a escala vira token de tema</td></tr>
+<tr><td><code>espaco.css</code>, 33 linhas</td><td>escala do Tailwind</td><td>o Tailwind já traz escala de espaço</td></tr>
+<tr><td><code>base.css</code>, 124 linhas</td><td><code>@layer base</code></td><td>o reset do Tailwind cobre a maior parte</td></tr>
+<tr><td><code>[data-theme="dark"]</code></td><td>classe <code>.dark</code></td><td>o shadcn usa classe, não atributo</td></tr>
+</tbody>
+</table>
+
+<div class="st-callout st-callout--amber">
+  <p class="st-callout-label">Uma troca que altera comportamento</p>
+  <p>
+    O tema hoje é o atributo <code>data-theme</code>, escrito pelo <code>TemaProvider</code> e
+    lido em sete arquivos. O shadcn espera a classe <code>.dark</code> no elemento raiz.
+  </p>
+  <p>
+    O provedor passa a escrever a classe. O atributo sai. Quem depende dele — o teste do shell
+    e a página de design system — acompanha.
+  </p>
+</div>
+
+<h3>3.4 O mapa de substituição</h3>
+
+<table>
+<thead><tr><th>Sai</th><th>Entra</th><th>Quem consome</th></tr></thead>
+<tbody>
+<tr><td><code>Botao</code>, <code>BotaoIcone</code>, <code>BotaoLink</code></td><td><code>button</code></td><td>formulário de entrada, barra lateral, tabela</td></tr>
+<tr><td><code>Entrada</code>, <code>AreaTexto</code></td><td><code>input</code>, <code>textarea</code></td><td>formulário de entrada, filtros</td></tr>
+<tr><td><code>Campo</code></td><td><code>form</code>, <code>label</code></td><td>formulário de entrada, filtros</td></tr>
+<tr><td><code>Cartao</code> e as duas partes</td><td><code>card</code></td><td>página de pessoas</td></tr>
+<tr><td><code>Dialogo</code></td><td><code>dialog</code></td><td>página de design system</td></tr>
+<tr><td><code>Dica</code></td><td><code>tooltip</code></td><td>campo, página de design system</td></tr>
+<tr><td><code>Selecao</code></td><td><code>select</code></td><td>filtros de pessoas</td></tr>
+<tr><td><code>Menu</code> e as três partes</td><td><code>dropdown-menu</code></td><td>barra superior</td></tr>
+<tr><td><code>Abas</code></td><td><code>tabs</code></td><td>página de design system</td></tr>
+<tr><td><code>Etiqueta</code></td><td><code>badge</code></td><td>colunas da tabela</td></tr>
+<tr><td><code>Tabela</code></td><td><code>table</code> com <code>@tanstack/react-table</code></td><td>página de pessoas</td></tr>
+<tr><td><code>Paginacao</code></td><td>composto de <code>button</code></td><td>página de pessoas</td></tr>
+<tr><td><code>EstadoVazio</code></td><td>composto de <code>card</code></td><td>tabela, página de design system</td></tr>
+<tr><td><code>Icone</code>, <code>NOMES_ICONE</code></td><td><code>@phosphor-icons/react</code>, sem embrulho</td><td>seis arquivos</td></tr>
+<tr><td><code>Marca</code></td><td>fica, adaptado</td><td>barra lateral, tela de entrada</td></tr>
+</tbody>
+</table>
+
+<div class="st-callout st-callout--amber">
+  <p class="st-callout-label">O custo do Phosphor</p>
+  <p>
+    O pacote exporta mais de nove mil módulos, e alguns empacotadores transpilam todos.
+    O sintoma é compilação lenta em desenvolvimento, não artefato maior.
+  </p>
+  <p>
+    O contorno é importar pelo caminho direto do ícone, e não pela raiz do pacote:
+    <code>@phosphor-icons/react/dist/csr/House</code>. O peso e o tamanho padrão ficam num
+    <code>IconContext.Provider</code> só, no provedor raiz.
+  </p>
+</div>
+
+<div class="st-callout st-callout--accent">
+  <p class="st-callout-label">A marca é o único que fica</p>
+  <p>
+    Ela carrega o marcador <code>Fotus Default</code> que o <code>New-Project.ps1</code>
+    substitui na geração. Trocá-la por componente de biblioteca quebraria o ritual de geração.
+    Ela permanece, reescrita em classe utilitária.
+  </p>
+</div>
+
+<h2><span class="st-section-num">04</span> Componentes</h2>
+
+<table>
+<thead><tr><th>Componente</th><th>Estado</th><th>Trabalho</th></tr></thead>
+<tbody>
+<tr><td><code>entities/</code>, <code>shared/api</code>, <code>shared/lib</code>, <code>shared/config</code></td><td>Intacto</td><td>Nenhum</td></tr>
+<tr><td><code>vite.config.ts</code></td><td>Alterado</td><td>Acrescentar o plugin do Tailwind</td></tr>
+<tr><td><code>package.json</code></td><td>Alterado</td><td>Entra Tailwind e shadcn; saem os cinco pacotes Radix antigos</td></tr>
+<tr><td><code>src/app/estilos/</code></td><td>Reescrito</td><td>Os quatro arquivos viram um, com <code>@theme</code></td></tr>
+<tr><td><code>src/shared/ui/</code></td><td>Removido</td><td>Quinze componentes e 24 folhas de estilo</td></tr>
+<tr><td><code>src/components/ui/</code></td><td>Novo</td><td>O que o shadcn instala</td></tr>
+<tr><td><code>src/app/providers/TemaProvider.tsx</code></td><td>Alterado</td><td>Classe <code>.dark</code> no lugar do atributo</td></tr>
+<tr><td><code>src/app/shell/</code></td><td>Reescrito</td><td>Barra lateral, barra superior e trilha</td></tr>
+<tr><td><code>src/features/autenticar/</code></td><td>Reescrito em parte</td><td>Só o formulário. O <code>useEntrar</code> e o <code>api.ts</code> ficam</td></tr>
+<tr><td><code>src/features/filtrar-pessoas/</code></td><td>Reescrito em parte</td><td>Só o componente de filtro. A ordenação fica</td></tr>
+<tr><td><code>src/pages/entrar/</code>, <code>src/pages/pessoas/</code></td><td>Reescrito</td><td>O JSX e as colunas. Os hooks ficam</td></tr>
+<tr><td><code>src/pages/design-system/</code></td><td>Reescrito</td><td>Catálogo do que o shadcn traz</td></tr>
+<tr><td><code>scripts/verifica-tokens.mjs</code></td><td>Reescrito</td><td>Passa a validar o bloco <code>@theme</code></td></tr>
+<tr><td><code>e2e/camadas.spec.ts</code></td><td>Alterado</td><td>Os rótulos e a ordem de pintura no shadcn</td></tr>
+<tr><td><code>README.md</code>, <code>CLAUDE.md</code>, <code>CONTRIBUTING.md</code></td><td>Alterado</td><td>O vocabulário de interface é outro</td></tr>
+</tbody>
+</table>
+
+<h2><span class="st-section-num">05</span> Riscos</h2>
+
+<table>
+<thead><tr><th>Risco</th><th>Efeito</th><th>Mitigação</th></tr></thead>
+<tbody>
+<tr>
+  <td>O <code>verifica-tokens.mjs</code> perde o sentido no Tailwind</td>
+  <td>A guarda que impede cor solta morre, e o próximo projeto espalha hex</td>
+  <td>Reescrever o script para validar o bloco <code>@theme</code>, e aceitar classe utilitária. A guarda passa a mirar outro alvo, e não deixa de existir</td>
+</tr>
+<tr>
+  <td>A ordem de pintura entre diálogo e seleção quebra</td>
+  <td>A lista abre atrás do véu, e o defeito só aparece no navegador</td>
+  <td>O <code>camadas.spec.ts</code> prova isso por <code>elementFromPoint</code> num navegador real. Ele continua rodando</td>
+</tr>
+<tr>
+  <td>Os testes de página assumem marcação do componente antigo</td>
+  <td>Vermelho em massa, e a tentação de afrouxar o teste</td>
+  <td>Os testes buscam por papel e por texto, não por classe. O que quebrar por marcação é ajustado; o que afirma comportamento fica</td>
+</tr>
+<tr>
+  <td>Sobra folha de estilo de módulo órfã</td>
+  <td>O build carrega CSS que ninguém usa</td>
+  <td>Varredura final por <code>module.css</code> e por import não resolvido</td>
+</tr>
+<tr>
+  <td>O projeto gerado quebra, mesmo com o boilerplate verde</td>
+  <td>O defeito aparece no primeiro uso real</td>
+  <td>A última task gera um projeto e roda a bateria inteira dentro dele. Foi assim que o defeito de BOM apareceu no ciclo anterior</td>
+</tr>
+</tbody>
+</table>
+
+<h2><span class="st-section-num">06</span> Decisões</h2>
+
+<table>
+<thead><tr><th>#</th><th>Decisão</th><th>Motivo</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>Substituir o <code>shared/ui</code>, e não conviver com os dois</td><td>Dois sistemas visuais dobram a decisão de quem chega. O boilerplate existe para reduzir decisão, não multiplicar</td></tr>
+<tr><td>2</td><td>O <code>verifica-tokens</code> aponta para o <code>@theme</code></td><td>A guarda contra cor solta é o que impede o próximo projeto de espalhar hex. Ela passa a mirar outro alvo</td></tr>
+<tr><td>3</td><td>A tela <code>/pessoas</code> continua verde ao final</td><td>Ela é a prova de que a fundação sobrevive à troca de interface. Sem ela, a spec afirma sem demonstrar</td></tr>
+<tr><td>4</td><td>Tailwind pelo plugin do Vite, sem PostCSS</td><td>É o caminho oficial da v4, e o projeto não tem PostCSS hoje</td></tr>
+<tr><td>5</td><td>Nomes do shadcn, não tradução para português</td><td>Quem busca ajuda encontra a documentação oficial. Traduzir os nomes quebraria essa ponte</td></tr>
+<tr><td>6</td><td>O <code>cn</code> que existe fica, e o shadcn aponta para ele</td><td>Os dois fazem a mesma coisa. Dois seria confusão</td></tr>
+<tr><td>7</td><td>Os ícones vêm do Phosphor, e não do Lucide</td><td>O Lucide virou assinatura de projeto gerado por máquina. O Phosphor tem seis pesos, de <code>thin</code> a <code>duotone</code>, e essa variação afasta o resultado do visual padrão</td></tr>
+<tr><td>10</td><td>A tela importa o ícone direto, sem componente de embrulho</td><td>O <code>Icone</code> de hoje declara 41 nomes, e 24 são resquício do domínio que saiu. Um catálogo próprio esconde o nome real e obriga a manter uma lista em dia</td></tr>
+<tr><td>8</td><td>Trabalho na <code>main</code>, sem branch</td><td>Decisão do dono do repositório</td></tr>
+<tr><td>9</td><td>O tema vira classe <code>.dark</code></td><td>É o que o shadcn espera. Manter o atributo exigiria alterar cada componente instalado</td></tr>
+</tbody>
+</table>
+
+<h2><span class="st-section-num">07</span> Fontes</h2>
+
+<table>
+<thead><tr><th>Caminho</th><th>O que decide</th></tr></thead>
+<tbody>
+<tr><td><code>src/shared/ui/</code></td><td>a superfície de 32 exportações a cobrir</td></tr>
+<tr><td><code>src/app/estilos/tokens.css</code></td><td>a paleta a traduzir para <code>@theme</code></td></tr>
+<tr><td><code>src/app/providers/TemaProvider.tsx</code></td><td>o atributo que vira classe</td></tr>
+<tr><td><code>scripts/verifica-tokens.mjs</code></td><td>a regra a reapontar</td></tr>
+<tr><td><code>src/pages/pessoas/</code></td><td>a tela que prova a fundação</td></tr>
+<tr><td><code>e2e/camadas.spec.ts</code></td><td>a ordem de pintura a preservar</td></tr>
+<tr><td><code>New-Project.ps1</code></td><td>o marcador <code>Fotus Default</code> na marca</td></tr>
+<tr><td><code>docs/specs/2026-08-06-boilerplate-front.html</code></td><td>a spec anterior, que criou o que esta altera</td></tr>
+</tbody>
+</table>
+
+<h2><span class="st-section-num">08</span> Critérios de aceite</h2>
+
+<h3>No boilerplate</h3>
+<ul>
+  <li><code>npm ci</code> termina com código 0.</li>
+  <li><code>npm run lint</code> passa, incluindo o verificador de tokens reapontado.</li>
+  <li><code>npm run typecheck</code> passa nos três <code>tsconfig</code>.</li>
+  <li><code>npm test</code> passa, e a fatia <code>pessoa</code> continua com teste próprio.</li>
+  <li><code>npm run api:check</code> confirma que o contrato e o schema batem.</li>
+  <li><code>npm run build</code> gera o artefato.</li>
+  <li><code>npm run e2e</code> passa nos três specs, inclusive o de ordem de pintura.</li>
+  <li>Nenhum arquivo <code>.module.css</code> sobra em <code>src/</code>.</li>
+  <li>Nenhum pacote <code>@radix-ui/react-*</code> individual sobra no <code>package.json</code>.</li>
+  <li>O tema claro e o escuro funcionam, e a paleta Fotus permanece.</li>
+</ul>
+
+<h3>No projeto gerado</h3>
+<ul>
+  <li>O script cria o destino e recusa destino que já existe.</li>
+  <li>Nenhum arquivo carrega BOM.</li>
+  <li>Nenhuma ocorrência de <code>fotus-default-web</code> nem de <code>Fotus Default</code> sobra.</li>
+  <li>A bateria inteira do critério anterior passa dentro do destino.</li>
+</ul>
+
+</main>
+<footer class="st-footer"><span class="st-mono">2026-08-22</span></footer>
+</body>
+</html>

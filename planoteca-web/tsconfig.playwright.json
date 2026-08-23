@@ -1,0 +1,22 @@
+{
+  // Config dedicada à superfície do Playwright (Tarefa 21), separada de
+  // `tsconfig.node.json` de propósito — não amplia o `lib`.
+  //
+  // `page.evaluate(...)` (`e2e/camadas.spec.ts`) recebe um callback que RODA
+  // NO NAVEGADOR (`document`), mas é TYPE-CHECKED do lado Node, com o `lib`
+  // deste arquivo. A primeira versão desta tarefa resolvia isso acrescentando
+  // `DOM` ao `lib` de `tsconfig.node.json` — que `vite.config.ts` e
+  // `vitest.config.ts` também usam. Isso não muda o que os dois executam
+  // (continuam rodando só em Node), mas afrouxa a garantia de tipo que os
+  // protegia: sob revisão, um `document.title` colado por engano em
+  // `vite.config.ts` deixou de dar erro de compilação — o mesmo furo que
+  // motivou trazer `playwright.config.ts` para debaixo de checagem, agora
+  // aberto de novo em dois arquivos que já estavam cobertos. Um config à
+  // parte, estendendo `tsconfig.node.json` só para quem de fato roda no
+  // navegador, mantém as duas garantias separadas.
+  "extends": "./tsconfig.node.json",
+  "compilerOptions": {
+    "lib": ["ES2023", "DOM"]
+  },
+  "include": ["playwright.config.ts", "e2e"]
+}

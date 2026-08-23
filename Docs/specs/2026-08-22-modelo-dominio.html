@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Modelo de domínio da Planoteca</title>
+<style>
+:root {
+  --st-bg:#FAF9F5; --st-bg-alt:#F0EEE6; --st-surface:#FFFFFF;
+  --st-border:#E3DACC; --st-border-soft:#F0EEE6;
+  --st-ink:#141413; --st-ink-soft:#3D3D3A; --st-ink-muted:#87867F; --st-ink-faint:#D1CFC5;
+  --st-accent:#D97757; --st-accent-soft:#F5E1D4; --st-rose:#E0897A; --st-rose-soft:#F8DDD5;
+  --st-olive:#788C5D; --st-olive-soft:#DCE3CC; --st-olive-light:#A3B88A;
+  --st-amber:#B47A3C; --st-amber-soft:#EDD9B7;
+  --st-crimson:#B0533C; --st-crimson-soft:#F0CFC3;
+  --st-azure:#3D6688; --st-azure-soft:#CDDAE6;
+  --st-invert-bg:#141413; --st-invert-ink:#F0EEE6;
+  --st-font-serif: ui-serif,"Iowan Old Style","Apple Garamond",Baskerville,"Times New Roman","Droid Serif",Times,"Source Serif Pro",serif;
+  --st-font-sans: system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --st-font-mono: ui-monospace,"SF Mono","Cascadia Code",Menlo,Consolas,"Liberation Mono",monospace;
+  --st-space-1:0.25rem; --st-space-2:0.5rem; --st-space-3:0.75rem; --st-space-4:1rem;
+  --st-space-5:1.25rem; --st-space-6:1.5rem; --st-space-8:2rem; --st-space-10:2.5rem;
+  --st-space-12:3rem; --st-space-16:4rem; --st-space-20:5rem;
+  --st-radius-sm:4px; --st-radius:8px; --st-radius-lg:12px; --st-radius-xl:16px;
+  --st-shadow:0 1px 2px rgba(20,20,19,.04),0 2px 8px rgba(20,20,19,.04);
+  --st-content-width:1100px; --st-wide-width:1320px;
+}
+*{box-sizing:border-box}
+body{margin:0;padding:0;font-family:var(--st-font-sans);font-size:16px;line-height:1.65;color:var(--st-ink);background:var(--st-bg);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+.st-doc{max-width:var(--st-content-width);margin:0 auto;padding:var(--st-space-16) var(--st-space-6) var(--st-space-12)}
+.st-eyebrow{font-family:var(--st-font-mono);font-size:.75rem;font-weight:500;text-transform:uppercase;letter-spacing:.08em;color:var(--st-ink-muted);margin:0 0 var(--st-space-4)}
+.st-title{font-family:var(--st-font-serif);font-weight:500;font-size:clamp(2rem,5vw,2.75rem);line-height:1.15;letter-spacing:-.01em;margin:0 0 var(--st-space-6)}
+.st-title em.st-accent{font-style:italic;color:var(--st-accent);font-weight:500}
+.st-lede{font-size:1.1rem;line-height:1.6;color:var(--st-ink-soft);margin:0 0 var(--st-space-8);max-width:60ch}
+h2{font-family:var(--st-font-serif);font-weight:500;font-size:clamp(1.4rem,3vw,1.75rem);letter-spacing:-.005em;margin:var(--st-space-16) 0 var(--st-space-4);display:flex;align-items:center;gap:var(--st-space-3)}
+h3{font-family:var(--st-font-serif);font-weight:500;font-size:1.2rem;margin:var(--st-space-8) 0 var(--st-space-3)}
+h4{font-family:var(--st-font-sans);font-weight:600;font-size:1rem;margin:var(--st-space-6) 0 var(--st-space-2)}
+.st-section-num{display:inline-block;font-family:var(--st-font-mono);font-size:.7rem;font-weight:500;background:var(--st-bg-alt);color:var(--st-ink-muted);padding:3px var(--st-space-2);border-radius:var(--st-radius-sm);letter-spacing:.05em;vertical-align:middle}
+p{margin:0 0 var(--st-space-4)}
+a{color:var(--st-accent);text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px}
+a:hover{color:var(--st-rose)}
+ul,ol{margin:0 0 var(--st-space-4);padding-left:var(--st-space-6)}
+li{margin-bottom:var(--st-space-2);line-height:1.6}
+li::marker{color:var(--st-accent)}
+strong{font-weight:600;color:var(--st-ink)}
+em{color:var(--st-ink-soft);font-style:italic}
+hr{border:none;border-top:1px solid var(--st-border);margin:var(--st-space-10) 0}
+code{font-family:var(--st-font-mono);font-size:.88em;background:var(--st-bg-alt);padding:2px 6px;border-radius:var(--st-radius-sm);color:var(--st-ink)}
+pre{background:var(--st-invert-bg);color:var(--st-invert-ink);padding:var(--st-space-4) var(--st-space-5);border-radius:var(--st-radius);overflow-x:auto;font-size:.85rem;line-height:1.55;margin:var(--st-space-4) 0;min-width:0;max-width:100%}
+pre code{background:none;padding:0;color:inherit;font-size:inherit}
+.st-pills{display:flex;gap:var(--st-space-2);flex-wrap:wrap;margin:0 0 var(--st-space-6)}
+.st-pill{display:inline-flex;align-items:center;gap:var(--st-space-2);padding:4px var(--st-space-3);border-radius:999px;font-family:var(--st-font-mono);font-size:.78rem;background:var(--st-bg-alt);color:var(--st-ink-soft);border:1px solid var(--st-border-soft)}
+.st-pill .st-pill-label{color:var(--st-ink-muted)}
+.st-pill .st-pill-value{color:var(--st-ink);font-weight:500}
+.st-pill--accent{background:var(--st-accent-soft);color:var(--st-accent);border-color:transparent}
+.st-pill--olive{background:var(--st-olive-soft);color:var(--st-olive);border-color:transparent}
+.st-pill--amber{background:var(--st-amber-soft);color:var(--st-amber);border-color:transparent}
+.st-pill--crimson{background:var(--st-crimson-soft);color:var(--st-crimson);border-color:transparent}
+.st-pill--azure{background:var(--st-azure-soft);color:var(--st-azure);border-color:transparent}
+.st-tldr{background:var(--st-invert-bg);color:var(--st-invert-ink);padding:var(--st-space-6);border-radius:var(--st-radius);margin:0 0 var(--st-space-10);font-size:1.05rem;line-height:1.6}
+.st-tldr-label{font-family:var(--st-font-mono);font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--st-ink-muted);margin-bottom:var(--st-space-2)}
+.st-tldr p{margin:0 0 var(--st-space-3)}
+.st-tldr p:last-child{margin:0}
+.st-tldr strong{color:#FFFFFF}
+.st-tldr em{color:var(--st-accent-soft);font-style:italic}
+.st-tldr code{background:rgba(255,255,255,.1);color:var(--st-invert-ink)}
+.st-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:var(--st-space-3);margin:0 0 var(--st-space-10)}
+.st-stat{background:var(--st-surface);border:1px solid var(--st-border);border-radius:var(--st-radius);padding:var(--st-space-4)}
+.st-stat-label{font-family:var(--st-font-mono);font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:var(--st-ink-muted);margin-bottom:var(--st-space-2)}
+.st-stat-value{font-family:var(--st-font-serif);font-weight:500;font-size:1.15rem}
+.st-stat--accent .st-stat-value{color:var(--st-accent)}
+.st-tag{display:inline-block;font-family:var(--st-font-mono);font-size:.78rem;background:var(--st-bg-alt);color:var(--st-ink-soft);padding:2px var(--st-space-2);border-radius:var(--st-radius-sm);margin:2px 4px 2px 0}
+.st-callout{background:var(--st-bg-alt);border-radius:var(--st-radius);padding:var(--st-space-4) var(--st-space-5);margin:var(--st-space-4) 0}
+.st-callout-label{font-family:var(--st-font-mono);font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--st-ink-muted);margin-bottom:var(--st-space-2)}
+.st-callout p:last-child{margin-bottom:0}
+.st-callout--accent{background:var(--st-accent-soft)} .st-callout--accent .st-callout-label{color:var(--st-accent)}
+.st-callout--olive{background:var(--st-olive-soft)} .st-callout--olive .st-callout-label{color:var(--st-olive)}
+.st-callout--amber{background:var(--st-amber-soft)} .st-callout--amber .st-callout-label{color:var(--st-amber)}
+.st-callout--crimson{background:var(--st-crimson-soft)} .st-callout--crimson .st-callout-label{color:var(--st-crimson)}
+.st-callout--azure{background:var(--st-azure-soft)} .st-callout--azure .st-callout-label{color:var(--st-azure)}
+.st-card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:var(--st-space-4);margin:var(--st-space-6) 0}
+.st-card{background:var(--st-surface);border:1px solid var(--st-border);border-radius:var(--st-radius);padding:var(--st-space-5);display:flex;flex-direction:column;gap:var(--st-space-3)}
+.st-card-eyebrow{font-family:var(--st-font-mono);font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:var(--st-ink-muted)}
+.st-card-title{font-family:var(--st-font-serif);font-weight:500;font-size:1.15rem;margin:0}
+.st-card-body{font-size:.95rem;color:var(--st-ink-soft);margin:0;flex:1}
+table{width:100%;border-collapse:collapse;margin:var(--st-space-4) 0;font-size:.92rem;background:var(--st-surface);border-radius:var(--st-radius);overflow:hidden;border:1px solid var(--st-border)}
+thead{background:var(--st-bg-alt)}
+th{text-align:left;padding:var(--st-space-3) var(--st-space-4);font-family:var(--st-font-mono);font-weight:500;font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--st-ink-muted);border-bottom:1px solid var(--st-border)}
+td{padding:var(--st-space-3) var(--st-space-4);border-bottom:1px solid var(--st-border-soft);vertical-align:top}
+tr:last-child td{border-bottom:none}
+.st-tabela-rolavel{overflow-x:auto;margin:var(--st-space-4) 0}
+.st-tabela-rolavel table{margin:0}
+details{background:var(--st-surface);border:1px solid var(--st-border);border-radius:var(--st-radius);padding:var(--st-space-3) var(--st-space-4);margin:var(--st-space-3) 0}
+details summary{cursor:pointer;font-weight:500;list-style:none;display:flex;align-items:center;gap:var(--st-space-2)}
+details summary::before{content:"▸";color:var(--st-accent);font-size:.85rem;transition:transform .15s}
+details[open] summary::before{transform:rotate(90deg)}
+details > *:not(summary){margin-top:var(--st-space-3)}
+.st-diagram{display:block;margin:var(--st-space-6) auto;max-width:100%;height:auto}
+.st-footer{text-align:center;padding:var(--st-space-8) var(--st-space-6) var(--st-space-12);color:var(--st-ink-muted);font-size:.85rem}
+.st-mono{font-family:var(--st-font-mono);font-size:.85em}
+@media (max-width:768px){.st-doc{padding:var(--st-space-8) var(--st-space-4)}}
+</style>
+</head>
+<body>
+<main class="st-doc">
+
+<p class="st-eyebrow">Spec · Planoteca · Modelagem de domínio</p>
+<h1 class="st-title">O modelo que o material <em class="st-accent">real</em> pede</h1>
+
+<div class="st-pills">
+  <span class="st-pill"><span class="st-pill-label">grau</span><span class="st-pill-value">2</span></span>
+  <span class="st-pill st-pill--crimson"><span class="st-pill-value">schema novo</span></span>
+  <span class="st-pill st-pill--amber"><span class="st-pill-value">contrato altera</span></span>
+  <span class="st-pill"><span class="st-pill-label">API</span><span class="st-pill-value">PostgreSQL 16</span></span>
+</div>
+
+<p class="st-lede">
+O modelo de <code>Plano</code> que existe hoje foi escrito antes de alguém olhar um plano
+de verdade. Sete documentos do acervo da SEDU-ES mostram uma estrutura diferente da que
+o código presume — a começar pelo fato de que <strong>nenhum plano real cita um código
+BNCC</strong>. Esta spec propõe o modelo que nasce do material, e não da suposição.
+</p>
+
+<div class="st-tldr">
+  <div class="st-tldr-label">TL;DR</div>
+  <p>
+    Sete entidades novas na API: <strong>Plano</strong>, <strong>EtapaPlano</strong>,
+    <strong>Metodologia</strong>, <strong>Componente</strong>, <strong>Série</strong>,
+    <strong>Pessoa</strong> e <strong>Post</strong>. Mais três tabelas de ligação
+    (<code>plano_componente</code>, <code>plano_serie</code>, <code>plano_metodologia</code>)
+    e <code>bncc</code>.
+  </p>
+  <p>
+    Componente, série e metodologia deixam de ser <em>union</em> em TypeScript e viram
+    <strong>tabela administrável</strong> — o material real traz Química, 2ª série do Médio
+    e "Cultura Maker", nenhum dos quais cabe nas listas fechadas de hoje. E as três se ligam
+    ao plano em <strong>N:N</strong>: um relato declara "2ª série I01 <em>e</em> 2ª série I02".
+  </p>
+  <p>
+    O eixo de busca passa a ser <code>objetos_conhecimento</code>, que todo plano tem.
+    <code>bncc</code> vira lista <em>opcional</em>, porque nenhum dos sete documentos traz um.
+  </p>
+</div>
+
+<h2><span class="st-section-num">01</span> Problema</h2>
+
+<p>
+A Planoteca tem um modelo de <code>Plano</code> em
+<code>planoteca-web/src/entities/plano/modelo.ts</code> e <strong>nenhuma entidade na API</strong>.
+A Biblioteca funciona contra mocks. Antes de escrever o schema em PostgreSQL, é preciso
+saber que forma o dado real tem — porque migrar schema depois do acervo povoado custa caro,
+e a fase de povoamento vai catalogar dezenas de planos em sequência.
+</p>
+
+<p>
+O acervo de referência (<code>Docs/Refbibliografica/</code>) trouxe a resposta, e ela
+contradiz o modelo atual em cinco pontos.
+</p>
+
+<h3>As cinco divergências</h3>
+
+<div class="st-tabela-rolavel">
+<table>
+  <thead>
+    <tr><th>Ponto</th><th>O modelo hoje presume</th><th>O material real mostra</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>BNCC</strong></td>
+      <td><code>bncc: string</code> obrigatório. O comentário do código afirma que a busca
+      por código "é o caminho principal de quem procura"</td> <!-- lint-ignore: deriva-terminologica — citação literal de modelo.ts -->
+      <td><strong>Zero ocorrências</strong> nos sete documentos. O eixo declarado é
+      "Objetos de conhecimento abordados", em texto livre</td>
+    </tr>
+    <tr>
+      <td><strong>Série</strong></td>
+      <td>Lista fechada de 5, e <strong>uma</strong> por plano</td>
+      <td>2ª série EM, 1ª Série EM, 7º Ano — e <strong>mais de uma por plano</strong>:
+      "2ª série I01 <em>e</em> 2ª série I02". Ainda vêm códigos crus: <code>2ºIM02-EM-COM</code></td>
+    </tr>
+    <tr>
+      <td><strong>Componente</strong></td>
+      <td>Lista fechada de 8, com "Ciências" genérico</td>
+      <td>Química, Física, Biologia — agrupados por <em>área do conhecimento</em>
+      ("Ciências da Natureza e suas Tecnologias"). E há prática interdisciplinar</td>
+    </tr>
+    <tr>
+      <td><strong>Metodologia</strong></td>
+      <td>Uma <code>string</code> por plano</td>
+      <td>Várias por plano: "Storytelling <strong>e</strong> Escape Room"</td>
+    </tr>
+    <tr>
+      <td><strong>Conteúdo</strong></td>
+      <td>Só metadado e <code>arquivoUrl</code></td>
+      <td>Estrutura rica e constante: objetivo, expectativas, recursos e
+      <strong>ETAPA 1..N</strong> ordenadas</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<div class="st-callout st-callout--crimson">
+  <div class="st-callout-label">O que isso significa</div>
+  <p>
+    Publicar o schema atual criaria um catálogo que não consegue receber o próprio acervo
+    de referência da escola. Um plano de Química da 2ª série <em>não teria onde ser
+    catalogado</em>.
+  </p>
+</div>
+
+<h2><span class="st-section-num">02</span> Escopo</h2>
+
+<h4>Entra</h4>
+<ul>
+  <li>Modelo de dados de <code>Plano</code> e do vocabulário que o classifica</li>
+  <li>Modelo de <code>Post</code> do blog, com o ciclo de moderação</li>
+  <li>Modelo de <code>Pessoa</code> e papéis (Professor, Administrador)</li>
+  <li>Schema PostgreSQL, migration inicial e o contrato REST correspondente</li>
+</ul>
+
+<h4>Não entra</h4>
+<ul>
+  <li>Implementação do login com Google — é tarefa própria, e o modelo só reserva o campo</li>
+  <li>Telas do painel administrativo</li>
+  <li>Importação automática dos PDFs de referência (a catalogação é manual, por decisão)</li>
+  <li>Busca full-text avançada — o schema deixa o caminho aberto, a implementação é depois</li>
+</ul>
+
+<h2><span class="st-section-num">03</span> Solução</h2>
+
+<p>
+Três blocos: o <strong>vocabulário</strong> (tabelas de classificação), o
+<strong>acervo</strong> (plano e suas etapas) e as <strong>pessoas</strong> (conta, papel e
+blog).
+</p>
+
+<svg class="st-diagram" viewBox="0 0 900 470" role="img" aria-label="Diagrama das entidades e suas relações">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#87867F"/>
+    </marker>
+    <marker id="arrow-accent" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#D97757"/>
+    </marker>
+  </defs>
+
+  <text x="20" y="26" font-family="ui-monospace, Menlo, monospace" font-size="11" fill="#87867F">VOCABULÁRIO — administrável pelo painel · tracejado = N:N</text>
+  <rect x="20" y="38" width="160" height="54" rx="10" fill="#FFFFFF" stroke="#E3DACC" stroke-width="1.5"/>
+  <text x="100" y="60" text-anchor="middle" font-family="ui-serif, Georgia, serif" font-size="14" font-weight="500" fill="#141413">area_conhecimento</text>
+  <text x="100" y="78" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="11" fill="#87867F">4 a 5 linhas</text>
+
+  <rect x="210" y="38" width="160" height="54" rx="10" fill="#FFFFFF" stroke="#E3DACC" stroke-width="1.5"/>
+  <text x="290" y="60" text-anchor="middle" font-family="ui-serif, Georgia, serif" font-size="14" font-weight="500" fill="#141413">componente</text>
+  <text x="290" y="78" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="11" fill="#87867F">cor + sigla</text>
+
+  <rect x="400" y="38" width="160" height="54" rx="10" fill="#FFFFFF" stroke="#E3DACC" stroke-width="1.5"/>
+  <text x="480" y="60" text-anchor="middle" font-family="ui-serif, Georgia, serif" font-size="14" font-weight="500" fill="#141413">serie</text>
+  <text x="480" y="78" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="11" fill="#87867F">7 semeadas</text>
+
+  <rect x="590" y="38" width="160" height="54" rx="10" fill="#FFFFFF" stroke="#E3DACC" stroke-width="1.5"/>
+  <text x="670" y="60" text-anchor="middle" font-family="ui-serif, Georgia, serif" font-size="14" font-weight="500" fill="#141413">metodologia</text>
+  <text x="670" y="78" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="11" fill="#87867F">41 semeadas</text>
+
+  <line x1="180" y1="65" x2="205" y2="65" stroke="#87867F" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <rect x="300" y="190" width="230" height="80" rx="10" fill="#F5E1D4" stroke="#D97757" stroke-width="1.5"/>
+  <text x="415" y="218" text-anchor="middle" font-family="ui-serif, Georgia, serif" font-size="16" font-weight="500" fill="#141413">plano</text>
+  <text x="415" y="238" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="11" fill="#87867F">objetos_conhecimento</text>
+  <text x="415" y="254" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="11" fill="#87867F">arquivo_url · publicado_em</text>
+
+  <line x1="290" y1="92" x2="380" y2="185" stroke="#D97757" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#arrow-accent)"/>
+  <text x="300" y="145" font-family="ui-monospace, Menlo, monospace" font-size="11" fill="#D97757">N:N + principal</text>
+  <line x1="480" y1="92" x2="450" y2="185" stroke="#D97757" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#arrow-accent)"/>
+  <text x="470" y="145" font-family="ui-monospace, Menlo, monospace" font-size="11" fill="#D97757">N:N</text>
+  <line x1="660" y1="92" x2="535" y2="200" stroke="#D97757" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#arrow-accent)"/>
+  <text x="600" y="150" font-family="ui-monospace, Menlo, monospace" font-size="11" fill="#D97757">N:N</text>
+
+  <rect x="620" y="195" width="160" height="70" rx="10" fill="#FFFFFF" stroke="#E3DACC" stroke-width="1.5"/>
+  <text x="700" y="220" text-anchor="middle" font-family="ui-serif, Georgia, serif" font-size="14" font-weight="500" fill="#141413">etapa_plano</text>
+  <text x="700" y="240" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="11" fill="#87867F">ordem · titulo</text>
+  <text x="700" y="256" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="11" fill="#87867F">ETAPA 1..N</text>
+  <line x1="530" y1="240" x2="615" y2="230" stroke="#87867F" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="552" y="256" font-family="ui-monospace, Menlo, monospace" font-size="11" fill="#87867F">1:N</text>
+
+  <rect x="60" y="195" width="160" height="70" rx="10" fill="#FFFFFF" stroke="#E3DACC" stroke-width="1.5"/>
+  <text x="140" y="220" text-anchor="middle" font-family="ui-serif, Georgia, serif" font-size="14" font-weight="500" fill="#141413">bncc</text>
+  <text x="140" y="240" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="11" fill="#87867F">0..N — opcional</text>
+  <text x="140" y="256" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="11" fill="#87867F">nenhum plano real tem</text>
+  <line x1="295" y1="235" x2="225" y2="232" stroke="#87867F" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <text x="20" y="330" font-family="ui-monospace, Menlo, monospace" font-size="11" fill="#87867F">PESSOAS</text>
+  <rect x="20" y="342" width="180" height="70" rx="10" fill="#141413"/>
+  <text x="110" y="368" text-anchor="middle" font-family="ui-serif, Georgia, serif" font-size="14" font-weight="500" fill="#F0EEE6">pessoa</text>
+  <text x="110" y="388" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="11" fill="#D1CFC5">google_sub · papel</text>
+  <text x="110" y="404" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="11" fill="#D1CFC5">professor | admin</text>
+
+  <rect x="250" y="342" width="180" height="70" rx="10" fill="#FFFFFF" stroke="#E3DACC" stroke-width="1.5"/>
+  <text x="340" y="368" text-anchor="middle" font-family="ui-serif, Georgia, serif" font-size="14" font-weight="500" fill="#141413">post</text>
+  <text x="340" y="388" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="11" fill="#87867F">situacao</text>
+  <text x="340" y="404" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="11" fill="#87867F">rascunho→publicado</text>
+  <line x1="200" y1="377" x2="245" y2="377" stroke="#87867F" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="205" y="370" font-family="ui-monospace, Menlo, monospace" font-size="11" fill="#87867F">autor</text>
+
+  <line x1="130" y1="342" x2="330" y2="272" stroke="#87867F" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="175" y="315" font-family="ui-monospace, Menlo, monospace" font-size="11" fill="#87867F">catalogado_por</text>
+</svg>
+
+<h3>3.1 O vocabulário vira tabela</h3>
+
+<p>
+Componente, etapa de ensino e metodologia saem do código e viram linha no banco. A troca
+é deliberada e tem um custo que vale declarar.
+</p>
+
+<div class="st-card-grid">
+  <div class="st-card">
+    <div class="st-card-eyebrow">Ganha</div>
+    <h4 class="st-card-title">Acervo real cabe</h4>
+    <p class="st-card-body">
+      Química, Física, Biologia, 2ª e 3ª série do Médio, "Cultura Maker" — tudo entra sem
+      alterar código nem esperar deploy. O administrador cadastra pelo painel.
+    </p>
+  </div>
+  <div class="st-card">
+    <div class="st-card-eyebrow">Perde</div>
+    <h4 class="st-card-title">A garantia do compilador</h4>
+    <p class="st-card-body">
+      Hoje um componente sem cor <em>quebra a compilação</em>. Com tabela, a cor é dado:
+      um componente cadastrado sem cor nasceria com bloco transparente.
+    </p>
+  </div>
+  <div class="st-card">
+    <div class="st-card-eyebrow">Mitigação</div>
+    <h4 class="st-card-title">Cor obrigatória e fallback</h4>
+    <p class="st-card-body">
+      <code>cor</code> e <code>sigla</code> são <code>NOT NULL</code> na tabela, e a UI tem
+      um neutro de fallback. A validação sai do compilador e vira restrição de banco mais
+      teste.
+    </p>
+  </div>
+</div>
+
+<h4>serie — o nome sozinho não identifica</h4>
+
+<p>
+"1ª série" é ambíguo: existe no Fundamental e no Médio. A tabela guarda a etapa junto, e uma
+<code>ordem</code> global que permite listar da menor para a maior sem nenhuma regra de
+desempate na aplicação.
+</p>
+
+<pre><code>serie
+  id               uuid  not null
+  etapa            text  not null  -- 'fundamental_anos_finais' | 'medio'
+  nome             text  not null  -- '6º ano', '2ª série'
+  rotulo_completo  text  not null  -- '2ª série do Ensino Médio'
+  sigla            text  not null  -- '6º', '2ªEM'  — cabe no chip do filtro
+  ordem            int   not null  -- 1..7, global
+  ativa            bool  not null default true
+  unique (etapa, nome)</code></pre>
+
+<p>Sete linhas no <em>seed</em> — Fundamental anos finais e Ensino Médio, que é o público do briefing:</p>
+
+<div class="st-tabela-rolavel">
+<table>
+  <thead><tr><th>ordem</th><th>etapa</th><th>nome</th><th>rótulo completo</th><th>sigla</th></tr></thead>
+  <tbody>
+    <tr><td>1</td><td><code>fundamental_anos_finais</code></td><td>6º ano</td><td>6º ano do Ensino Fundamental</td><td>6º</td></tr>
+    <tr><td>2</td><td><code>fundamental_anos_finais</code></td><td>7º ano</td><td>7º ano do Ensino Fundamental</td><td>7º</td></tr>
+    <tr><td>3</td><td><code>fundamental_anos_finais</code></td><td>8º ano</td><td>8º ano do Ensino Fundamental</td><td>8º</td></tr>
+    <tr><td>4</td><td><code>fundamental_anos_finais</code></td><td>9º ano</td><td>9º ano do Ensino Fundamental</td><td>9º</td></tr>
+    <tr><td>5</td><td><code>medio</code></td><td>1ª série</td><td>1ª série do Ensino Médio</td><td>1ªEM</td></tr>
+    <tr><td>6</td><td><code>medio</code></td><td>2ª série</td><td>2ª série do Ensino Médio</td><td>2ªEM</td></tr>
+    <tr><td>7</td><td><code>medio</code></td><td>3ª série</td><td>3ª série do Ensino Médio</td><td>3ªEM</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p>
+<code>etapa</code> é coluna e não tabela própria: são duas ou três linhas que quase nunca
+alteram, e normalizá-las custaria um <em>join</em> a mais em toda consulta de filtro. Se um
+dia entrar Fundamental anos iniciais ou EJA, é uma linha nova no <em>seed</em>, não uma
+migração de estrutura.
+</p>
+
+<h4>metodologia — três tipos, uma tabela</h4>
+
+<p>
+O Guia de Metodologias Ativas (UGB/FERP, 2020) organiza o vocabulário em três níveis, e a
+tabela guarda isso na coluna <code>tipo</code>:
+</p>
+
+<div class="st-tabela-rolavel">
+<table>
+  <thead><tr><th>tipo</th><th>quantas</th><th>exemplos do guia</th></tr></thead>
+  <tbody>
+    <tr><td><code>metodologia</code></td><td>16</td><td>Sala de Aula Invertida, Rotação por Estações, Peer Instruction, TBL, PBL, Gamificação, Estudo de Casos, Storytelling, Design Thinking, Escape Room</td></tr>
+    <tr><td><code>tecnica</code></td><td>13</td><td>Simulações, Diagrama de Ishikawa, Brainstorming, 5W2H, Técnica dos Chapéus, Mapa Mental, Trilhas de Aprendizagem</td></tr>
+    <tr><td><code>ferramenta</code></td><td>12</td><td>Plickers, Google Forms, Socrative, Quizizz, Mentimeter, Kahoot, Classcraft</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p>
+São <strong>41 linhas de <em>seed</em></strong>. O relacionamento com <code>plano</code> é
+N:N, porque um relato real usa "Storytelling e Escape Room". Termos que os relatos usam e o
+guia não tem — "Cultura Maker", "Aprendizagem mediada por tecnologia" — entram pelo painel,
+sem deploy.
+</p>
+
+<h3>3.2 O plano, campo a campo</h3>
+
+<p>
+Os nomes vêm dos rótulos literais dos documentos do acervo, traduzidos para
+<code>snake_case</code>.
+</p>
+
+<div class="st-tabela-rolavel">
+<table>
+  <thead>
+    <tr><th>coluna</th><th>tipo</th><th>nulo?</th><th>vem de / porquê</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>id</code></td><td><code>uuid</code></td><td>não</td><td>gerado em C#, como as demais entidades</td></tr>
+    <tr><td><code>titulo</code></td><td><code>text</code></td><td>não</td><td>título do relato</td></tr>
+    <tr><td><code>autoria</code></td><td><code>text</code></td><td>não</td><td>"Anna Ruth de Souza e Souza". Texto, não FK: o autor do PDF pode não ter conta no sistema</td></tr>
+    <tr><td><code>objetos_conhecimento</code></td><td><code>text</code></td><td><strong>não</strong></td><td>"Objetos de conhecimento abordados". <strong>É o eixo de busca</strong>, no lugar do BNCC</td></tr>
+    <tr><td><code>modalidade</code></td><td><code>text</code></td><td>sim</td><td>Regular, Integral, Integrado. Vinha grudado no ano ("2ª série I01"); aqui é campo próprio</td></tr>
+    <tr><td><code>turma_origem</code></td><td><code>text</code></td><td>sim</td><td>o código cru da turma, preservado como veio: <code>2ºIM02-EM-COM</code></td></tr>
+    <tr><td><code>objetivo</code></td><td><code>text</code></td><td>não</td><td>"Objetivo da prática"</td></tr>
+    <tr><td><code>expectativas_aprendizagem</code></td><td><code>text</code></td><td>não</td><td>"Expectativas de aprendizagem"</td></tr>
+    <tr><td><code>recursos</code></td><td><code>text</code></td><td>sim</td><td>"Recurso(s) utilizado(s)". Prosa, não lista: os documentos escrevem corrido</td></tr>
+    <tr><td><code>duracao_aulas</code></td><td><code>int</code></td><td>sim</td><td>número, para o filtro funcionar</td></tr>
+    <tr><td><code>duracao_descricao</code></td><td><code>text</code></td><td>sim</td><td>"Sequência didática", "1 bimestre" — o que o número não expressa</td></tr>
+    <tr><td><code>arquivo_url</code></td><td><code>text</code></td><td>não</td><td>o PDF. Público, sem token</td></tr>
+    <tr><td><code>links_extras</code></td><td><code>jsonb</code></td><td>sim</td><td>os relatos trazem link de Drive com material de apoio</td></tr>
+    <tr><td><code>situacao</code></td><td><code>text</code></td><td>não</td><td><code>rascunho</code> ou <code>publicado</code>. Permite catalogar sem publicar na hora</td></tr>
+    <tr><td><code>catalogado_por_id</code></td><td><code>uuid</code></td><td>sim</td><td>FK para <code>pessoa</code> — quem subiu, não quem escreveu</td></tr>
+    <tr><td><code>publicado_em</code></td><td><code>timestamptz</code></td><td>sim</td><td>nulo enquanto rascunho</td></tr>
+    <tr><td><code>criado_em</code> / <code>atualizado_em</code></td><td><code>timestamptz</code></td><td>não</td><td><code>default now()</code></td></tr>
+  </tbody>
+</table>
+</div>
+
+<p>
+Componente e série <strong>não são coluna</strong> do plano: cada um tem sua tabela de
+ligação, descrita a seguir.
+</p>
+
+<h4>As duas ligações N:N</h4>
+
+<pre><code>plano_componente
+  plano_id       uuid not null  → plano (on delete cascade)
+  componente_id  uuid not null  → componente
+  e_principal    bool not null default false
+  primary key (plano_id, componente_id)
+  -- no máximo um principal por plano:
+  unique index (plano_id) where e_principal
+
+plano_serie
+  plano_id  uuid not null  → plano (on delete cascade)
+  serie_id  uuid not null  → serie
+  primary key (plano_id, serie_id)</code></pre>
+
+<div class="st-callout st-callout--accent">
+  <div class="st-callout-label">Por que o componente tem um principal</div>
+  <p>
+    O card da Biblioteca é desenhado em torno de <strong>um</strong> bloco de cor com a sigla
+    de duas letras — é a assinatura da Direção B. Um plano com três componentes iguais
+    deixaria o card sem saber que cor usar, e três blocos empilhados viram poluição.
+  </p>
+  <p>
+    <code>e_principal</code> resolve: o principal manda na cor e na sigla; os demais aparecem
+    na ficha do plano e continuam <strong>filtráveis</strong> — buscar por "Arte" acha a
+    prática interdisciplinar em que Arte é secundária.
+  </p>
+</div>
+
+<div class="st-callout st-callout--amber">
+  <div class="st-callout-label">Duração em duas colunas, e não uma</div>
+  <p>
+    O campo atual mistura quantidade ("2 aulas") com formato ("Sequência didática"). São
+    dimensões diferentes, e o briefing pede <em>filtro por duração</em> — filtro precisa de
+    número. Separar agora custa uma coluna; separar depois custa migração de dado já digitado.
+  </p>
+</div>
+
+<h4>etapa_plano — o passo a passo vira dado</h4>
+
+<p>
+Todo relato traz <code>ETAPA 1</code>, <code>ETAPA 2</code>… com título e descrição. Guardar
+como entidade ordenada permite mostrar o roteiro na página do plano sem abrir o PDF — que é
+o que o briefing pede quando fala em "objetivos de aprendizagem e materiais necessários"
+visíveis.
+</p>
+
+<pre><code>etapa_plano
+  id                uuid      not null
+  plano_id          uuid      not null  → plano (on delete cascade)
+  ordem             int       not null  -- 1, 2, 3…
+  titulo            text      null      -- "Início da Missão: O Mistério do Termoscópio"
+  descricao         text      not null
+  unique (plano_id, ordem)</code></pre>
+
+<h3>3.3 Pessoa, papel e blog</h3>
+
+<pre><code>pessoa
+  id            uuid  not null
+  google_sub    text  null  unique   -- o `sub` do OIDC do Google; nulo até o login existir
+  email         text  not null unique
+  nome          text  not null
+  papel         text  not null       -- 'professor' | 'administrador'
+  ativo         bool  not null default true
+  criado_em     timestamptz not null default now()
+
+post
+  id             uuid  not null
+  autor_id       uuid  not null  → pessoa
+  titulo         text  not null
+  resumo         text  null
+  corpo          text  not null
+  situacao       text  not null    -- 'pendente'|'publicado'|'devolvido'|'recusado'
+  comentario_moderacao  text  null -- obrigatório quando devolvido ou recusado
+  moderado_por_id       uuid  null → pessoa
+  moderado_em    timestamptz null
+  publicado_em   timestamptz null
+  criado_em      timestamptz not null default now()</code></pre>
+
+<div class="st-callout st-callout--azure">
+  <div class="st-callout-label">Papel é coluna, não grupo de diretório</div>
+  <p>
+    O front hoje lê <code>sessao.grupos</code>, herdado do boilerplate corporativo. Na
+    Planoteca o professor <strong>se cadastra sozinho</strong> com conta Google — não existe
+    diretório que o classifique. O papel nasce <code>professor</code> e só um administrador
+    promove.
+  </p>
+</div>
+
+<h2><span class="st-section-num">04</span> A API</h2>
+
+<p>
+Duas famílias de rota, com regras de acesso opostas. A distinção não é técnica: é a decisão
+de produto que o <code>CLAUDE.md</code> da raiz protege.
+</p>
+
+<div class="st-tabela-rolavel">
+<table>
+  <thead><tr><th>rota</th><th>quem acessa</th><th>observação</th></tr></thead>
+  <tbody>
+    <tr><td><code>GET /api/v1/lesson-plans</code></td><td><strong>anônimo</strong></td><td>lista paginada. Filtros: componente, série, metodologia, duração, busca textual. Só <code>situacao='publicado'</code></td></tr>
+    <tr><td><code>GET /api/v1/lesson-plans/{id}</code></td><td><strong>anônimo</strong></td><td>traz etapas, metodologias e BNCC embutidos</td></tr>
+    <tr><td><code>GET /api/v1/vocabulary</code></td><td><strong>anônimo</strong></td><td>componentes, séries e metodologias de uma vez — alimenta os filtros numa chamada</td></tr>
+    <tr><td><code>GET /api/v1/posts</code></td><td><strong>anônimo</strong></td><td>só publicados</td></tr>
+    <tr><td><code>POST /api/v1/lesson-plans</code></td><td>administrador</td><td>catalogação</td></tr>
+    <tr><td><code>POST /api/v1/lesson-plans/{id}/file</code></td><td>administrador</td><td>upload do PDF</td></tr>
+    <tr><td><code>POST /api/v1/posts</code></td><td>professor</td><td>nasce <code>pendente</code></td></tr>
+    <tr><td><code>POST /api/v1/posts/{id}/moderation</code></td><td>administrador</td><td>publicar, devolver ou recusar</td></tr>
+    <tr><td><code>GET /api/v1/vocabulary/methodologies</code> <span class="st-tag">POST/PUT</span></td><td>administrador</td><td>cadastro do vocabulário</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="st-callout st-callout--olive">
+  <div class="st-callout-label">Regra que não se renegocia</div>
+  <p>
+    As quatro primeiras rotas <strong>nunca</strong> recebem <code>[Authorize]</code>, e o
+    <code>arquivo_url</code> é acessível sem token. Uma barreira ali é a barreira que o
+    produto existe para não ter.
+  </p>
+</div>
+
+<h2><span class="st-section-num">05</span> Riscos</h2>
+
+<div class="st-tabela-rolavel">
+<table>
+  <thead><tr><th>risco</th><th>gravidade</th><th>o que fazemos</th></tr></thead>
+  <tbody>
+    <tr>
+      <td>Componente cadastrado sem cor nasce com bloco transparente</td>
+      <td><span class="st-pill st-pill--amber"><span class="st-pill-value">média</span></span></td>
+      <td><code>cor</code> e <code>sigla</code> <code>NOT NULL</code>; fallback neutro na UI; teste que cobre o caso</td>
+    </tr>
+    <tr>
+      <td>Vocabulário administrável degenera em duplicata ("Escape Room" e "escape room")</td>
+      <td><span class="st-pill st-pill--amber"><span class="st-pill-value">média</span></span></td>
+      <td><code>unique</code> sobre <code>lower(nome)</code>; o formulário busca antes de deixar criar</td>
+    </tr>
+    <tr>
+      <td>Amostra pequena: li sete documentos, não o acervo inteiro</td>
+      <td><span class="st-pill st-pill--amber"><span class="st-pill-value">média</span></span></td>
+      <td>Campos opcionais onde a evidência é fraca. <code>turma_origem</code> preserva o dado cru para reprocessar depois</td>
+    </tr>
+    <tr>
+      <td><code>DateTime</code> não-UTC quebra em <code>timestamptz</code> no Npgsql 6+</td>
+      <td><span class="st-pill st-pill--crimson"><span class="st-pill-value">alta</span></span></td>
+      <td>Sempre <code>DateTime.UtcNow</code>; normalizar toda entrada externa. Já documentado no <code>CLAUDE.md</code> da API</td>
+    </tr>
+    <tr>
+      <td>Front precisa alterar junto: <code>modelo.ts</code>, mapeador, filtros, ficha</td>
+      <td><span class="st-pill st-pill--amber"><span class="st-pill-value">média</span></span></td>
+      <td>O mapeador isola o formato de fio. As telas alteram por causa do vocabulário dinâmico, não do nome dos campos</td>
+    </tr>
+    <tr>
+      <td><code>Docs/</code> e <code>docs/</code> coexistem — bug latente de git no Windows</td>
+      <td><span class="st-pill"><span class="st-pill-value">baixa</span></span></td>
+      <td>Consolidar com <code>git mv</code> quando o repositório virar git</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<h2><span class="st-section-num">06</span> Decisões</h2>
+
+<div class="st-tabela-rolavel">
+<table>
+  <thead><tr><th>#</th><th>decisão</th><th>alternativa recusada</th><th>por quê</th></tr></thead>
+  <tbody>
+    <tr>
+      <td><strong>D1</strong></td>
+      <td>BNCC opcional (0..N); <code>objetos_conhecimento</code> é o eixo</td>
+      <td>BNCC obrigatório na catalogação</td>
+      <td>Nenhum dos sete documentos traz código. Exigir na catalogação inviabilizaria o povoamento</td>
+    </tr>
+    <tr>
+      <td><strong>D2</strong></td>
+      <td>Componente e série em tabela administrável</td>
+      <td>Ampliar as listas fechadas em código</td>
+      <td>Área do conhecimento e modalidade não cabem em <em>union</em> sem reescrever a tipagem a cada ajuste</td>
+    </tr>
+    <tr>
+      <td><strong>D3</strong></td>
+      <td>Metodologia em tabela, semeada com as 41 do guia, N:N com plano</td>
+      <td><em>union</em> fechado com as 16 metodologias</td>
+      <td>Relatos usam "Cultura Maker", fora do guia. E combinam duas metodologias num plano só</td>
+    </tr>
+    <tr>
+      <td><strong>D4</strong></td>
+      <td>Etapas como entidade ordenada</td>
+      <td>Um campo de texto rico</td>
+      <td>É a espinha do relato. Como dado, dá para exibir sem abrir o PDF e buscar dentro depois</td>
+    </tr>
+    <tr>
+      <td><strong>D5</strong></td>
+      <td><code>autoria</code> é texto; <code>catalogado_por_id</code> é FK</td>
+      <td>Autor sempre FK para <code>pessoa</code></td>
+      <td>O autor do PDF quase nunca terá conta. Forçar cadastro criaria centenas de contas fantasma</td>
+    </tr>
+    <tr>
+      <td><strong>D6</strong></td>
+      <td>Duração em duas colunas: número e descrição</td>
+      <td>Uma <code>string</code></td>
+      <td>Filtro por duração precisa de número; o formato precisa de prosa</td>
+    </tr>
+    <tr>
+      <td><strong>D7</strong></td>
+      <td><code>papel</code> é coluna em <code>pessoa</code></td>
+      <td>Continuar lendo <code>groupMembership</code></td>
+      <td>Professor se cadastra sozinho com Google; não há diretório corporativo que o classifique</td>
+    </tr>
+    <tr>
+      <td><strong>D8</strong></td>
+      <td><code>turma_origem</code> guarda o código cru</td>
+      <td>Descartar depois de mapear</td>
+      <td>Amostra pequena. Preservar o original permite reprocessar sem voltar aos PDFs</td>
+    </tr>
+    <tr>
+      <td><strong>D9</strong></td>
+      <td>Plano liga a <strong>N séries</strong> (<code>plano_serie</code>)</td>
+      <td>Uma série por plano</td>
+      <td>O relato do Termoscópio declara "2ª série I01 e 2ª série I02". Sequência didática que
+      serve 8º e 9º ano é a norma. Com 1:1, catalogá-la exigiria duplicar o plano</td>
+    </tr>
+    <tr>
+      <td><strong>D10</strong></td>
+      <td>Plano liga a <strong>N componentes</strong>, um marcado <code>e_principal</code></td>
+      <td>N:N sem principal, ou 1:1</td>
+      <td>Existe prática interdisciplinar, mas o card tem <em>um</em> bloco de cor. O principal
+      decide a identidade visual; os demais continuam filtráveis</td>
+    </tr>
+    <tr>
+      <td><strong>D11</strong></td>
+      <td><code>etapa</code> é coluna de <code>serie</code>, não tabela</td>
+      <td>Tabela <code>etapa_ensino</code> separada</td>
+      <td>Duas ou três linhas que quase nunca alteram. Normalizar custaria um <em>join</em> a
+      mais em toda consulta de filtro</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<h2><span class="st-section-num">07</span> Fontes</h2>
+
+<p>
+Acervo em <code>Docs/Refbibliografica/</code>, apontado pelo autor. Leitura por amostragem
+deliberada — capa, sumário e alguns relatos —, não integral.
+</p>
+
+<div class="st-tabela-rolavel">
+<table>
+  <thead><tr><th>arquivo</th><th>o que decide</th><th>lido</th></tr></thead>
+  <tbody>
+    <tr>
+      <td><code>Guia_De_Metodologias_Ativas (1).pdf</code><br><span class="st-tag">UGB/FERP, 2020, 185 p.</span></td>
+      <td><strong>D3</strong> — o vocabulário de 16+13+12 e os três tipos</td>
+      <td>p. 3, 6, 7, 8</td>
+    </tr>
+    <tr>
+      <td><code>E-book 2025-2 — PRÁTICAS EXITOSAS (1).pdf</code><br><span class="st-tag">SEDU-ES/CEFOPE, 4ª ed., 80 p.</span></td>
+      <td><strong>D1, D2, D4, D5, D6, D8</strong> — a estrutura real do relato e seus metadados</td>
+      <td>p. 1-7, 10-16</td>
+    </tr>
+    <tr>
+      <td><code>E-book 2025 — PRÁTICAS EXITOSAS (2).pdf</code></td>
+      <td>não lido — mesma coleção, edição anterior</td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td><code>Diretrizes Operacionais e Pedagógicas — Escola do Futuro 2026.pdf</code></td>
+      <td>não lido — candidato a refinar série e modalidade</td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td><code>Pensamento Computacional — Atividades Desplugadas.pdf</code></td>
+      <td>não lido — conteúdo, não estrutura</td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td><code>4922644189443460367.jpg</code></td>
+      <td>selo "Certificação Escola do Futuro" — azul-marinho <code>#26355F</code> e laranja <code>#F0921E</code>. Uso na landing</td>
+      <td>sim</td>
+    </tr>
+    <tr>
+      <td><code>4922644189443460368.jpg</code></td>
+      <td>logo EEEFM Prof. João Antunes das Dores</td>
+      <td>sim</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<h4>Fontes de código</h4>
+<ul>
+  <li><code>planoteca-web/src/entities/plano/modelo.ts</code> — o modelo atual, que esta spec substitui</li>
+  <li><code>planoteca-api/src/SaraivaTech.Planoteca.Domain/Base/Entity.cs</code> — <code>Guid</code> gerado em C#</li>
+  <li><code>CLAUDE.md</code> (raiz) — a regra do acervo público</li>
+  <li><code>planoteca-api/CLAUDE.md</code> — convenções PostgreSQL, snake_case, UTC</li>
+</ul>
+
+<h2><span class="st-section-num">08</span> Critérios de aceite</h2>
+
+<div class="st-tabela-rolavel">
+<table>
+  <thead><tr><th>#</th><th>critério</th></tr></thead>
+  <tbody>
+    <tr><td><strong>RF-01</strong></td><td>As sete entidades e as tabelas de ligação existem no domínio, com mapeamento Fluent API e migration aplicável num Postgres limpo</td></tr>
+    <tr><td><strong>RF-02</strong></td><td>A migration semeia as 41 metodologias do guia, com <code>tipo</code> correto</td></tr>
+    <tr><td><strong>RF-03</strong></td><td>A migration semeia componentes (com área, cor e sigla) e as <strong>sete séries</strong> — 6º ao 9º ano e 1ª a 3ª do Médio — com <code>ordem</code> global sem repetição</td></tr>
+    <tr><td><strong>RF-04</strong></td><td>Um plano aceita duas ou mais metodologias</td></tr>
+    <tr><td><strong>RF-04a</strong></td><td>Um plano aceita <strong>duas ou mais séries</strong>, e a ficha as mostra ordenadas por <code>ordem</code></td></tr>
+    <tr><td><strong>RF-04b</strong></td><td>Um plano aceita <strong>dois ou mais componentes</strong>, e o banco recusa um segundo <code>e_principal</code> no mesmo plano</td></tr>
+    <tr><td><strong>RF-05</strong></td><td>Um plano é catalogável <strong>sem</strong> código BNCC, e <code>objetos_conhecimento</code> é obrigatório</td></tr>
+    <tr><td><strong>RF-06</strong></td><td>As etapas voltam ordenadas por <code>ordem</code>, e <code>(plano_id, ordem)</code> é único</td></tr>
+    <tr><td><strong>RF-07</strong></td><td><code>GET /lesson-plans</code> e <code>GET /lesson-plans/{id}</code> respondem <strong>sem token</strong>, e só devolvem <code>publicado</code></td></tr>
+    <tr><td><strong>RF-08</strong></td><td>Filtro por componente, série, metodologia e duração funciona combinado, e o total vem em <code>X-Total-Count</code>. Filtrar por "9º ano" acha o plano catalogado em 8º <em>e</em> 9º; filtrar por um componente secundário acha a prática interdisciplinar</td></tr>
+    <tr><td><strong>RF-09</strong></td><td>O front consome o vocabulário da API, sem lista fechada em TypeScript, e a ficha pinta a cor vinda do banco</td></tr>
+    <tr><td><strong>RF-10</strong></td><td>Um plano de Química <strong>da 2ª série I01 e I02</strong>, integral, com Storytelling e Escape Room, é catalogável de ponta a ponta — o teste que prova que o acervo real cabe</td></tr>
+    <tr><td><strong>RF-11</strong></td><td><code>post</code> nasce <code>pendente</code>; devolver ou recusar exige <code>comentario_moderacao</code></td></tr>
+    <tr><td><strong>RF-12</strong></td><td><code>dotnet build</code>, <code>dotnet test</code>, <code>npm run lint</code>, <code>npm run test</code>, <code>npm run build</code> e <code>npm run e2e</code> verdes</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h2><span class="st-section-num">09</span> Em aberto</h2>
+
+<p>Três pontos que não travam a implementação, mas precisam de resposta antes do povoamento:</p>
+
+<ol>
+  <li>
+    <strong>Onde o PDF fica hospedado?</strong> <code>arquivo_url</code> é texto e aceita
+    qualquer coisa. Disco da API, S3/MinIO, ou o Google Drive que os relatos já usam? Altera o
+    endpoint de upload, não o schema.
+  </li>
+  <li>
+    <strong>A cor por componente sai de onde?</strong> Hoje são oito, escolhidas a dedo no
+    sistema visual. Com Química, Física e Biologia entrando, é preciso decidir se a cor é da
+    <em>área</em> (quatro cores) ou do <em>componente</em> (uma dúzia). Recomendo a área:
+    doze cores distinguíveis e acessíveis é difícil.
+  </li>
+  <li>
+    <strong>O acervo inicial vem destes e-books?</strong> Se cada relato virar um plano, vale
+    avaliar uma importação assistida em vez de digitação manual.
+  </li>
+</ol>
+
+</main>
+
+<footer class="st-footer">
+  <span class="st-mono">2026-08-22</span>
+</footer>
+</body>
+</html>

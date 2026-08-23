@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="Entities\Api\**" />
+    <Compile Remove="Enumerables\**" />
+    <EmbeddedResource Remove="Entities\Api\**" />
+    <EmbeddedResource Remove="Enumerables\**" />
+    <None Remove="Entities\Api\**" />
+    <None Remove="Enumerables\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Services\" />
+    <Folder Include="Resources\" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Dapper.Contrib" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" />
+  </ItemGroup>
+</Project>

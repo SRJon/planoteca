@@ -1,0 +1,12 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Serilog" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SaraivaTech.Planoteca.Application\SaraivaTech.Planoteca.Application.csproj" />
+    <ProjectReference Include="..\SaraivaTech.Planoteca.Domain\SaraivaTech.Planoteca.Domain.csproj" />
+  </ItemGroup>
+</Project>

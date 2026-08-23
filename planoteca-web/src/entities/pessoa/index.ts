@@ -1,0 +1,6 @@
+export type { Pessoa } from './modelo'
+export { paraDominio } from './mapeador'
+export type { PessoaApi } from './mapeador'
+export { listarPessoas } from './api'
+export type { FiltroPessoa } from './api'
+export { usePessoas } from './usePessoas'

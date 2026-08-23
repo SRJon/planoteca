@@ -1,0 +1,38 @@
+# Build results and compiled files
+[Bb]in/
+[Oo]bj/
+*.dll
+*.exe
+*.pdb
+
+# Visual Studio folders and files
+.vs/
+*.user
+*.suo
+
+# Temporary build logs and text outputs (found in project root)
+api_build_log.txt
+build.log
+build_errors*.txt
+detailed_errors.txt
+errors.log
+test_output*.txt
+logs/
+
+# Test Results
+TestResults/
+
+# Resharper / Rider
+.idea/
+_ReSharper*/
+
+# Packages / Nuget
+packages/
+
+# Environment files
+.env
+.env.*
+
+# OS generated files
+.DS_Store
+Thumbs.db

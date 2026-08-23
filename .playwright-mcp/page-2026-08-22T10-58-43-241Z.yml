@@ -1,0 +1,51 @@
+- generic [ref=e2]:
+  - generic [ref=e3]:
+    - generic [ref=e4]: Planoteca
+    - generic [ref=e10]:
+      - generic [ref=e11]: Biblioteca
+      - button "Menu" [ref=e12] [cursor=pointer]
+  - generic [ref=e15]:
+    - generic [ref=e16]: Assunto ou código BNCC
+    - generic [ref=e21]:
+      - generic [ref=e22]: Ano
+      - generic [ref=e23]:
+        - button "6º" [ref=e24] [cursor=pointer]
+        - button "7º" [ref=e25] [cursor=pointer]
+        - button "8º" [ref=e26] [cursor=pointer]
+        - button "9º" [ref=e27] [cursor=pointer]
+        - button "1ª EM" [ref=e28] [cursor=pointer]
+    - generic [ref=e29]:
+      - generic [ref=e30]: Componente
+      - generic [ref=e31]:
+        - button "Matemática" [ref=e32] [cursor=pointer]
+        - button "Ciências" [ref=e33] [cursor=pointer]
+        - button "História" [ref=e34] [cursor=pointer]
+        - button "Arte" [ref=e35] [cursor=pointer]
+    - generic [ref=e36]:
+      - generic [ref=e37]: 12 planos
+      - button "Mais filtros" [ref=e38] [cursor=pointer]
+  - generic [ref=e41]:
+    - generic [ref=e42]:
+      - generic [ref=e43]:
+        - generic [ref=e44]: MA
+        - generic [ref=e46]:
+          - generic [ref=e47]: Matemática · 9º ano
+          - generic [ref=e48]: Juros compostos na conta do mercado
+      - generic [ref=e49]:
+        - generic [ref=e50]:
+          - generic [ref=e51]: Rotação por estações
+          - generic [ref=e52]: 2 aulas
+          - generic [ref=e53]: EF09MA05
+        - button "Baixar plano" [ref=e54] [cursor=pointer]
+    - generic [ref=e57]:
+      - generic [ref=e58]:
+        - generic [ref=e59]: MA
+        - generic [ref=e61]:
+          - generic [ref=e62]: Matemática · 9º ano
+          - generic [ref=e63]: Quem paga a conta da escola?
+      - generic [ref=e64]:
+        - generic [ref=e65]:
+          - generic [ref=e66]: Estudo de caso
+          - generic [ref=e67]: Sequência didática
+          - generic [ref=e68]: EF09MA14
+        - button "Baixar plano" [ref=e69] [cursor=pointer]

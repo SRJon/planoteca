@@ -1,0 +1,506 @@
+/* ==========================================================================
+   Tema — a camada de estilo inteira num arquivo.
+
+   Planoteca, direção B: "modernista didático". Livro didático dos anos 60/70
+   — grid rígido, grotesca geométrica, blocos chapados. Zero textura, zero
+   nostalgia decorativa.
+
+   Os valores saem de `design/tokens.css`, que é a fonte da verdade do
+   sistema visual. Aqui eles são traduzidos para a estrutura que o Tailwind v4
+   e o shadcn esperam; o nome de origem aparece no comentário quando os dois
+   vocabulários divergem.
+
+   Três decisões da direção atravessam TODA esta folha, e não são preferência
+   de valor — são a assinatura:
+
+     1. O traço preto de 2px é a estrutura. Elevação se faz com traço, nunca
+        com sombra difusa. `--shadow` existe, mas vale `none`.
+     2. O raio é quase zero. A direção é ortogonal por decisão, não por
+        descuido.
+     3. O tema escuro é a inversão papel/tinta, não uma segunda identidade.
+        Ele existe porque o `TemaProvider` e o shadcn contam com a classe
+        `.dark` — ver o comentário do bloco.
+
+   A organizacao tem quatro camadas, e a ordem importa:
+
+     0. PONTO DE TROCA — os valores de marca, e so eles.
+     1. `@theme` — as primitivas e os nomes que o Tailwind vira utilitario.
+        A v4 so aceita valor estatico aqui: um token que muda com o tema nao
+        cabe neste bloco.
+     2. `:root` e `.dark` — a camada semantica, que troca com o tema.
+     3. `@layer base` — o resto do reset que o preflight do Tailwind nao
+        cobre.
+   ========================================================================== */
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Work+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap");
+@import "tailwindcss";
+/* `tw-animate-css` da as classes `animate-in`/`animate-out`/`animate-none`
+   que os componentes do shadcn instalados (dialog, select, dropdown-menu,
+   tooltip) usam para a transicao de entrada e saida. O Tailwind v4 nao as
+   traz nativamente. */
+@import "tw-animate-css";
+
+/* O Tailwind so gera utilitario para classe que ele encontra varrendo o
+   fonte. O `.dark` desta folha nasce de JavaScript, nunca de um arquivo
+   varrido — sem esta diretiva a variante `dark:` do shadcn nao dispararia. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ==========================================================================
+   PONTO DE TROCA — a cor de marca deste projeto
+   --------------------------------------------------------------------------
+   Sete valores por tema, na convenção do boilerplate:
+
+     --marca            o tom de identidade. Vira `bg-primary` e a cor do foco
+     --marca-forte      o mesmo tom mais fechado: hover, item ativo
+     --marca-suave      o mesmo tom lavado, para fundo de realce
+     --sobre-marca      o texto que fica POR CIMA de `--marca` solido
+     --acento           o segundo tom, de destaque pontual
+     --acento-forte     o acento mais fechado
+     --sobre-acento     o texto que fica POR CIMA de `--acento` solido
+
+   Na direção B a marca é a CANETA (índigo de tinta) e o acento é a RÉGUA
+   (dourado empoeirado). O mimeógrafo (terracota) NÃO entra aqui: ele é a
+   ação principal e mora em `--acao`, com regra própria — ver a camada
+   semântica.
+
+   O dourado da régua com texto branco já nasce ilegível; por isso
+   `--sobre-acento` é tinta, nos dois temas.
+
+   FIM DO PONTO DE TROCA
+   ========================================================================== */
+:root {
+  --marca: #3a5578;        /* caneta-500 */
+  --marca-forte: #2b4059;  /* caneta-700 */
+  --marca-suave: #e4e9f0;  /* caneta-100 */
+  --sobre-marca: #ffffff;
+  --acento: #c9a54a;       /* regua-500 */
+  --acento-forte: #8a6e28; /* regua-700 */
+  --sobre-acento: #14161c; /* tinta-900 */
+}
+
+.dark {
+  --marca: #8496af;        /* caneta-300 — o 500 some contra tinta-900 */
+  --marca-forte: #b3c0d1;
+  --marca-suave: #2b4059;  /* caneta-700 */
+  --sobre-marca: #14161c;
+  --acento: #c9a54a;
+  --acento-forte: #e0c273;
+  --sobre-acento: #14161c;
+}
+
+@theme {
+  /* ── Primitivas ────────────────────────────────────────────────────────
+     As rampas de `design/tokens.css`, portadas sem alterar valor. São
+     fechadas: não invente degraus intermediários. Não mudam com o tema — são
+     a matéria-prima de onde a camada semântica tira os tons. */
+
+  /* Caneta — índigo de tinta. Cor de identidade e de seleção. */
+  --color-caneta-900: #1b2739;
+  --color-caneta-700: #2b4059;
+  --color-caneta-500: #3a5578;
+  --color-caneta-300: #8496af;
+  --color-caneta-100: #e4e9f0;
+
+  /* Mimeógrafo — terracota queimada. Exclusiva da ação principal. */
+  --color-mimeo-900: #5e2e19;
+  --color-mimeo-700: #7f3f23;
+  --color-mimeo-500: #a6522e;
+  --color-mimeo-100: #f4e7e0;
+
+  /* Régua — dourado empoeirado. Destaque e metodologia. */
+  --color-regua-700: #8a6e28;
+  --color-regua-500: #c9a54a;
+  --color-regua-100: #f7f0dc;
+
+  /* Tinta — neutros quentes. Texto, traço e superfícies. */
+  --color-tinta-900: #14161c;
+  --color-tinta-700: #3a3f4d;
+  --color-tinta-500: #55596a;
+  --color-tinta-300: #a9aec0;
+  --color-tinta-200: #d5d1c8;
+  --color-tinta-100: #e7e4dd;
+  --color-tinta-050: #f2f0ec;
+  --color-branco: #ffffff;
+
+  /* Sinal — estados de sistema. Fora da identidade, uso restrito. */
+  --color-sinal-ok: #2f6b4f;
+  --color-sinal-erro: #96331f;
+  --color-sinal-aviso: #8a6e28;
+
+  /* ── Área do conhecimento ──────────────────────────────────────────────
+     A cor do bloco do card, por ÁREA e não por componente.
+
+     A razão é aritmética: o acervo real trouxe Química, Física, Biologia,
+     Filosofia e Sociologia, e o catálogo passou de 8 para 13 componentes.
+     Treze cores distinguíveis entre si, todas passando AA com texto branco,
+     não existem — as últimas sairiam quase iguais, e o bloco deixaria de
+     identificar coisa alguma.
+
+     Por área são quatro, bem separadas, e o agrupamento é o mesmo que os
+     e-books da SEDU usam para organizar os relatos. Química, Física e
+     Biologia compartilharem o verde de Ciências da Natureza é informação,
+     não perda.
+
+     São primitivas, não semânticas: não trocam com o tema. Um bloco de
+     Matemática precisa ser o mesmo azul no papel e na tinta, senão a
+     memória de cor que a direção constrói se perde.
+
+     Os valores reaproveitam a paleta já aprovada: matemática vira
+     Linguagens (índigo), ciências vira Natureza (verde), historia vira
+     Humanas (terra). */
+  --color-comp-linguagens: #7a3b4e;
+  --color-comp-matematica: #3a5578;
+  --color-comp-natureza: #2f6b5e;
+  --color-comp-humanas: #8a5a2b;
+
+  /* ── Componente curricular (legado da lista fechada) ───────────────────
+     Estes oito tokens vieram de quando o componente era union em TypeScript,
+     com uma cor cada. O vocabulário virou tabela no banco em 2026-08-22 e a
+     cor passou a ser da área, acima.
+
+     Ficam porque a página de guia de estilo ainda os cataloga. Nenhum código
+     de tela os consome. */
+  --color-comp-portugues: #7a3b4e;
+  --color-comp-ciencias: #2f6b5e;
+  --color-comp-historia: #8a5a2b;
+  --color-comp-geografia: #4a6b33;
+  --color-comp-arte: #6e4076;
+  --color-comp-edfisica: #2c5f6b;
+  --color-comp-ingles: #5b4a7a;
+  --color-comp-texto: #ffffff;
+
+  /* ── Nomes semanticos, na forma que o shadcn espera ────────────────────
+     Apontam para a camada de `:root`/`.dark` abaixo. O shadcn escreve
+     `bg-background`, `text-foreground`, `border-border`; e esta indirecao
+     que faz esses utilitarios existirem e, ao mesmo tempo, acompanharem a
+     troca de tema. */
+  --color-background: var(--bg);
+  --color-foreground: var(--ink);
+  --color-card: var(--surface);
+  --color-card-foreground: var(--ink);
+  --color-popover: var(--surface);
+  --color-popover-foreground: var(--ink);
+  --color-primary: var(--brand);
+  --color-primary-foreground: var(--on-brand);
+  --color-secondary: var(--surface-2);
+  --color-secondary-foreground: var(--ink);
+  --color-muted: var(--campo);
+  --color-muted-foreground: var(--text-2);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--on-accent);
+  --color-destructive: var(--err);
+  --color-destructive-foreground: var(--on-err);
+  --color-border: var(--line);
+  /* `--campo` é o FUNDO do campo (branco), e o shadcn usa `--color-input`
+     como cor de BORDA (`border-input` no `input.tsx`). Apontar um para o
+     outro desenhava uma borda branca sobre fundo claro: o campo sumia, e só
+     o rótulo e o placeholder apareciam.
+     A borda é traço, como todo contorno da direção B. O fundo do campo
+     continua vindo de `--campo`, por `bg-campo`. */
+  --color-input: var(--traco-suave);
+  --color-ring: var(--brand);
+  --color-overlay: var(--veu);
+
+  /* Os nomes proprios da marca, que o shadcn nao tem. */
+  --color-brand: var(--brand);
+  --color-brand-d: var(--brand-d);
+  --color-brand-subtle: var(--brand-subtle);
+  --color-painel: var(--painel);
+  --color-ok: var(--ok);
+  --color-ok-bg: var(--ok-bg);
+  --color-warn: var(--warn);
+  --color-warn-bg: var(--warn-bg);
+  --color-err: var(--err);
+  --color-err-bg: var(--err-bg);
+  --color-info: var(--info);
+  --color-info-bg: var(--info-bg);
+  --color-side-bg: var(--side-bg);
+  --color-side-ink: var(--side-ink);
+  --color-side-ativo-bg: var(--side-ativo-bg);
+  --color-side-ativo-ink: var(--side-ativo-ink);
+  --color-side-marca: var(--side-marca);
+
+  /* A AÇÃO — terracota de mimeógrafo, exclusiva de "baixar plano".
+     Não é `--primary`: a caneta é seleção (chip ativo, link, nav atual), e a
+     terracota é o verbo. Misturar as duas apaga a hierarquia que a direção
+     constrói. Por isso é token próprio, e não um alias de `--primary`. */
+  --color-acao: var(--acao);
+  --color-acao-hover: var(--acao-hover);
+  --color-acao-ativa: var(--acao-ativa);
+  --color-acao-texto: var(--acao-texto);
+
+  /* O traço estrutural. `border-traco` é o 2px preto que desenha card, chip,
+     campo e botão; `border-border` continua sendo a linha suave. */
+  --color-traco: var(--traco);
+  --color-traco-suave: var(--traco-suave);
+
+  /* ── Tipografia ────────────────────────────────────────────────────────
+     Três famílias, três papéis. Nunca use uma no papel da outra.
+       display — título de página, de seção, de card, e a marca
+       sans    — todo o resto da interface e o texto longo
+       mono    — código BNCC, etiqueta em caixa alta, contagem, metadado */
+  --font-display: "Space Grotesk", "Trebuchet MS", system-ui, sans-serif;
+  --font-sans: "Work Sans", -apple-system, "Segoe UI", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "Courier New", monospace;
+
+  /* ── Raio ──────────────────────────────────────────────────────────────
+     O shadcn deriva a escala inteira de `--radius`. Aqui ele é 2px — o
+     degrau de etiqueta. A direção é ortogonal: card, campo e botão têm raio
+     ZERO, e quem quiser canto arredondado precisa declarar o motivo. */
+  --radius: 2px;
+}
+
+/* ==========================================================================
+   Camada semantica — o que troca com o tema.
+
+   Estes NAO cabem no `@theme`: a v4 exige valor estatico la, e cada um destes
+   tem um valor no claro e outro no escuro.
+   ========================================================================== */
+:root {
+  --bg: #f2f0ec;         /* papel — tinta-050 */
+  --surface: #ffffff;
+  --surface-2: #e7e4dd;  /* tinta-100 */
+  --painel: #ffffff;
+  --brand: var(--marca);
+  --brand-d: var(--marca-forte);
+  --brand-subtle: var(--marca-suave);
+  --on-brand: var(--sobre-marca);
+  --ink: #14161c;        /* tinta-900 */
+  --text-2: #55596a;     /* tinta-500 */
+  --text-3: #6a6e80;
+  --line: #d5d1c8;       /* tinta-200 — a linha SUAVE */
+  --line-2: #e7e4dd;
+  --accent: var(--acento);
+  --accent-d: var(--acento-forte);
+
+  /* O traço estrutural, preto, de 2px. É o que separa esta direção de um
+     tema com cara de painel: elevação aqui é traço, não sombra. */
+  --traco: #14161c;
+  --traco-suave: #d5d1c8;
+
+  /* A ação — terracota de mimeógrafo. Um único verbo na tela. */
+  --acao: #a6522e;         /* mimeo-500 */
+  --acao-hover: #7f3f23;   /* mimeo-700 */
+  --acao-ativa: #5e2e19;   /* mimeo-900 */
+  --acao-texto: #ffffff;
+
+  --ok: #2f6b4f;
+  --ok-bg: #e2ece7;
+  --warn: #8a6e28;
+  --warn-bg: #f7f0dc;
+  --err: #96331f;
+  --err-bg: #f4e7e0;
+  --info: #3a5578;
+  --info-bg: #e4e9f0;
+
+  /* Niveis de hierarquia de tabela — ESTRUTURA, nao feedback. Quem separa os
+     niveis e o recuo e o peso; o fundo so confirma. */
+  --nivel-1: #eae7e1;
+  --nivel-2: #f2f0ec;
+
+  /* Preenchimento de controle. Nesta direção o controle é achável pelo
+     TRAÇO de 2px, não pelo fundo — por isso o campo é branco, e não um
+     cinza de preenchimento como no boilerplate de origem. */
+  --campo: #ffffff;
+  --campo-h: #f2f0ec;
+
+  /* Texto sobre fundo solido colorido. */
+  --on-ok: #ffffff;
+  --on-warn: #ffffff;
+  --on-err: #ffffff;
+  --on-accent: var(--sobre-acento);
+
+  /* Sem sombra difusa em lugar nenhum — a regra da direção. O token
+     permanece porque os componentes do shadcn o consomem; o valor é `none`
+     de propósito, e trocá-lo por um blur descaracteriza o sistema. */
+  --shadow: none;
+  --sombra-flutuante: none;
+
+  /* Painel de marca do login — bloco chapado de caneta, sem gradiente.
+     Gradiente é textura, e esta direção não tem textura. Os dois tokens
+     `--marca-grad-*` recebem o MESMO valor por isso: o nome sobrevive porque
+     o componente de entrada o consome, mas a rampa é plana. */
+  --marca-grad-de: var(--marca);
+  --marca-grad-ate: var(--marca);
+  --marca-ink: #ffffff;
+
+  /* Barra lateral — bloco chapado de caneta, com texto de papel. Ela NÃO
+     segue o papel claro do conteúdo: o contraste entre a navegação em bloco
+     e o papel do conteúdo é a estrutura da tela. */
+  --side-bg: #3a5578;
+  --side-bg-2: #2b4059;
+  --side-ink: #f2f0ec;
+  --side-ink-2: #c6cedb;
+  --side-ic: #c6cedb;
+  --side-ativo-bg: #f2f0ec;
+  --side-ativo-ink: #1b2739;
+  --side-linha: #2b4059;
+  --side-marca: #c9a54a;
+
+  /* Raio — a escala é quase toda zero, de propósito. `--raio-3` é o mesmo
+     valor de `--radius`, que o shadcn consome.
+       raio-1  0     card, campo, botão, chip — a forma padrão da direção
+       raio-2  2px   tag e etiqueta
+       raio-3  2px   o degrau do shadcn
+       raio-4  4px   o teto: nada maior sem motivo declarado
+       raio-5  999px só onde a forma É um círculo (avatar, ponto de status) */
+  --raio-1: 0;
+  --raio-2: 2px;
+  --raio-3: 2px;
+  --raio-4: 4px;
+  --raio-5: 999px;
+
+  /* Espessura de traço. A direção desenha com três, e só três. */
+  --traco-fino: 1px;
+  --traco-base: 2px;
+  --traco-grosso: 3px;
+
+  --veu: rgb(20 22 28 / 55%);
+
+  /* Camada — degraus nomeados, nao numeros soltos.
+
+     ATENCAO: `--camada-menu` fica ACIMA de `--camada-dialogo`, o inverso do
+     que a intuicao sugere. `Dialog.Portal`, `DropdownMenu.Portal` e
+     `Select.Portal` do Radix anexam em `document.body` como IRMAOS. Entre
+     irmaos `position: fixed` no nivel do body, quem decide a ordem de
+     pintura e so o `z-index` numerico. Um `Menu` aberto DENTRO de um dialogo
+     pintaria atras do painel se `--camada-menu` ficasse abaixo.
+     `e2e/camadas.spec.ts` prova isso num navegador real. */
+  --camada-base: 1;
+  --camada-veu: 10;
+  --camada-dialogo: 20;
+  --camada-menu: 100;
+  --camada-aviso: 300;
+
+  --camada-cabecalho-tabela: 2;
+  --camada-cabecalho-tabela-canto: 3;
+}
+
+/* O tema escuro — a inversão papel/tinta, não uma segunda identidade.
+
+   A direção B é papel claro com traço preto; o escuro aqui vira tinta com
+   traço de papel. O que NÃO inverte: as cores de componente curricular, que
+   são primitivas fixas, e a terracota da ação, que aguenta os dois fundos.
+
+   A caneta clareia para `caneta-300`: o `500` sobre tinta-900 fica em 2.6:1
+   e some. */
+.dark {
+  --bg: #14161c;
+  --surface: #1b2739;
+  --surface-2: #2b4059;
+  --painel: #1b2739;
+  --brand: var(--marca);
+  --brand-d: var(--marca-forte);
+  --brand-subtle: var(--marca-suave);
+  --on-brand: var(--sobre-marca);
+  --ink: #f2f0ec;
+  --text-2: #a9aec0;
+  --text-3: #8f94a5;
+  --line: #3a3f4d;
+  --line-2: #2b303c;
+
+  /* No escuro o traço estrutural é de PAPEL, não de tinta: um traço preto
+     sobre fundo preto não desenha nada. */
+  --traco: #f2f0ec;
+  --traco-suave: #3a3f4d;
+
+  --campo: #1b2739;
+  --campo-h: #223047;
+
+  --nivel-1: #1b2739;
+  --nivel-2: #191b23;
+
+  --accent: var(--acento);
+  --accent-d: var(--acento-forte);
+
+  /* A terracota clareia: o `mimeo-500` sobre tinta-900 ainda passa, mas o
+     hover precisa ir para CIMA, não para baixo, senão o estado some. */
+  --acao: #c06b41;
+  --acao-hover: #d8875e;
+  --acao-ativa: #a6522e;
+  --acao-texto: #14161c;
+
+  --ok: #6aa98c;
+  --ok-bg: #1c2b25;
+  --warn: #c9a54a;
+  --warn-bg: #2b2718;
+  --err: #d1755c;
+  --err-bg: #2e1d17;
+  --info: #8496af;
+  --info-bg: #1b2739;
+  --on-ok: #14161c;
+  --on-warn: #14161c;
+  --on-err: #14161c;
+  --on-accent: var(--sobre-acento);
+
+  --shadow: none;
+
+  /* A barra lateral inverte junto: no escuro ela é o bloco que ancora a
+     navegação, com o conteúdo em tinta ao lado. */
+  --side-bg: #1b2739;
+  --side-bg-2: #2b4059;
+  --side-ink: #f2f0ec;
+  --side-ink-2: #a9aec0;
+  --side-ic: #a9aec0;
+  --side-ativo-bg: #3a5578;
+  --side-ativo-ink: #ffffff;
+  --side-linha: #2b4059;
+  --side-marca: #c9a54a;
+}
+
+/* ==========================================================================
+   Base — o que o preflight do Tailwind nao cobre.
+   ========================================================================== */
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    background: var(--bg);
+    color: var(--ink);
+    font-size: 14px;
+    line-height: 1.45;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Título é display. A direção não tem título em Work Sans: a grotesca
+     geométrica no título contra a humanista no corpo é metade do contraste
+     tipográfico que ela constrói. */
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    line-height: 1.24;
+    letter-spacing: -0.02em;
+  }
+
+  /* O preflight zera a cor do controle de formulario para `inherit`, mas nao
+     a do link: `a` continua herdando `-webkit-link` do navegador. */
+  a {
+    color: inherit;
+  }
+
+  /* O foco é um traço de 3px de caneta, deslocado — nunca o outline padrão.
+     Sem raio: a direção é ortogonal, e um foco arredondado sobre um card de
+     canto vivo denuncia a inconsistência. */
+  :focus-visible {
+    outline: 3px solid var(--brand);
+    outline-offset: 2px;
+    border-radius: var(--raio-1);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}

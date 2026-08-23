@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <UseAspNetCore>true</UseAspNetCore>
+  </PropertyGroup>
+  <ItemGroup>
+<PackageReference Include="AWSSDK.S3" />
+<PackageReference Include="Microsoft.Extensions.Configuration" />
+    <PackageReference Include="Microsoft.Extensions.Http" />
+    <PackageReference Include="Microsoft.Extensions.Http.Polly" />
+    <PackageReference Include="Polly" />
+    <PackageReference Include="Polly.Extensions.Http" />
+    <PackageReference Include="Serilog" />
+    <PackageReference Include="Serilog.Enrichers.Process" />
+    <PackageReference Include="Serilog.Settings.Configuration" />
+    <PackageReference Include="Serilog.Sinks.ApplicationInsights" />
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SaraivaTech.Planoteca.Application.Core\SaraivaTech.Planoteca.Application.Core.csproj" />
+    <ProjectReference Include="..\SaraivaTech.Planoteca.Application\SaraivaTech.Planoteca.Application.csproj" />
+    <ProjectReference Include="..\SaraivaTech.Planoteca.Domain.Core\SaraivaTech.Planoteca.Domain.Core.csproj" />
+    <ProjectReference Include="..\SaraivaTech.Planoteca.Domain\SaraivaTech.Planoteca.Domain.csproj" />
+    <ProjectReference Include="..\SaraivaTech.Planoteca.Infra.Data\SaraivaTech.Planoteca.Infra.Data.csproj" />
+  </ItemGroup>
+</Project>

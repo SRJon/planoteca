@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Guia de provisionamento — Planoteca</title>
+  <style>
+    :root {
+      --st-bg:           #FAF9F5;
+      --st-bg-alt:       #F0EEE6;
+      --st-surface:      #FFFFFF;
+      --st-border:       #E3DACC;
+      --st-border-soft:  #F0EEE6;
+      --st-ink:          #141413;
+      --st-ink-soft:     #3D3D3A;
+      --st-ink-muted:    #87867F;
+      --st-ink-faint:    #D1CFC5;
+      --st-accent:       #D97757;
+      --st-accent-soft:  #F5E1D4;
+      --st-rose:         #E0897A;
+      --st-rose-soft:    #F8DDD5;
+      --st-olive:        #788C5D;
+      --st-olive-soft:   #DCE3CC;
+      --st-olive-light:  #A3B88A;
+      --st-amber:        #B47A3C;
+      --st-amber-soft:   #EDD9B7;
+      --st-crimson:      #B0533C;
+      --st-crimson-soft: #F0CFC3;
+      --st-azure:        #3D6688;
+      --st-azure-soft:   #CDDAE6;
+      --st-invert-bg:    #141413;
+      --st-invert-ink:   #F0EEE6;
+      --st-font-serif: ui-serif, "Iowan Old Style", "Apple Garamond", Baskerville, "Times New Roman", "Droid Serif", Times, "Source Serif Pro", serif;
+      --st-font-sans:  system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      --st-font-mono:  ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, "Liberation Mono", monospace;
+      --st-space-1: 0.25rem; --st-space-2: 0.5rem; --st-space-3: 0.75rem;
+      --st-space-4: 1rem;    --st-space-5: 1.25rem; --st-space-6: 1.5rem;
+      --st-space-8: 2rem;    --st-space-10: 2.5rem; --st-space-12: 3rem;
+      --st-space-16: 4rem;   --st-space-20: 5rem;
+      --st-radius-sm: 4px; --st-radius: 8px; --st-radius-lg: 12px; --st-radius-xl: 16px;
+      --st-shadow: 0 1px 2px rgba(20, 20, 19, 0.04), 0 2px 8px rgba(20, 20, 19, 0.04);
+      --st-content-width: 1100px;
+      --st-wide-width: 1320px;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; padding: 0;
+      font-family: var(--st-font-sans);
+      font-size: 16px; line-height: 1.65;
+      color: var(--st-ink);
+      background: var(--st-bg);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    .st-doc {
+      max-width: var(--st-content-width);
+      margin: 0 auto;
+      padding: var(--st-space-16) var(--st-space-6) var(--st-space-12);
+    }
+
+    .st-eyebrow {
+      font-family: var(--st-font-mono);
+      font-size: 0.75rem; font-weight: 500;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      color: var(--st-ink-muted);
+      margin: 0 0 var(--st-space-4);
+    }
+
+    .st-title {
+      font-family: var(--st-font-serif);
+      font-weight: 500;
+      font-size: clamp(2rem, 5vw, 2.75rem);
+      line-height: 1.15; letter-spacing: -0.01em;
+      color: var(--st-ink);
+      margin: 0 0 var(--st-space-6);
+    }
+    .st-title em.st-accent {
+      font-style: italic; color: var(--st-accent); font-weight: 500;
+    }
+
+    .st-lede {
+      font-size: 1.1rem; line-height: 1.6;
+      color: var(--st-ink-soft);
+      margin: 0 0 var(--st-space-8);
+      max-width: 70ch;
+    }
+
+    h2 {
+      font-family: var(--st-font-serif); font-weight: 500;
+      font-size: clamp(1.4rem, 3vw, 1.75rem);
+      letter-spacing: -0.005em;
+      margin: var(--st-space-16) 0 var(--st-space-4);
+      display: flex; align-items: center; gap: var(--st-space-3);
+    }
+    h3 {
+      font-family: var(--st-font-serif); font-weight: 500;
+      font-size: 1.2rem;
+      margin: var(--st-space-8) 0 var(--st-space-3);
+    }
+
+    .st-section-num {
+      display: inline-block;
+      font-family: var(--st-font-mono);
+      font-size: 0.7rem; font-weight: 500;
+      background: var(--st-bg-alt);
+      color: var(--st-ink-muted);
+      padding: 3px var(--st-space-2);
+      border-radius: var(--st-radius-sm);
+      letter-spacing: 0.05em;
+      vertical-align: middle;
+    }
+
+    p { margin: 0 0 var(--st-space-4); }
+    a {
+      color: var(--st-accent);
+      text-decoration: underline;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 3px;
+    }
+    a:hover { color: var(--st-rose); }
+    ul, ol { margin: 0 0 var(--st-space-4); padding-left: var(--st-space-6); }
+    li { margin-bottom: var(--st-space-2); line-height: 1.6; }
+    li::marker { color: var(--st-accent); }
+    strong { font-weight: 600; color: var(--st-ink); }
+    em { color: var(--st-ink-soft); font-style: italic; }
+    hr { border: none; border-top: 1px solid var(--st-border); margin: var(--st-space-10) 0; }
+
+    code {
+      font-family: var(--st-font-mono); font-size: 0.88em;
+      background: var(--st-bg-alt);
+      padding: 2px 6px; border-radius: var(--st-radius-sm);
+      color: var(--st-ink);
+    }
+    pre {
+      background: var(--st-invert-bg); color: var(--st-invert-ink);
+      padding: var(--st-space-4) var(--st-space-5);
+      border-radius: var(--st-radius);
+      overflow-x: auto;
+      font-size: 0.85rem; line-height: 1.55;
+      margin: var(--st-space-4) 0;
+      min-width: 0; max-width: 100%;
+    }
+    pre code { background: none; padding: 0; color: inherit; font-size: inherit; }
+
+    .st-tldr {
+      background: var(--st-invert-bg); color: var(--st-invert-ink);
+      padding: var(--st-space-6);
+      border-radius: var(--st-radius);
+      margin: 0 0 var(--st-space-10);
+      font-size: 1.05rem; line-height: 1.6;
+    }
+    .st-tldr-label {
+      font-family: var(--st-font-mono);
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--st-ink-muted);
+      margin-bottom: var(--st-space-2);
+    }
+    .st-tldr p { margin: 0; }
+    .st-tldr strong { color: #FFFFFF; }
+    .st-tldr em { color: var(--st-accent-soft); font-style: italic; }
+    .st-tldr code { background: rgba(255,255,255,0.1); color: var(--st-invert-ink); }
+
+    .st-callout {
+      background: var(--st-bg-alt);
+      border-radius: var(--st-radius);
+      padding: var(--st-space-4) var(--st-space-5);
+      margin: var(--st-space-4) 0;
+    }
+    .st-callout-label {
+      font-family: var(--st-font-mono);
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--st-ink-muted);
+      margin-bottom: var(--st-space-2);
+    }
+    .st-callout p:last-child { margin-bottom: 0; }
+    .st-callout--accent   { background: var(--st-accent-soft); }
+    .st-callout--accent .st-callout-label { color: var(--st-accent); }
+    .st-callout--olive    { background: var(--st-olive-soft); }
+    .st-callout--olive .st-callout-label { color: var(--st-olive); }
+    .st-callout--amber    { background: var(--st-amber-soft); }
+    .st-callout--amber .st-callout-label { color: var(--st-amber); }
+    .st-callout--crimson  { background: var(--st-crimson-soft); }
+    .st-callout--crimson .st-callout-label { color: var(--st-crimson); }
+    .st-callout--azure    { background: var(--st-azure-soft); }
+    .st-callout--azure .st-callout-label { color: var(--st-azure); }
+
+    table {
+      width: 100%; border-collapse: collapse;
+      margin: var(--st-space-4) 0;
+      font-size: 0.92rem;
+      background: var(--st-surface);
+      border-radius: var(--st-radius);
+      overflow: hidden;
+      border: 1px solid var(--st-border);
+    }
+    thead { background: var(--st-bg-alt); }
+    th {
+      text-align: left;
+      padding: var(--st-space-3) var(--st-space-4);
+      font-family: var(--st-font-mono); font-weight: 500;
+      font-size: 0.72rem;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      color: var(--st-ink-muted);
+      border-bottom: 1px solid var(--st-border);
+    }
+    td {
+      padding: var(--st-space-3) var(--st-space-4);
+      border-bottom: 1px solid var(--st-border-soft);
+      vertical-align: top;
+    }
+    tr:last-child td { border-bottom: none; }
+
+    .st-checklist { list-style: none; padding: 0; margin: var(--st-space-4) 0; }
+    .st-checklist li {
+      position: relative;
+      padding: var(--st-space-3) 0 var(--st-space-3) calc(14px + var(--st-space-3));
+      border-bottom: 1px solid var(--st-border-soft);
+      min-width: 0;
+    }
+    .st-checklist li:last-child { border-bottom: none; }
+    .st-checklist li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: calc(var(--st-space-3) + 0.3em);
+      width: 14px; height: 14px;
+      border: 1.5px solid var(--st-ink-muted);
+      border-radius: 3px;
+    }
+
+    .st-diagram { display: block; margin: var(--st-space-6) auto; max-width: 100%; height: auto; }
+
+    .st-footer {
+      text-align: center;
+      padding: var(--st-space-8) var(--st-space-6) var(--st-space-12);
+      color: var(--st-ink-muted);
+      font-size: 0.85rem;
+    }
+    .st-mono { font-family: var(--st-font-mono); font-size: 0.85em; }
+
+    @media (max-width: 768px) {
+      .st-doc { padding: var(--st-space-8) var(--st-space-4); }
+    }
+  </style>
+</head>
+<body>
+  <main class="st-doc">
+
+    <p class="st-eyebrow">GUIA · PLANOTECA · PRIMEIRO DEPLOY</p>
+    <h1 class="st-title">Guia de <em class="st-accent">provisionamento</em></h1>
+    <p class="st-lede">Passo a passo para criar as contas da Planoteca do zero e colocar o primeiro deploy no ar — banco, arquivo, login, API e front, nessa ordem.</p>
+
+    <div class="st-tldr">
+      <p class="st-tldr-label">TL;DR</p>
+      <p>Cinco serviços, todos em plano gratuito: <strong>Neon</strong> (banco), <strong>Cloudflare R2</strong> (arquivos), <strong>Firebase</strong> (login), <strong>Render</strong> (API) e <strong>Vercel</strong> (front). A ordem importa: o Render precisa das chaves do Neon e do R2 para subir, e o Vercel precisa da URL do Render para o build. Fazer fora de ordem obriga a voltar e refazer um passo.</p>
+    </div>
+
+    <svg class="st-diagram" viewBox="0 0 780 320" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+          <path d="M0,0 L10,5 L0,10 z" fill="#87867F"/>
+        </marker>
+        <marker id="arrow-accent" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+          <path d="M0,0 L10,5 L0,10 z" fill="#D97757"/>
+        </marker>
+      </defs>
+
+      <!-- Neon -->
+      <rect x="20" y="20" width="180" height="64" rx="10" fill="#141413"/>
+      <text x="110" y="48" text-anchor="middle" font-family="ui-serif, Georgia, serif" font-size="14" font-weight="500" fill="#F0EEE6">Neon</text>
+      <text x="110" y="66" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="10" fill="#D1CFC5">banco PostgreSQL</text>
+
+      <!-- R2 -->
+      <rect x="20" y="128" width="180" height="64" rx="10" fill="#FFFFFF" stroke="#E3DACC" stroke-width="1.5"/>
+      <text x="110" y="156" text-anchor="middle" font-family="ui-serif, Georgia, serif" font-size="14" font-weight="500" fill="#141413">Cloudflare R2</text>
+      <text x="110" y="174" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="10" fill="#87867F">arquivos (PDF)</text>
+
+      <!-- Firebase -->
+      <rect x="20" y="236" width="180" height="64" rx="10" fill="#F5E1D4" stroke="#D97757" stroke-width="1.5"/>
+      <text x="110" y="264" text-anchor="middle" font-family="ui-serif, Georgia, serif" font-size="14" font-weight="500" fill="#141413">Firebase</text>
+      <text x="110" y="282" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="10" fill="#87867F">login</text>
+
+      <!-- Render -->
+      <rect x="330" y="128" width="180" height="64" rx="10" fill="#FFFFFF" stroke="#E3DACC" stroke-width="1.5"/>
+      <text x="420" y="156" text-anchor="middle" font-family="ui-serif, Georgia, serif" font-size="14" font-weight="500" fill="#141413">Render</text>
+      <text x="420" y="174" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="10" fill="#87867F">API .NET</text>
+
+      <!-- Vercel -->
+      <rect x="600" y="128" width="160" height="64" rx="10" fill="#FFFFFF" stroke="#E3DACC" stroke-width="1.5"/>
+      <text x="680" y="156" text-anchor="middle" font-family="ui-serif, Georgia, serif" font-size="14" font-weight="500" fill="#141413">Vercel</text>
+      <text x="680" y="174" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="10" fill="#87867F">front Vite</text>
+
+      <!-- Arrows to Render -->
+      <path d="M200 52 Q265 90 330 145" fill="none" stroke="#87867F" stroke-width="1.5" marker-end="url(#arrow)"/>
+      <text x="255" y="90" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="10" fill="#87867F">connection string</text>
+
+      <line x1="200" y1="160" x2="325" y2="160" stroke="#87867F" stroke-width="1.5" marker-end="url(#arrow)"/>
+      <text x="262" y="150" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="10" fill="#87867F">chaves S3</text>
+
+      <path d="M200 268 Q265 230 330 175" fill="none" stroke="#87867F" stroke-width="1.5" marker-end="url(#arrow)"/>
+      <text x="255" y="230" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="10" fill="#87867F">ProjectId</text>
+
+      <!-- Render -> Vercel -->
+      <line x1="510" y1="160" x2="595" y2="160" stroke="#D97757" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#arrow-accent)"/>
+      <text x="552" y="150" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="10" fill="#D97757">URL da API</text>
+
+      <!-- Vercel -> Render (volta, CORS) -->
+      <path d="M680 192 Q680 240 420 240 Q380 240 400 195" fill="none" stroke="#D97757" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#arrow-accent)"/>
+      <text x="540" y="255" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="10" fill="#D97757">CORS: URL do Vercel (seção 06)</text>
+    </svg>
+
+    <h2><span class="st-section-num">01</span> Neon — banco</h2>
+    <p>Criar um projeto novo, nome <code>planoteca</code>. Região <code>aws-us-east-1</code> como ponto de partida — se o Render acabar hospedado em Oregon, prefira <code>aws-us-west-2</code> para reduzir a latência entre banco e API. É uma escolha de proximidade, não uma regra fixa.</p>
+
+    <p>Copiar a connection string no formato que o .NET lê, não no formato <code>postgres://</code> que o Neon mostra por padrão. O .NET espera pares <code>chave=valor</code> separados por ponto e vírgula:</p>
+
+    <pre><code>Host=ep-xxxx.us-east-2.aws.neon.tech;Database=planoteca;Username=neondb_owner;Password=SENHA;SSL Mode=Require;Trust Server Certificate=true</code></pre>
+
+    <p>O sufixo <code>SSL Mode=Require;Trust Server Certificate=true</code> é obrigatório — o Neon exige conexão criptografada.</p>
+
+    <div class="st-callout st-callout--amber">
+      <p class="st-callout-label">Aviso</p>
+      <p>O Neon hiberna sem tráfego. A primeira consulta depois da hibernação demora alguns segundos. Não é erro.</p>
+    </div>
+
+    <p>Não é preciso rodar migration à mão. A API aplica as migrations no próprio arranque — <code>context.Database.MigrateAsync()</code> em <code>Program.cs</code> — porque o Render (plano gratuito) não tem um passo de release separado do processo web.</p>
+
+    <h2><span class="st-section-num">02</span> Cloudflare R2 — arquivos</h2>
+    <p>Criar um bucket chamado <code>planoteca-planos</code>. O nome está fixo no <code>render.yaml</code>; alterar o nome do bucket exige alterar esse arquivo também.</p>
+
+    <p>Criar um API Token do tipo <strong>Object Read &amp; Write</strong>, com escopo restrito a esse bucket. Anotar três valores: Account ID, Access Key ID e Secret Access Key.</p>
+
+    <p>Habilitar o domínio público do bucket (subdomínio <code>r2.dev</code> ou domínio próprio). Essa URL vira <code>UrlPublicaBase</code> — guarde-a sem barra final.</p>
+
+    <div class="st-callout st-callout--accent">
+      <p class="st-callout-label">Por quê público</p>
+      <p>A leitura do PDF é anônima por decisão de produto: baixar plano nunca exige conta. É a mesma regra do acervo, agora na camada de armazenamento.</p>
+    </div>
+
+    <p>Configurar o CORS do bucket para liberar o domínio do Vercel no método <code>PUT</code>. O upload do PDF vai do navegador direto para o R2, por URL pré-assinada — a API só assina a URL, não recebe o arquivo. Sem esse CORS, a catalogação falha no navegador, com o erro visível só no console.</p>
+
+    <h2><span class="st-section-num">03</span> Firebase — login</h2>
+    <p>Criar um projeto novo. Anotar o <strong>Project ID</strong> — não o nome de exibição do projeto, que pode divergir.</p>
+
+    <p>Em Authentication → Sign-in method, habilitar dois provedores: <strong>Google</strong> e <strong>e-mail/senha</strong>. Os dois, não um.</p>
+
+    <p>Registrar um app do tipo <strong>Web</strong> dentro do projeto, para obter <code>apiKey</code> e <code>authDomain</code>.</p>
+
+    <p>Em Authorized domains, acrescentar o domínio que o Vercel vai gerar. Sem esse passo, o login falha com <code>auth/unauthorized-domain</code> — e só depois da seção 05 esse domínio existe.</p>
+
+    <div class="st-callout st-callout--azure">
+      <p class="st-callout-label">Nota</p>
+      <p>Os três valores do front — <code>apiKey</code>, <code>authDomain</code>, <code>projectId</code> — são públicos por natureza: viajam no bundle do navegador, e o Firebase conta com isso. O que protege o projeto é a lista de domínios autorizados, nunca o segredo desses campos.</p>
+    </div>
+
+    <div class="st-callout st-callout--accent">
+      <p class="st-callout-label">Autenticação não é autorização</p>
+      <p>O Firebase prova quem é a pessoa. O papel — professor ou administrador — mora na coluna <code>pessoa.papel</code> do nosso banco. Nunca use custom claim do Firebase para papel: o console dele é um lugar onde alguém altera permissão sem passar por revisão.</p>
+    </div>
+
+    <h2><span class="st-section-num">04</span> Render — API</h2>
+    <p>Conectar o repositório. O Render lê o <code>render.yaml</code> da raiz sozinho, sem configuração adicional.</p>
+
+    <p>No painel, preencher as variáveis marcadas <code>sync: false</code> no arquivo. São sete:</p>
+
+    <table>
+      <thead>
+        <tr><th>Variável</th><th>De onde vem</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>ConnectionStrings__DefaultConnection</code></td><td>Neon, seção 01</td></tr>
+        <tr><td><code>Armazenamento__R2__AccountId</code></td><td>R2, seção 02</td></tr>
+        <tr><td><code>Armazenamento__R2__AccessKey</code></td><td>R2, seção 02</td></tr>
+        <tr><td><code>Armazenamento__R2__SecretKey</code></td><td>R2, seção 02</td></tr>
+        <tr><td><code>Armazenamento__R2__UrlPublicaBase</code></td><td>R2, domínio público, sem barra final</td></tr>
+        <tr><td><code>Firebase__ProjectId</code></td><td>Firebase, seção 03</td></tr>
+        <tr><td><code>Cors__OrigensPermitidas__0</code></td><td>Vercel — só existe depois da seção 05</td></tr>
+      </tbody>
+    </table>
+
+    <p>O duplo sublinhado é como o .NET lê seção aninhada a partir de variável de ambiente: <code>Armazenamento__R2__AccountId</code> vira <code>Armazenamento:R2:AccountId</code> na configuração da aplicação.</p>
+
+    <p>O sufixo <code>__0</code> é o índice do array de origens permitidas. Um segundo domínio entraria como <code>__1</code>.</p>
+
+    <div class="st-callout st-callout--crimson">
+      <p class="st-callout-label">Cuidado — CORS ainda não dá para preencher</p>
+      <p><code>Cors__OrigensPermitidas__0</code> é a única variável que não dá para preencher agora, porque o domínio do Vercel ainda não existe. Volte aqui depois da seção 05 (seção 06). Sem ela, a tela do front carrega e fica vazia — o navegador recusa toda resposta da API, e o erro só aparece no console. Lista vazia significa nenhuma origem permitida, e isso é de propósito: um front que não carrega denuncia a variável esquecida, enquanto um curinga a esconderia.</p>
+    </div>
+
+    <p>Anotar a URL que o Render devolve ao final do deploy, algo como <code>https://planoteca-api.onrender.com</code>.</p>
+
+    <div class="st-callout st-callout--amber">
+      <p class="st-callout-label">Aviso</p>
+      <p>O plano gratuito hiberna após 15 minutos sem tráfego. A primeira requisição depois disso leva cerca de 50 segundos. Não é erro.</p>
+    </div>
+
+    <h2><span class="st-section-num">05</span> Vercel — front</h2>
+    <p>Importar o repositório com <strong>Root Directory: <code>planoteca-web</code></strong>. Sem esse ajuste, o build não encontra o <code>package.json</code>.</p>
+
+    <p>Framework: Vite, detectado sozinho. O <code>vercel.json</code> já trata o fallback de SPA.</p>
+
+    <div class="st-callout st-callout--crimson">
+      <p class="st-callout-label">Cuidado — variável de build</p>
+      <p><code>VITE_URL_API</code> é obrigatória em tempo de <strong>build</strong>. Definir depois do primeiro deploy não adianta — é preciso refazer o build inteiro. Defina antes de disparar o primeiro deploy.</p>
+    </div>
+
+    <table>
+      <thead>
+        <tr><th>Variável</th><th>Valor</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>VITE_URL_API</code></td><td>URL do Render, sem sufixo e sem barra final — o próprio cliente HTTP do front acrescenta <code>/api/v1</code> a cada chamada</td></tr>
+        <tr><td><code>VITE_FIREBASE_API_KEY</code></td><td>Firebase, app Web</td></tr>
+        <tr><td><code>VITE_FIREBASE_AUTH_DOMAIN</code></td><td>Firebase, app Web</td></tr>
+        <tr><td><code>VITE_FIREBASE_PROJECT_ID</code></td><td>Firebase, Project ID</td></tr>
+      </tbody>
+    </table>
+
+    <p>Exemplo de valor correto: <code>https://planoteca-api.onrender.com</code> — não <code>.../api/v1</code>. O prefixo já está fixo dentro de <code>src/shared/api/cliente.ts</code>, e duplicá-lo na variável faria toda chamada bater em <code>/api/v1/api/v1/...</code>.</p>
+
+    <p>As três variáveis do Firebase são "as três juntas, ou nenhuma": configuração pela metade faz a leitura de ambiente do front devolver <code>firebase: null</code>, e o login some da tela sem nenhum erro claro.</p>
+
+    <h2><span class="st-section-num">06</span> Voltar ao Render</h2>
+    <p>Preencher <code>Cors__OrigensPermitidas__0</code> com a URL que o Vercel gerou, sem barra final. Disparar um redeploy da API para a variável entrar em vigor.</p>
+
+    <h2><span class="st-section-num">07</span> Primeiro administrador</h2>
+    <p>Todo cadastro nasce <strong>professor</strong>. Não existe caminho de código que crie um administrador — é de propósito: o primeiro administrador nasce por SQL, fora da aplicação.</p>
+
+    <ol>
+      <li>Entrar uma vez pelo front, com Google ou e-mail/senha. Isso cria a linha correspondente em <code>pessoa</code>.</li>
+      <li>Rodar no console SQL do Neon:
+        <pre><code>update pessoa set papel = 'administrador' where email = 'SEU-EMAIL-AQUI';</code></pre>
+      </li>
+      <li>Sair e entrar de novo. O papel entra no principal da sessão quando a API resolve a sessão de novo — a sessão antiga não sabe do UPDATE.</li>
+    </ol>
+
+    <table>
+      <thead>
+        <tr><th>Rota</th><th>Acesso</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>/admin/moderacao</code></td><td>administrador</td></tr>
+        <tr><td><code>/admin/planos</code></td><td>administrador</td></tr>
+        <tr><td><code>/admin/catalogar</code></td><td>administrador</td></tr>
+        <tr><td><code>/admin/escrever</code></td><td>qualquer conta autenticada</td></tr>
+      </tbody>
+    </table>
+
+    <h2><span class="st-section-num">08</span> Conferir que subiu</h2>
+    <p>Troque <code>{API}</code> pela URL do Render nos itens abaixo.</p>
+
+    <ul class="st-checklist">
+      <li><code>GET {API}/api/v1/vocabulary</code> responde 200 sem token</li>
+      <li><code>GET {API}/api/v1/lesson-plans</code> responde 200 ou 204 sem token</li>
+      <li><code>GET {API}/api/v1/auth/me</code> responde 401 sem token</li>
+      <li>A Biblioteca abre no Vercel sem exigir login</li>
+      <li>Um link direto como <code>/biblioteca?componente=matematica</code> abre sem 404 — isso prova que o fallback de SPA está funcionando</li>
+      <li>O botão Entrar abre a tela de login com a opção Google visível</li>
+      <li>Depois do UPDATE em SQL e de entrar de novo, o menu mostra Moderação e Planos</li>
+    </ul>
+
+    <h2><span class="st-section-num">09</span> O que fica de fora</h2>
+    <p>CI/CD fica para depois de a API estar de pé. Domínio próprio também não entra neste primeiro deploy.</p>
+
+    <div class="st-callout st-callout--amber">
+      <p class="st-callout-label">Dívida conhecida</p>
+      <p>Se a catalogação falhar depois do upload, o arquivo fica órfão no R2 — subiu, mas nenhum registro no banco aponta para ele. Ainda não existe uma rotina de coleta para esse caso.</p>
+    </div>
+
+  </main>
+
+  <footer class="st-footer">
+    <span class="st-mono">2026-08-23</span>
+  </footer>
+</body>
+</html>

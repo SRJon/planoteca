@@ -1,0 +1,626 @@
+{
+  "openapi": "3.0.4",
+  "info": {
+    "title": "Planoteca API",
+    "version": "v1",
+    "description": "ESTE ARQUIVO NASCEU ESCRITO A MAO. Ele nao veio da API viva.\n\nCada rota foi derivada, campo a campo, do PersonSampleController.cs e dos DTOs do repositorio saraivatech-api. Ele descreve o contrato que o back-end boilerplate expoe (as seis rotas de person-samples) e o contrato que o back-end AINDA PRECISA implementar (as duas rotas de /auth).\n\nAssim que a API estiver de pe em modo Development, execute:\n\n    npm run api:sync\n\nEsse comando busca https://localhost:7206/openapi/v1.json, sobrescreve este arquivo com a especificacao real e regenera src/shared/api/schema.d.ts a partir dela. A partir dai o git diff deste arquivo passa a ser o changelog do contrato, e o texto escrito a mao deixa de valer.\n\nLACUNA DECLARADA: POST /auth/login e GET /auth/userinfo nao existem no back-end hoje. O saraivatech-api tem um unico controller, o PersonSampleController. As duas rotas estao aqui porque o front-end ja as consome (RF-05) e porque elas sao o contrato que o back-end precisa cumprir. O casing de UserInfoDto foi DERIVADO do C#, nao observado numa resposta real.\n\nO servidor abaixo e o do certificado de desenvolvimento do ASP.NET, o mesmo que o scripts/api-sync.mjs usa por padrao."
+  },
+  "servers": [
+    {
+      "url": "https://localhost:7206",
+      "description": "API local em modo Development"
+    }
+  ],
+  "paths": {
+    "/api/v1/person-samples": {
+      "get": {
+        "tags": [
+          "PersonSample"
+        ],
+        "summary": "Filtrar/buscar pessoas",
+        "description": "Lista as pessoas da base. Responde 204 SEM CORPO quando o total e zero — o cabecalho X-Total-Count so acompanha o 200.",
+        "operationId": "PersonSample_Get",
+        "parameters": [
+          {
+            "name": "active",
+            "in": "query",
+            "required": false,
+            "description": "Limita o resultado as pessoas ativas. Ausente = sem filtro por status.",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/page"
+          },
+          {
+            "$ref": "#/components/parameters/per_page"
+          },
+          {
+            "$ref": "#/components/parameters/sort"
+          },
+          {
+            "$ref": "#/components/parameters/filter"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de pessoas.",
+            "headers": {
+              "X-Total-Count": {
+                "$ref": "#/components/headers/X-Total-Count"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PersonSampleDto"
+                  }
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "Nenhuma pessoa encontrada. SEM CORPO e SEM X-Total-Count."
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error500"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "PersonSample"
+        ],
+        "summary": "Criar uma nova pessoa",
+        "operationId": "PersonSample_Post",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PersonSampleDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Pessoa criada. O back-end responde Created(\"\", response) — o cabecalho Location vem vazio.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonSampleDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error500"
+          }
+        }
+      }
+    },
+    "/api/v1/person-samples/All": {
+      "get": {
+        "tags": [
+          "PersonSample"
+        ],
+        "summary": "Listar todas as pessoas da base",
+        "description": "Igual ao GET /person-samples, sem o parametro active. Responde 204 SEM CORPO quando o total e zero.",
+        "operationId": "PersonSample_GetAll",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/page"
+          },
+          {
+            "$ref": "#/components/parameters/per_page"
+          },
+          {
+            "$ref": "#/components/parameters/sort"
+          },
+          {
+            "$ref": "#/components/parameters/filter"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de pessoas.",
+            "headers": {
+              "X-Total-Count": {
+                "$ref": "#/components/headers/X-Total-Count"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PersonSampleDto"
+                  }
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "Nenhuma pessoa encontrada. SEM CORPO e SEM X-Total-Count."
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error500"
+          }
+        }
+      }
+    },
+    "/api/v1/person-samples/{id}": {
+      "get": {
+        "tags": [
+          "PersonSample"
+        ],
+        "summary": "Recuperar uma pessoa pelo ID",
+        "operationId": "PersonSample_GetById",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A pessoa solicitada.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonSampleDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error500"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "PersonSample"
+        ],
+        "summary": "Atualizar pessoa",
+        "operationId": "PersonSample_Put",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/id"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PersonSampleDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Pessoa atualizada.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonSampleDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error500"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "PersonSample"
+        ],
+        "summary": "Deletar uma pessoa pelo ID",
+        "operationId": "PersonSample_Delete",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/id"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Pessoa deletada. SEM CORPO."
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error500"
+          }
+        }
+      }
+    },
+    "/api/v1/auth/login": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Autenticar e obter o token",
+        "description": "LACUNA DECLARADA: o back-end nao implementa esta rota. Ela e o contrato a cumprir.",
+        "operationId": "Auth_Login",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Credenciais aceitas.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "description": "Credenciais recusadas.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/Error500"
+          }
+        }
+      }
+    },
+    "/api/v1/auth/userinfo": {
+      "get": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Dados do usuario autenticado",
+        "description": "LACUNA DECLARADA: o back-end nao implementa esta rota. Ela e o contrato a cumprir. Exige o Bearer do /auth/login.",
+        "operationId": "Auth_UserInfo",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Dados do usuario.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserInfoDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token ausente, invalido ou expirado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/Error500"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "parameters": {
+      "id": {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "description": "Id da pessoa.",
+        "schema": {
+          "type": "string",
+          "format": "uuid"
+        }
+      },
+      "page": {
+        "name": "page",
+        "in": "query",
+        "required": false,
+        "description": "Pagina, base 1. O FilterDto nasce com page = 1.",
+        "schema": {
+          "type": "integer",
+          "format": "int32",
+          "default": 1
+        }
+      },
+      "per_page": {
+        "name": "per_page",
+        "in": "query",
+        "required": false,
+        "description": "Itens por pagina. O FilterDto nasce com per_page = int.MaxValue, ou seja, sem paginacao quando o parametro nao vai.",
+        "schema": {
+          "type": "integer",
+          "format": "int32",
+          "default": 2147483647
+        }
+      },
+      "sort": {
+        "name": "sort",
+        "in": "query",
+        "required": false,
+        "description": "Campo de ordenacao, no nome C# da propriedade (PascalCase). O prefixo - marca DESCENDENTE: FirstName ordena ascendente, -FirstName ordena descendente. O getter do FilterDto traduz o prefixo para o sufixo ' desc' antes de chegar no repositorio. O FilterDto nasce com sort = 'Id'.",
+        "schema": {
+          "type": "string",
+          "default": "Id"
+        }
+      },
+      "filter": {
+        "name": "filter",
+        "in": "query",
+        "required": false,
+        "description": "Filtro no formato {Key}:{operador}:{Value}, separado por virgula. Ex.: FirstName:=:Leonardo,LastName:=:Silva ou FirstName:like:leo",
+        "schema": {
+          "type": "string"
+        }
+      }
+    },
+    "headers": {
+      "X-Total-Count": {
+        "description": "Total de registros que o filtro encontrou, ignorando a paginacao. So acompanha o 200 — o 204 nao o traz. Exposto pelo CORS via WithExposedHeaders.",
+        "schema": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "responses": {
+      "Error400": {
+        "description": "Uma validacao de negocio nao foi atendida.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "Error404": {
+        "description": "Registro nao encontrado.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "Error500": {
+        "description": "Oops! algum problema ocorreu no servidor.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "PersonSampleDto": {
+        "type": "object",
+        "description": "Deriva do record PersonSampleDto (SaraivaTech.Default.Application/Dto/PersonSampleDto.cs:17-27). O JSON sai em camelCase: o Program.cs nao declara PropertyNamingPolicy, entao vale o default do AddJsonOptions.\n\nO Program.cs tambem roda com DefaultIgnoreCondition = WhenWritingNull, entao campo nulo SOME do JSON em vez de virar null. Dos sete campos, so lastName pode sumir: os outros seis sao tipos de valor ou string [Required], que nunca sao nulos na saida.",
+        "required": [
+          "id",
+          "firstName",
+          "dateBirth",
+          "type",
+          "active",
+          "age"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Id da pessoa. Guid. No POST o back-end ignora o valor enviado e gera o proprio."
+          },
+          "firstName": {
+            "type": "string",
+            "description": "Primeiro nome. [Required] no DTO — o ModelState rejeita a ausencia com 400."
+          },
+          "lastName": {
+            "type": "string",
+            "description": "Sobrenome. Sem [Required]. Some do JSON quando nulo."
+          },
+          "dateBirth": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Data de nascimento. DateTime nao anulavel — sempre presente."
+          },
+          "type": {
+            "$ref": "#/components/schemas/PersonTypeSample"
+          },
+          "active": {
+            "type": "boolean",
+            "description": "Status ativo. [Required] e bool nao anulavel."
+          },
+          "age": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Idade. Calculada pelo back-end."
+          }
+        }
+      },
+      "PersonTypeSample": {
+        "type": "string",
+        "enum": [
+          "MALE",
+          "FEMALE"
+        ],
+        "description": "Tipo da pessoa. Sai como TEXTO, nao como numero: o enum PersonTypeSample tem [EnumMember(Value = \"MALE\")] e [EnumMember(Value = \"FEMALE\")], e o Program.cs registra o JsonStringEnumMemberConverter. Os valores numericos do C# (Male = 1, Female = 2) nao aparecem no fio."
+      },
+      "Error": {
+        "type": "object",
+        "description": "Deriva da classe Error (SaraivaTech.Default.Application/Base/Error.cs). E o corpo padrao de erro, produzido pelo StandardErrorResultFilter e pelo InvalidModelStateResponseFactory do Program.cs.",
+        "properties": {
+          "messages": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "As mensagens de validacao ou de falha."
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32",
+            "description": "O codigo HTTP repetido no corpo."
+          }
+        }
+      },
+      "LoginRequest": {
+        "type": "object",
+        "description": "LACUNA DECLARADA: nao existe DTO correspondente no back-end. O corpo abaixo e a forma minima que o front-end envia (RF-05). Confirme contra a implementacao real antes da primeira integracao.",
+        "required": [
+          "username",
+          "password"
+        ],
+        "properties": {
+          "username": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string",
+            "format": "password"
+          }
+        }
+      },
+      "TokenDto": {
+        "type": "object",
+        "description": "Deriva do record TokenDto (SaraivaTech.Default.Application/Dto/Authorization/TokenDto.cs:3-9). Os cinco campos ja nascem minusculos e com underscore no C#, entao o serializador nao muda nada: eles chegam em snake_case no fio.\n\nrefresh_token e id_token sao opcionais aqui, e nao no C#, por causa do WhenWritingNull: campo nulo some do JSON.",
+        "required": [
+          "access_token",
+          "token_type",
+          "expires_in"
+        ],
+        "properties": {
+          "access_token": {
+            "type": "string",
+            "description": "O token que vai no cabecalho Authorization. E OPACO para o front — nada o decodifica."
+          },
+          "token_type": {
+            "type": "string",
+            "description": "O esquema do cabecalho Authorization. Esperado: Bearer."
+          },
+          "expires_in": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Validade do access_token em SEGUNDOS a partir do recebimento, nao em milissegundos e nao um instante absoluto. E a unica fonte de expiracao do front."
+          },
+          "refresh_token": {
+            "type": "string",
+            "description": "Sem consumidor hoje: o back-end boilerplate nao expoe rota de renovacao. Guardado, nao usado."
+          },
+          "id_token": {
+            "type": "string"
+          }
+        }
+      },
+      "UserInfoDto": {
+        "type": "object",
+        "description": "Deriva do record UserInfoDto (SaraivaTech.Default.Application/Dto/Authorization/UserInfoDto.cs:5-15).\n\nATENCAO — CASING DERIVADO, NAO OBSERVADO: o record tem casing MISTO no C#. sub, mail, locationCountry, cn, sn e groupMembership ja nascem minusculos; FirstName, EmployeeID e UserFullName nascem em PascalCase. Como o Program.cs nao declara PropertyNamingPolicy, o serializador aplica camelCase e emite firstName, employeeID e userFullName. Esses tres nomes NAO foram vistos numa resposta real — a rota nem existe ainda. Confirme campo a campo contra a API viva; employeeID e o candidato mais provavel a divergir, porque a politica camelCase so minuscula a primeira letra.\n\nTodo campo e opcional pelo WhenWritingNull do Program.cs.",
+        "properties": {
+          "sub": {
+            "type": "string",
+            "description": "Identificador do usuario no diretorio."
+          },
+          "mail": {
+            "type": "string",
+            "format": "email"
+          },
+          "locationCountry": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string",
+            "description": "C#: FirstName."
+          },
+          "cn": {
+            "type": "string",
+            "description": "Common name do LDAP."
+          },
+          "sn": {
+            "type": "string",
+            "description": "Surname do LDAP."
+          },
+          "employeeID": {
+            "type": "string",
+            "description": "C#: EmployeeID. O casing mais fragil deste schema."
+          },
+          "groupMembership": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Os grupos do diretorio. Alimentam o menu e a guarda de rota (RF-06)."
+          },
+          "userFullName": {
+            "type": "string",
+            "description": "C#: UserFullName. Nome para exibir na barra superior."
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "Bearer": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "Insira o token JWT aqui. Registrado pelo RegisterOpenApi em ServiceExtensions.cs."
+      }
+    }
+  }
+}

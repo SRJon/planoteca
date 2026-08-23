@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>De boilerplate de cliente a boilerplate pessoal</title>
+<style>
+:root{
+--st-bg:#FAF9F5;--st-bg-alt:#F0EEE6;--st-surface:#FFFFFF;--st-border:#E3DACC;--st-border-soft:#F0EEE6;
+--st-ink:#141413;--st-ink-soft:#3D3D3A;--st-ink-muted:#87867F;--st-ink-faint:#D1CFC5;
+--st-accent:#D97757;--st-accent-soft:#F5E1D4;--st-rose:#E0897A;
+--st-olive:#788C5D;--st-olive-soft:#DCE3CC;--st-amber:#B47A3C;--st-amber-soft:#EDD9B7;
+--st-crimson:#B0533C;--st-crimson-soft:#F0CFC3;--st-azure:#3D6688;--st-azure-soft:#CDDAE6;
+--st-invert-bg:#141413;--st-invert-ink:#F0EEE6;
+--st-font-serif:ui-serif,"Iowan Old Style","Apple Garamond",Baskerville,"Times New Roman",Times,serif;
+--st-font-sans:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+--st-font-mono:ui-monospace,"SF Mono","Cascadia Code",Menlo,Consolas,monospace;
+--st-space-2:.5rem;--st-space-3:.75rem;--st-space-4:1rem;--st-space-5:1.25rem;
+--st-space-6:1.5rem;--st-space-8:2rem;--st-space-10:2.5rem;--st-space-12:3rem;--st-space-16:4rem;
+--st-radius-sm:4px;--st-radius:8px;--st-content-width:1100px;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:var(--st-font-sans);font-size:16px;line-height:1.65;color:var(--st-ink);background:var(--st-bg);-webkit-font-smoothing:antialiased}
+.st-doc{max-width:var(--st-content-width);margin:0 auto;padding:var(--st-space-16) var(--st-space-6) var(--st-space-12)}
+.st-eyebrow{font-family:var(--st-font-mono);font-size:.75rem;font-weight:500;text-transform:uppercase;letter-spacing:.08em;color:var(--st-ink-muted);margin:0 0 var(--st-space-4)}
+.st-title{font-family:var(--st-font-serif);font-weight:500;font-size:clamp(2rem,5vw,2.75rem);line-height:1.15;letter-spacing:-.01em;margin:0 0 var(--st-space-6)}
+.st-title em.st-accent{font-style:italic;color:var(--st-accent);font-weight:500}
+.st-lede{font-size:1.1rem;line-height:1.6;color:var(--st-ink-soft);margin:0 0 var(--st-space-8);max-width:62ch}
+h2{font-family:var(--st-font-serif);font-weight:500;font-size:clamp(1.4rem,3vw,1.75rem);margin:var(--st-space-16) 0 var(--st-space-4);display:flex;align-items:center;gap:var(--st-space-3)}
+h3{font-family:var(--st-font-serif);font-weight:500;font-size:1.2rem;margin:var(--st-space-8) 0 var(--st-space-3)}
+.st-section-num{display:inline-block;font-family:var(--st-font-mono);font-size:.7rem;font-weight:500;background:var(--st-bg-alt);color:var(--st-ink-muted);padding:3px var(--st-space-2);border-radius:var(--st-radius-sm);letter-spacing:.05em}
+p{margin:0 0 var(--st-space-4)}
+ul,ol{margin:0 0 var(--st-space-4);padding-left:var(--st-space-6)}
+li{margin-bottom:var(--st-space-2);line-height:1.6}
+li::marker{color:var(--st-accent)}
+strong{font-weight:600}
+em{color:var(--st-ink-soft);font-style:italic}
+code{font-family:var(--st-font-mono);font-size:.88em;background:var(--st-bg-alt);padding:2px 6px;border-radius:var(--st-radius-sm)}
+pre{background:var(--st-invert-bg);color:var(--st-invert-ink);padding:var(--st-space-4) var(--st-space-5);border-radius:var(--st-radius);overflow-x:auto;font-size:.85rem;line-height:1.55;margin:var(--st-space-4) 0;min-width:0;max-width:100%}
+pre code{background:none;padding:0;color:inherit;font-size:inherit}
+.st-pills{display:flex;gap:var(--st-space-2);flex-wrap:wrap;margin:0 0 var(--st-space-6)}
+.st-pill{display:inline-flex;align-items:center;gap:var(--st-space-2);padding:4px var(--st-space-3);border-radius:999px;font-family:var(--st-font-mono);font-size:.78rem;background:var(--st-bg-alt);color:var(--st-ink-soft);border:1px solid var(--st-border-soft)}
+.st-pill .st-pill-label{color:var(--st-ink-muted)}
+.st-pill .st-pill-value{color:var(--st-ink);font-weight:500}
+.st-pill--olive{background:var(--st-olive-soft);color:var(--st-olive);border-color:transparent}
+.st-pill--accent{background:var(--st-accent-soft);color:var(--st-accent);border-color:transparent}
+.st-pill--crimson{background:var(--st-crimson-soft);color:var(--st-crimson);border-color:transparent}
+.st-tldr{background:var(--st-invert-bg);color:var(--st-invert-ink);padding:var(--st-space-6);border-radius:var(--st-radius);margin:0 0 var(--st-space-10);font-size:1.05rem;line-height:1.6}
+.st-tldr-label{font-family:var(--st-font-mono);font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--st-ink-muted);margin-bottom:var(--st-space-2)}
+.st-tldr p{margin:0 0 var(--st-space-3)}
+.st-tldr p:last-child{margin:0}
+.st-tldr strong{color:#FFFFFF}
+.st-tldr em{color:var(--st-accent-soft);font-style:italic}
+.st-tldr code{background:rgba(255,255,255,.1);color:var(--st-invert-ink)}
+.st-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:var(--st-space-3);margin:0 0 var(--st-space-10)}
+.st-stat{background:var(--st-surface);border:1px solid var(--st-border);border-radius:var(--st-radius);padding:var(--st-space-4)}
+.st-stat-label{font-family:var(--st-font-mono);font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:var(--st-ink-muted);margin-bottom:var(--st-space-2)}
+.st-stat-value{font-family:var(--st-font-serif);font-weight:500;font-size:1.15rem}
+.st-stat--accent .st-stat-value{color:var(--st-accent)}
+.st-stat--crimson .st-stat-value{color:var(--st-crimson)}
+.st-callout{background:var(--st-bg-alt);border-radius:var(--st-radius);padding:var(--st-space-4) var(--st-space-5);margin:var(--st-space-4) 0}
+.st-callout-label{font-family:var(--st-font-mono);font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--st-ink-muted);margin-bottom:var(--st-space-2)}
+.st-callout p:last-child{margin-bottom:0}
+.st-callout--accent{background:var(--st-accent-soft)}
+.st-callout--accent .st-callout-label{color:var(--st-accent)}
+.st-callout--olive{background:var(--st-olive-soft)}
+.st-callout--olive .st-callout-label{color:var(--st-olive)}
+.st-callout--amber{background:var(--st-amber-soft)}
+.st-callout--amber .st-callout-label{color:var(--st-amber)}
+.st-callout--crimson{background:var(--st-crimson-soft)}
+.st-callout--crimson .st-callout-label{color:var(--st-crimson)}
+.st-callout--azure{background:var(--st-azure-soft)}
+.st-callout--azure .st-callout-label{color:var(--st-azure)}
+table{width:100%;border-collapse:collapse;margin:var(--st-space-4) 0;font-size:.92rem;background:var(--st-surface);border-radius:var(--st-radius);overflow:hidden;border:1px solid var(--st-border)}
+thead{background:var(--st-bg-alt)}
+th{text-align:left;padding:var(--st-space-3) var(--st-space-4);font-family:var(--st-font-mono);font-weight:500;font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--st-ink-muted);border-bottom:1px solid var(--st-border)}
+td{padding:var(--st-space-3) var(--st-space-4);border-bottom:1px solid var(--st-border-soft);vertical-align:top}
+tr:last-child td{border-bottom:none}
+.st-diagram{display:block;margin:var(--st-space-6) auto;max-width:100%;height:auto}
+.st-footer{text-align:center;padding:var(--st-space-8) var(--st-space-6) var(--st-space-12);color:var(--st-ink-muted);font-size:.85rem}
+.st-mono{font-family:var(--st-font-mono);font-size:.85em}
+@media (max-width:768px){.st-doc{padding:var(--st-space-8) var(--st-space-4)}}
+</style>
+</head>
+<body>
+<main class="st-doc">
+
+<p class="st-eyebrow">Spec · Grau 2 · planoteca-web</p>
+<h1 class="st-title">De boilerplate de cliente a <em class="st-accent">boilerplate pessoal</em></h1>
+
+<div class="st-pills">
+  <span class="st-pill"><span class="st-pill-label">de</span><span class="st-pill-value">fotus-default-web</span></span>
+  <span class="st-pill"><span class="st-pill-label">para</span><span class="st-pill-value">planoteca-web</span></span>
+  <span class="st-pill st-pill--accent"><span class="st-pill-value">a paleta vira ponto de troca</span></span>
+  <span class="st-pill st-pill--olive"><span class="st-pill-value">o back-end par continua nomeado</span></span>
+</div>
+
+<p class="st-lede">
+O boilerplate nasceu de um sistema da Fotus e carrega a marca dela em 176 linhas: no nome do
+pacote, na chave de sessão, num navio de carga desenhado em SVG. Nada disso pertence a um
+boilerplate pessoal. Esta spec tira a marca e, no caminho, resolve algo que faltava: a paleta
+precisa ser um ponto de troca declarado, não um valor que alguém descobre onde mexer.
+</p>
+
+<div class="st-tldr">
+  <p class="st-tldr-label">Resumo</p>
+  <p>
+    O repositório vira <code>planoteca-web</code>, com título <code>Planoteca</code>. O
+    navio de carga dá lugar a um símbolo geométrico. A chave de sessão deixa de citar cliente.
+  </p>
+  <p>
+    <strong>A paleta continua azul e dourado</strong>, e passa a ser um bloco declarado como
+    ponto de troca. Cada projeto novo substitui os valores ali, num lugar só, sem caçar
+    <em>onde</em> a cor mora.
+  </p>
+  <p>
+    O <code>fotus-default-api</code> continua nomeado como back-end par: ele existe, e o
+    contrato deriva dele.
+  </p>
+</div>
+
+<div class="st-stats">
+  <div class="st-stat"><div class="st-stat-label">ocorrências</div><div class="st-stat-value">176</div></div>
+  <div class="st-stat"><div class="st-stat-label">arquivos</div><div class="st-stat-value">31</div></div>
+  <div class="st-stat st-stat--crimson"><div class="st-stat-label">chaves de runtime</div><div class="st-stat-value">2</div></div>
+  <div class="st-stat st-stat--accent"><div class="st-stat-label">tasks no plano</div><div class="st-stat-value">6</div></div>
+  <div class="st-stat"><div class="st-stat-label">o que fica</div><div class="st-stat-value">8 citações</div></div>
+</div>
+
+<h2><span class="st-section-num">01</span> Problema</h2>
+
+<p>
+Um boilerplate pessoal com a marca de um cliente é dívida no primeiro dia. Quem gera um projeto
+para outro cliente herda o nome errado, e descobre isso tarde — numa chave de armazenamento
+visível no navegador, ou num logotipo que ninguém trocou.
+</p>
+
+<p>
+A varredura achou 176 ocorrências em 31 arquivos. Elas não são todas iguais, e tratá-las como
+se fossem seria o erro. Cada categoria pede uma coisa diferente.
+</p>
+
+<table>
+<thead><tr><th>Categoria</th><th>Exemplo</th><th>Tratamento</th></tr></thead>
+<tbody>
+<tr>
+  <td>Marcador de geração</td>
+  <td><code>fotus-default-web</code>, <code>Fotus Default</code></td>
+  <td>troca o valor. O mecanismo já existe e funciona</td>
+</tr>
+<tr>
+  <td>Chave de runtime</td>
+  <td><code>fotus.sessao</code>, <code>fotus:sessao</code></td>
+  <td>troca o valor, e o teste que a afirma acompanha</td>
+</tr>
+<tr>
+  <td>Comentário sobre paleta</td>
+  <td>"a paleta Fotus (azul e dourado)"</td>
+  <td>reescreve como ponto de troca</td>
+</tr>
+<tr>
+  <td>Citação do back-end</td>
+  <td><code>Fotus.Default.Application/Dto/...</code></td>
+  <td>fica. É proveniência de contrato real</td>
+</tr>
+<tr>
+  <td>Resíduo</td>
+  <td><code>TOKENS_COR_FOTUS</code>, <code>ana@fotus.com</code></td>
+  <td>troca. O script de geração não alcança</td>
+</tr>
+</tbody>
+</table>
+
+<div class="st-callout st-callout--crimson">
+  <p class="st-callout-label">A chave de sessão é contrato</p>
+  <p>
+    O <code>deposito.ts</code> grava em <code>sessionStorage</code> sob a chave
+    <code>fotus.sessao</code>, e emite o evento <code>fotus:sessao</code>. Elas aparecem no
+    navegador de quem usa.
+  </p>
+  <p>
+    Trocá-las agora não custa nada, porque nenhum projeto real nasceu ainda. Trocá-las depois
+    invalidaria a sessão de todo mundo no dia da atualização.
+  </p>
+</div>
+
+<h2><span class="st-section-num">02</span> Escopo</h2>
+
+<h3>Dentro</h3>
+<ul>
+  <li>Trocar os dois marcadores de geração por <code>planoteca-web</code> e <code>Planoteca</code>.</li>
+  <li>Trocar a chave e o evento de sessão, com o teste acompanhando.</li>
+  <li>Substituir o navio de carga por um símbolo geométrico.</li>
+  <li>Declarar a paleta como ponto de troca, com instrução de como substituí-la.</li>
+  <li>Limpar o resíduo que o script de geração não alcança.</li>
+  <li>Atualizar o <code>README</code>, o <code>CLAUDE.md</code> e o <code>CONTRIBUTING.md</code>.</li>
+  <li>Renomear a pasta do repositório.</li>
+</ul>
+
+<h3>Fora</h3>
+<ul>
+  <li>Trocar a paleta por outra cor. Ela continua azul e dourado até um projeto substituí-la.</li>
+  <li>Remover a citação ao <code>fotus-default-api</code>. Ele é o back-end par de verdade.</li>
+  <li>Alterar a fundação: <code>entities/</code>, <code>shared/api</code>, <code>shared/lib</code>, <code>shared/config</code>.</li>
+  <li>Alterar componente do shadcn, a guarda de token ou a ordem das camadas.</li>
+  <li>Publicar o repositório. O git continua local.</li>
+  <li>Reescrever os documentos de <code>docs/</code> dos ciclos anteriores. Eles são registro histórico.</li>
+</ul>
+
+<h2><span class="st-section-num">03</span> Solução</h2>
+
+<h3>3.1 A paleta como ponto de troca</h3>
+
+<p>
+Hoje a paleta funciona, e ninguém sabe onde mexer. O comentário diz "a paleta Fotus permanece",
+o que sinaliza permanência — o contrário do que um boilerplate precisa comunicar.
+</p>
+
+<p>
+O <code>tema.css</code> ganha um bloco delimitado, no topo, com instrução explícita. Ele passa a
+dizer três coisas: onde a cor mora, o que trocar, e o que <em>não</em> trocar.
+</p>
+
+<svg class="st-diagram" viewBox="0 0 880 250" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#87867F"/></marker>
+<marker id="arrow-accent" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#D97757"/></marker>
+</defs>
+
+<rect x="20" y="30" width="230" height="90" rx="10" fill="#F5E1D4" stroke="#D97757" stroke-width="1.5"/>
+<text x="135" y="60" text-anchor="middle" font-family="ui-serif, Georgia, serif" font-size="14" font-weight="500" fill="#141413">ponto de troca</text>
+<text x="135" y="80" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="11" fill="#87867F">7 valores de marca</text>
+<text x="135" y="98" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="11" fill="#87867F">o projeto novo troca aqui</text>
+
+<rect x="330" y="30" width="230" height="90" rx="10" fill="#FFFFFF" stroke="#E3DACC" stroke-width="1.5"/>
+<text x="445" y="60" text-anchor="middle" font-family="ui-serif, Georgia, serif" font-size="14" font-weight="500" fill="#141413">primitivas</text>
+<text x="445" y="80" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="11" fill="#87867F">73 tokens no @theme</text>
+<text x="445" y="98" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="11" fill="#87867F">escala derivada</text>
+
+<rect x="640" y="30" width="220" height="90" rx="10" fill="#141413"/>
+<text x="750" y="60" text-anchor="middle" font-family="ui-serif, Georgia, serif" font-size="14" font-weight="500" fill="#F0EEE6">semânticos</text>
+<text x="750" y="80" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="11" fill="#D1CFC5">bg-background</text>
+<text x="750" y="98" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="11" fill="#D1CFC5">o que o JSX escreve</text>
+
+<line x1="250" y1="75" x2="325" y2="75" stroke="#D97757" stroke-width="1.5" marker-end="url(#arrow-accent)"/>
+<line x1="560" y1="75" x2="635" y2="75" stroke="#87867F" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+<text x="255" y="160" font-family="ui-monospace, Menlo, monospace" font-size="11" fill="#87867F">alimenta</text>
+<text x="565" y="160" font-family="ui-monospace, Menlo, monospace" font-size="11" fill="#87867F">aponta por var()</text>
+
+<text x="20" y="200" font-family="ui-monospace, Menlo, monospace" font-size="11" fill="#B0533C">o projeto novo altera SÓ a caixa da esquerda</text>
+<text x="20" y="222" font-family="ui-monospace, Menlo, monospace" font-size="11" fill="#87867F">as outras duas se ajustam sozinhas — e a guarda de token continua valendo</text>
+</svg>
+
+<div class="st-callout st-callout--azure">
+  <p class="st-callout-label">Por que a paleta não vira neutra agora</p>
+  <p>
+    Trocar azul e dourado por cinza não deixaria o boilerplate mais genérico — deixaria mais
+    apagado. O que faltava não era a cor certa, e sim o <em>lugar declarado</em> onde ela se
+    troca.
+  </p>
+  <p>
+    Com o bloco marcado, a cor atual vira exemplo preenchido, e não herança esquecida.
+  </p>
+</div>
+
+<h3>3.2 A marca</h3>
+
+<p>
+O navio de carga é desenho do domínio de importação, e o comentário no próprio arquivo já
+admite isso. Ele sai.
+</p>
+
+<p>
+Entra um símbolo geométrico, sem referência a ramo nenhum. A assinatura do componente permanece:
+ele continua recebendo <code>tamanho</code>, <code>tom</code> e <code>className</code>, e
+continua carregando o marcador de título que o script substitui.
+</p>
+
+<h3>3.3 O que fica</h3>
+
+<p>
+Oito citações permanecem, e todas apontam para código que existe:
+</p>
+
+<table>
+<thead><tr><th>Onde</th><th>O que cita</th></tr></thead>
+<tbody>
+<tr><td><code>entities/sessao/modelo.ts</code></td><td>o <code>TokenDto</code> e o <code>UserInfoDto</code> do back-end, com arquivo e linha</td></tr>
+<tr><td><code>entities/sessao/permissao.ts</code></td><td>o <code>groupMembership</code> do <code>UserInfoDto</code></td></tr>
+<tr><td><code>CLAUDE.md</code></td><td>o <code>fotus-default-api</code> como par, e as duas lacunas dele</td></tr>
+<tr><td><code>contracts/README.md</code></td><td>de onde o contrato veio, e o que conferir contra a API viva</td></tr>
+</tbody>
+</table>
+
+<p>
+Apagar essas citações tornaria o contrato órfão. Quem for implementar as rotas de autenticação
+precisa saber contra qual back-end o front escreve.
+</p>
+
+<h2><span class="st-section-num">04</span> Componentes</h2>
+
+<table>
+<thead><tr><th>Componente</th><th>Estado</th><th>Trabalho</th></tr></thead>
+<tbody>
+<tr><td><code>package.json</code>, <code>index.html</code>, <code>.env.example</code></td><td>Alterado</td><td>O marcador de nome e o de título</td></tr>
+<tr><td><code>New-Project.ps1</code></td><td>Alterado</td><td>Os dois literais que ele procura</td></tr>
+<tr><td><code>entities/sessao/deposito.ts</code></td><td>Alterado</td><td>A chave e o evento. O teste acompanha</td></tr>
+<tr><td><code>components/marca/Marca.tsx</code></td><td>Reescrito</td><td>Símbolo geométrico no lugar do navio</td></tr>
+<tr><td><code>app/estilos/tema.css</code></td><td>Reescrito em parte</td><td>O bloco de ponto de troca, no topo</td></tr>
+<tr><td><code>pages/design-system/</code></td><td>Alterado</td><td>O nome do grupo de tokens de marca</td></tr>
+<tr><td><code>features/autenticar/api.test.ts</code></td><td>Alterado</td><td>O dado de exemplo</td></tr>
+<tr><td><code>README.md</code>, <code>CLAUDE.md</code>, <code>CONTRIBUTING.md</code></td><td>Alterado</td><td>O nome, e a instrução de troca de paleta</td></tr>
+<tr><td>A pasta do repositório</td><td>Renomeada</td><td><code>fotus-default-web</code> vira <code>planoteca-web</code></td></tr>
+<tr><td><code>entities/</code>, <code>shared/</code>, <code>components/ui/</code></td><td>Intacto</td><td>Nenhum</td></tr>
+</tbody>
+</table>
+
+<h2><span class="st-section-num">05</span> Riscos</h2>
+
+<table>
+<thead><tr><th>Risco</th><th>Efeito</th><th>Mitigação</th></tr></thead>
+<tbody>
+<tr>
+  <td>A troca em massa alcança uma citação legítima</td>
+  <td>O contrato fica órfão, e quem for implementar a autenticação não sabe contra o quê</td>
+  <td>A substituição é por categoria, não por varredura cega. As oito citações do back-end saem da lista</td>
+</tr>
+<tr>
+  <td>A chave de sessão é alterada e o teste não acompanha</td>
+  <td>O teste passa afirmando a chave velha, e o defeito só aparece no navegador</td>
+  <td>O teste cita a chave literal. Ele é alterado no mesmo commit, e a bateria roda</td>
+</tr>
+<tr>
+  <td>Renomear a pasta quebra caminho absoluto</td>
+  <td>Documento, script ou configuração aponta para o caminho antigo</td>
+  <td>Varredura por <code>fotus-default-web</code> depois do rename, incluindo o que está fora de <code>src/</code></td>
+</tr>
+<tr>
+  <td>O bloco de ponto de troca vira decoração</td>
+  <td>Ninguém troca a paleta ali, e a cor volta a se espalhar</td>
+  <td>O <code>README</code> traz o passo a passo, e a guarda de token continua recusando cor fora do tema</td>
+</tr>
+<tr>
+  <td>O projeto gerado quebra</td>
+  <td>O defeito aparece no primeiro uso real</td>
+  <td>A última task gera um projeto e roda a bateria inteira dentro dele</td>
+</tr>
+</tbody>
+</table>
+
+<h2><span class="st-section-num">06</span> Decisões</h2>
+
+<table>
+<thead><tr><th>#</th><th>Decisão</th><th>Motivo</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>O nome é <code>planoteca-web</code>, com título <code>Planoteca</code></td><td>Alinha com as skills que já usam esse nome</td></tr>
+<tr><td>2</td><td>A paleta continua azul e dourado</td><td>Cor neutra não deixa o boilerplate mais genérico, só mais apagado. O que faltava era o lugar de troca</td></tr>
+<tr><td>3</td><td>A paleta vira bloco declarado, no topo do tema</td><td>Um projeto novo precisa saber onde mexer sem ler 367 linhas de CSS</td></tr>
+<tr><td>4</td><td>A marca vira símbolo geométrico</td><td>O navio é do domínio de importação, e o próprio comentário admite a herança</td></tr>
+<tr><td>5</td><td>A chave de sessão é alterada agora</td><td>Nenhum projeto real nasceu. Depois, a troca invalidaria sessão em produção</td></tr>
+<tr><td>6</td><td>A citação ao <code>fotus-default-api</code> fica</td><td>Ele é o back-end par de verdade, e o contrato deriva dele. Apagar deixaria o contrato órfão</td></tr>
+<tr><td>7</td><td>Os documentos de <code>docs/</code> não são reescritos</td><td>Eles registram o que aconteceu, e o histórico não se corrige</td></tr>
+<tr><td>8</td><td>A pasta é renomeada</td><td>Um repositório chamado <code>fotus-default-web</code> contradiz tudo o mais</td></tr>
+</tbody>
+</table>
+
+<h2><span class="st-section-num">07</span> Fontes</h2>
+
+<table>
+<thead><tr><th>Caminho</th><th>O que decide</th></tr></thead>
+<tbody>
+<tr><td><code>New-Project.ps1</code></td><td>os dois literais e as extensões que ele processa</td></tr>
+<tr><td><code>src/entities/sessao/deposito.ts</code></td><td>a chave e o evento de sessão</td></tr>
+<tr><td><code>src/entities/sessao/deposito.test.ts</code></td><td>o teste que afirma a chave literal</td></tr>
+<tr><td><code>src/components/marca/Marca.tsx</code></td><td>a assinatura a preservar, e o desenho a trocar</td></tr>
+<tr><td><code>src/app/estilos/tema.css</code></td><td>onde o bloco de ponto de troca entra</td></tr>
+<tr><td><code>src/pages/design-system/tokensReferencia.ts</code></td><td>o nome do grupo de tokens de marca</td></tr>
+<tr><td><code>src/pages/design-system/PaginaDesignSystem.tsx</code></td><td>o consumo desse grupo, e o teste de paridade</td></tr>
+<tr><td><code>README.md</code></td><td>a instrução de geração, e onde a de troca de paleta entra</td></tr>
+</tbody>
+</table>
+
+<h2><span class="st-section-num">08</span> Critérios de aceite</h2>
+
+<h3>No boilerplate</h3>
+<ul>
+  <li><code>npm ci</code>, <code>lint</code>, <code>typecheck</code>, <code>test</code>, <code>api:check</code>, <code>build</code> e <code>e2e</code> saem com código 0.</li>
+  <li>Nenhuma ocorrência de <code>fotus</code> fora das oito citações do back-end.</li>
+  <li>A chave de sessão e o evento não citam cliente, e o teste afirma os valores novos.</li>
+  <li>O <code>tema.css</code> tem um bloco de ponto de troca delimitado, com instrução.</li>
+  <li>A marca não desenha nada de um ramo específico.</li>
+  <li>A pasta do repositório se chama <code>planoteca-web</code>.</li>
+</ul>
+
+<h3>No projeto gerado</h3>
+<ul>
+  <li>O script cria o destino e recusa destino que já existe.</li>
+  <li>Nenhum arquivo carrega BOM.</li>
+  <li>Nenhuma ocorrência de <code>planoteca-web</code> nem de <code>Planoteca</code> sobra.</li>
+  <li>A bateria inteira do critério anterior passa dentro do destino.</li>
+</ul>
+
+</main>
+<footer class="st-footer"><span class="st-mono">2026-08-22</span></footer>
+</body>
+</html>

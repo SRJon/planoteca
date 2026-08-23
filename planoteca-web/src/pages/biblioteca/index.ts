@@ -1,0 +1,1 @@
+export { PaginaBiblioteca } from './PaginaBiblioteca'

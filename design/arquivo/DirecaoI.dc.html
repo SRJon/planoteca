@@ -1,0 +1,171 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,500;0,6..72,600;1,6..72,500&family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+  <style>
+    body { margin: 0; font-family: 'Archivo', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+    a { color: #3E6E80; } a:hover { color: #2d5260; }
+    * { box-sizing: border-box; }
+    button { font: inherit; cursor: pointer; }
+    :focus-visible { outline: 3px solid #3E6E80; outline-offset: 3px; }
+    @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+  </style>
+</helmet>
+
+<div style="width: 390px; min-height: 844px; background: #F2F0E6; font-family: 'Archivo', system-ui, sans-serif; color: #23271F; display: flex; flex-direction: column;">
+
+  <div style="background: #23271F; color: #F2F0E6; padding: 14px 18px 13px; display: flex; flex-direction: column; gap: 6px;">
+    <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px;">
+      <span style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase;">Direção I</span>
+      <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.06em; opacity: 0.9;">low-fi · 390×844</span>
+    </div>
+    <div style="font-family: 'Newsreader', serif; font-weight: 600; font-size: 23px; line-height: 1.1;">Carta do território</div>
+    <div style="font-size: 13.5px; line-height: 1.5; opacity: 0.92;">A educação brasileira como território a cobrir: cada plano é um ponto mapeado, o código BNCC é a coordenada, o acervo é uma expedição coletiva.</div>
+  </div>
+
+  <div style="display: flex; border-bottom: 1px solid #DAD5C2;">
+    <sc-for list="{{swatches}}" as="sw" hint-placeholder-count="5">
+      <div style="flex-grow: 1; display: flex; flex-direction: column;">
+        <div style="height: 34px; background: {{sw.hex}};"></div>
+        <div style="padding: 5px 4px 6px; text-align: center; background: #EAE7D8; border-left: 1px solid #DAD5C2;">
+          <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 8.5px; letter-spacing: 0.04em; text-transform: uppercase; color: #48503F;">{{sw.name}}</div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 8px; color: #565E4C; margin-top: 1px;">{{sw.hex}}</div>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+
+  <div style="padding: 11px 18px 12px; background: #EAE7D8; border-bottom: 1px solid #DAD5C2; display: flex; flex-direction: column; gap: 4px;">
+    <div style="font-family: 'Newsreader', serif; font-weight: 600; font-size: 17px;">Newsreader <span style="font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 9.5px; letter-spacing: 0.08em; text-transform: uppercase; color: #565E4C;">display · topônimos</span></div>
+    <div style="font-weight: 500; font-size: 14.5px;">Archivo <span style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.08em; text-transform: uppercase; color: #565E4C;">corpo</span></div>
+    <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px;">IBM Plex Mono <span style="font-family: 'Archivo', sans-serif; font-size: 9.5px; letter-spacing: 0.08em; text-transform: uppercase; color: #565E4C;">coordenadas · BNCC</span></div>
+  </div>
+
+  <div style="background: #F2F0E6; padding: 11px 18px; display: flex; align-items: center; justify-content: space-between; gap: 12px; position: relative; overflow: hidden;">
+    <svg width="390" height="70" viewBox="0 0 390 70" style="position: absolute; left: 0; top: 0; opacity: 0.5;" aria-hidden="true"><path d="M-10 58c60-18 90 6 150-10s90-26 150-12 70 22 110 12" stroke="#DAD5C2" stroke-width="1.3" fill="none"/><path d="M-10 44c55-14 95 10 155-8s85-30 145-16 70 24 110 14" stroke="#DAD5C2" stroke-width="1.3" fill="none"/><path d="M-10 30c50-12 100 12 160-6s80-32 140-18 75 24 110 16" stroke="#DAD5C2" stroke-width="1.3" fill="none"/></svg>
+    <div style="display: flex; align-items: center; gap: 10px; position: relative;">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9.5" stroke="#23271F" stroke-width="1.7"/><circle cx="12" cy="12" r="2.6" fill="#8A5A36"/><path d="M12 2.5v4M12 17.5v4M2.5 12h4M17.5 12h4" stroke="#23271F" stroke-width="1.7" stroke-linecap="round"/></svg>
+      <span style="font-family: 'Newsreader', serif; font-weight: 600; font-size: 19.5px; letter-spacing: -0.005em;">Planoteca</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 13px; position: relative;">
+      <button style="background: none; border: 0; border-bottom: 2px solid #3E6E80; min-height: 44px; padding: 0 2px 2px; font-family: 'Archivo', sans-serif; font-weight: 600; font-size: 14px; color: #3E6E80;">Biblioteca</button>
+      <button style="width: 44px; height: 44px; margin: -12px -8px -12px 0; background: none; border: 0; display: flex; align-items: center; justify-content: center;" aria-label="Menu">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#23271F" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <div style="padding: 12px 18px 0; display: flex; flex-direction: column; gap: 14px;">
+
+    <div style="display: flex; align-items: center; gap: 10px; background: #FFFFFF; border: 1.5px solid #23271F; border-radius: 3px; padding: 13px 14px; box-shadow: 2px 2px 0 #DAD5C2;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#565E4C" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6"/></svg>
+      <span style="font-size: 15px; color: #565E4C;">Assunto ou coordenada BNCC</span>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 8px;">
+      <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase; color: #48503F;">Ano</div>
+      <div style="display: flex; gap: 7px; flex-wrap: wrap;">
+        <sc-for list="{{anos}}" as="a" hint-placeholder-count="5">
+          <button onClick="{{a.pick}}" style="{{a.style}}">{{a.label}}</button>
+        </sc-for>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 8px;">
+      <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase; color: #48503F;">Componente</div>
+      <div style="display: flex; gap: 7px; flex-wrap: wrap;">
+        <sc-for list="{{comps}}" as="c" hint-placeholder-count="4">
+          <button onClick="{{c.pick}}" style="{{c.style}}">{{c.label}}</button>
+        </sc-for>
+      </div>
+    </div>
+
+    <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; border-top: 1.5px dashed #B3AC93; padding-top: 10px;">
+      <span style="font-family: 'IBM Plex Mono', monospace; font-size: 12.5px;">{{contagemTexto}}</span>
+      <button onClick="{{abrirGaveta}}" style="display: flex; align-items: center; gap: 6px; background: none; border: 0; min-height: 44px; padding: 0; font-weight: 600; font-size: 14px; color: #3E6E80;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3E6E80" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4"/></svg>
+        Mais filtros
+      </button>
+    </div>
+  </div>
+
+  <div style="padding: 13px 18px 20px; display: flex; flex-direction: column; gap: 13px; flex-grow: 1;">
+    <sc-for list="{{fichas}}" as="f" hint-placeholder-count="2">
+      <div style="background: #FFFFFF; border: 1.5px solid #23271F; border-radius: 3px; box-shadow: 3px 3px 0 #DAD5C2; overflow: hidden; display: flex; flex-direction: column;">
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 8px 14px; border-bottom: 1px dashed #B3AC93; background: #FAF8F0;">
+          <span style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 10.5px; letter-spacing: 0.08em; color: #8A5A36;"><span aria-hidden="true">▲ </span>{{f.bncc}}</span>
+          <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; color: #565E4C;">{{f.comp}} · {{f.ano}}</span>
+        </div>
+        <div style="padding: 13px 14px 15px; display: flex; flex-direction: column; gap: 10px;">
+          <div style="font-family: 'Newsreader', serif; font-weight: 600; font-size: 20px; line-height: 1.18;">{{f.titulo}}</div>
+          <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+            <span style="font-size: 12.5px; font-weight: 600; color: #3E6E80; background: #E3EAE9; border-radius: 3px; padding: 4px 9px;">{{f.metodo}}</span>
+            <span style="font-size: 13px; color: #565E4C;">{{f.duracao}}</span>
+          </div>
+          <button style="min-height: 46px; background: #3E6E80; color: #FFFFFF; border: 1.5px solid #23271F; border-radius: 3px; font-weight: 700; font-size: 14.5px; display: flex; align-items: center; justify-content: center; gap: 8px;">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11"/><path d="m7.5 11 4.5 4.5 4.5-4.5"/><path d="M5 19h14"/></svg>
+            Baixar plano
+          </button>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+
+  <div style="background: #23271F; color: #ABA795; padding: 12px 18px; font-size: 12px; line-height: 1.5;">
+    Assinatura: a <strong style="color: #F2F0E6;">coordenada BNCC</strong> — o código vira ponto de mapa (<span aria-hidden="true">▲ </span>EF09MA05), com curvas de nível discretas ao fundo. O acervo inteiro se lê como carta topográfica da educação.
+  </div>
+</div>
+</x-dc>
+
+<script data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { ano: '9º', comp: 'Matemática' };
+  }
+  chip(label, active) {
+    const base = 'min-height:44px;padding:10px 15px;font-family:\'Archivo\',sans-serif;font-weight:600;font-size:14px;border-radius:3px;';
+    return active
+      ? base + 'background:#3E6E80;color:#FFFFFF;border:1.5px solid #23271F;box-shadow:2px 2px 0 #DAD5C2;'
+      : base + 'background:#FFFFFF;color:#23271F;border:1.5px solid #B3AC93;';
+  }
+  renderVals() {
+    const anos = ['6º', '7º', '8º', '9º', '1ª EM'].map((label) => ({
+      label,
+      style: this.chip(label, this.state.ano === label),
+      pick: () => this.setState({ ano: this.state.ano === label ? null : label }),
+    }));
+    const comps = ['Matemática', 'Ciências', 'História', 'Arte'].map((label) => ({
+      label,
+      style: this.chip(label, this.state.comp === label),
+      pick: () => this.setState({ comp: this.state.comp === label ? null : label }),
+    }));
+    const contagem = 214 - (this.state.ano ? 150 : 0) - (this.state.comp ? 52 : 0);
+    const contagemTexto = contagem === 1 ? '1 ponto no mapa' : contagem + ' pontos no mapa';
+    return {
+      swatches: [
+        { name: 'Grafite', hex: '#23271F' },
+        { name: 'Mapa', hex: '#F2F0E6' },
+        { name: 'Água', hex: '#3E6E80' },
+        { name: 'Trilha', hex: '#8A5A36' },
+        { name: 'Curva', hex: '#DAD5C2' },
+      ],
+      anos, comps,
+      contagemTexto,
+      abrirGaveta: () => {},
+      fichas: [
+        { bncc: 'EF09MA05', comp: 'Matemática', ano: '9º ano', titulo: 'Juros compostos na conta do mercado', metodo: 'Rotação por estações', duracao: '2 aulas' },
+        { bncc: 'EF09MA14', comp: 'Matemática', ano: '9º ano', titulo: 'Quem paga a conta da escola?', metodo: 'Estudo de caso', duracao: 'Sequência didática' },
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>

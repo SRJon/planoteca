@@ -1,0 +1,167 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Karla:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;600&display=swap">
+  <style>
+    body { margin: 0; font-family: 'Karla', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+    a { color: #7FD1AE; } a:hover { color: #a8e2c8; }
+    * { box-sizing: border-box; }
+    button { font: inherit; cursor: pointer; }
+    :focus-visible { outline: 3px solid #F5C542; outline-offset: 2px; }
+    @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+  </style>
+</helmet>
+
+<div style="width: 390px; min-height: 844px; background: #1A2B24; font-family: 'Karla', system-ui, sans-serif; color: #EDEDE6; display: flex; flex-direction: column;">
+
+  <div style="background: #0F1B16; color: #EDEDE6; padding: 14px 18px 12px; display: flex; flex-direction: column; gap: 6px;">
+    <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px;">
+      <span style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase;">Direção C</span>
+      <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.06em; opacity: 0.66;">low-fi · 390×844</span>
+    </div>
+    <div style="font-family: 'Fraunces', serif; font-weight: 700; font-size: 19.5px; line-height: 1.15;">Quadro-verde</div>
+    <div style="font-size: 13px; line-height: 1.45; opacity: 0.82;">Inverte a polaridade: superfície escura de lousa, tipo em giz. Ousadia concentrada no fundo; o resto é quieto.</div>
+  </div>
+
+  <div style="display: flex; border-bottom: 1px solid #2E4238;">
+    <sc-for list="{{swatches}}" as="sw" hint-placeholder-count="5">
+      <div style="flex-grow: 1; display: flex; flex-direction: column;">
+        <div style="height: 34px; background: {{sw.hex}};"></div>
+        <div style="padding: 5px 4px 6px; text-align: center; background: #14231D; border-left: 1px solid #2E4238;">
+          <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 8.5px; letter-spacing: 0.04em; text-transform: uppercase; color: #93A79C;">{{sw.name}}</div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 8px; color: #8A9C92; margin-top: 1px;">{{sw.hex}}</div>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+
+  <div style="padding: 10px 18px 12px; background: #14231D; border-bottom: 1px solid #2E4238; display: flex; flex-direction: column; gap: 3px;">
+    <div style="font-family: 'Fraunces', serif; font-weight: 700; font-size: 15.5px;">Fraunces <span style="font-family: 'IBM Plex Mono', monospace; font-weight: 400; font-size: 9.5px; letter-spacing: 0.08em; text-transform: uppercase; color: #8A9C92;">display</span></div>
+    <div style="font-weight: 500; font-size: 14px;">Karla <span style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.08em; text-transform: uppercase; color: #8A9C92;">corpo</span></div>
+    <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px;">IBM Plex Mono <span style="font-family: 'Karla', sans-serif; font-size: 9.5px; letter-spacing: 0.08em; text-transform: uppercase; color: #8A9C92;">BNCC · dados</span></div>
+  </div>
+
+  <div style="background: #1A2B24; border-bottom: 1px solid #2E4238; padding: 11px 18px; display: flex; align-items: center; justify-content: space-between; gap: 12px;">
+    <div style="display: flex; align-items: center; gap: 9px;">
+      <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#EDEDE6" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="4" width="19" height="13" rx="1"/><path d="M8 20h8"/><path d="M12 17v3"/></svg>
+      <span style="font-family: 'Fraunces', serif; font-weight: 700; font-size: 17px;">Planoteca</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 14px;">
+      <span style="font-weight: 700; font-size: 13.5px; color: #7FD1AE;">Biblioteca</span>
+      <button style="width: 44px; height: 44px; margin: -12px -8px -12px 0; background: none; border: 0; display: flex; align-items: center; justify-content: center;" aria-label="Menu">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#EDEDE6" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <div style="padding: 16px 18px 0; display: flex; flex-direction: column; gap: 13px;">
+
+    <div style="display: flex; align-items: center; gap: 9px; background: #14231D; border: 1px solid #3D5449; border-radius: 2px; padding: 13px;">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#93A79C" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6"/></svg>
+      <span style="font-size: 14.5px; color: #93A79C;">Assunto ou código BNCC</span>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 7px;">
+      <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: #93A79C;">Ano</div>
+      <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+        <sc-for list="{{anos}}" as="a" hint-placeholder-count="5">
+          <button onClick="{{a.pick}}" style="{{a.style}}">{{a.label}}</button>
+        </sc-for>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 7px;">
+      <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: #93A79C;">Componente</div>
+      <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+        <sc-for list="{{comps}}" as="c" hint-placeholder-count="4">
+          <button onClick="{{c.pick}}" style="{{c.style}}">{{c.label}}</button>
+        </sc-for>
+      </div>
+    </div>
+
+    <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; border-top: 1px solid #2E4238; border-bottom: 1px solid #2E4238; padding: 9px 0;">
+      <span style="font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; color: #EDEDE6;">{{contagem}} planos</span>
+      <button onClick="{{abrirGaveta}}" style="display: flex; align-items: center; gap: 6px; background: none; border: 0; min-height: 44px; padding: 8px 0; font-weight: 700; font-size: 13px; color: #7FD1AE;">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#7FD1AE" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4"/></svg>
+        Mais filtros
+      </button>
+    </div>
+  </div>
+
+  <div style="padding: 14px 18px 20px; display: flex; flex-direction: column; gap: 12px; flex-grow: 1;">
+    <sc-for list="{{fichas}}" as="f" hint-placeholder-count="2">
+      <div style="background: #14231D; border: 1px solid #3D5449; border-radius: 3px; padding: 14px; display: flex; flex-direction: column; gap: 10px;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px;">
+          <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: #93A79C;">{{f.comp}} · {{f.ano}}</div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; color: #7FD1AE;">{{f.bncc}}</div>
+        </div>
+        <div style="font-family: 'Fraunces', serif; font-weight: 600; font-size: 17px; line-height: 1.24; color: #FFFDF5;">{{f.titulo}}</div>
+        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+          <span style="font-weight: 600; font-size: 11.5px; color: #1A2B24; background: #F5C542; padding: 3px 8px; border-radius: 2px;">{{f.metodo}}</span>
+          <span style="font-size: 12.5px; color: #93A79C;">{{f.duracao}}</span>
+        </div>
+        <button style="margin-top: 2px; min-height: 46px; background: #EDEDE6; color: #0F1B16; border: 0; border-radius: 2px; font-weight: 700; font-size: 14.5px; display: flex; align-items: center; justify-content: center; gap: 8px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0F1B16" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11"/><path d="m7.5 11 4.5 4.5 4.5-4.5"/><path d="M5 19h14"/></svg>
+          Baixar plano
+        </button>
+      </div>
+    </sc-for>
+  </div>
+
+  <div style="background: #0F1B16; color: #93A79C; padding: 11px 18px; font-size: 11.5px; line-height: 1.45;">
+    Assinatura: a <strong style="color: #F5C542;">superfície escura</strong> — num campo de sites brancos de educação, a lousa é reconhecida antes de ser lida.
+  </div>
+</div>
+</x-dc>
+
+<script data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { ano: '9º', comp: 'Matemática' };
+  }
+  chip(label, active) {
+    const base = 'min-height:44px;padding:10px 13px;font-family:\'Karla\',sans-serif;font-weight:600;font-size:13.5px;border-radius:2px;border:1px solid #3D5449;';
+    return active
+      ? base + 'background:#7FD1AE;color:#0F1B16;border-color:#7FD1AE;'
+      : base + 'background:#14231D;color:#EDEDE6;';
+  }
+  renderVals() {
+    const anos = ['6º', '7º', '8º', '9º', '1ª EM'].map((label) => ({
+      label,
+      style: this.chip(label, this.state.ano === label),
+      pick: () => this.setState({ ano: this.state.ano === label ? null : label }),
+    }));
+    const comps = ['Matemática', 'Ciências', 'História', 'Arte'].map((label) => ({
+      label,
+      style: this.chip(label, this.state.comp === label),
+      pick: () => this.setState({ comp: this.state.comp === label ? null : label }),
+    }));
+    const contagem = 214 - (this.state.ano ? 150 : 0) - (this.state.comp ? 52 : 0);
+    return {
+      swatches: [
+        { name: 'Lousa', hex: '#1A2B24' },
+        { name: 'Fundo', hex: '#0F1B16' },
+        { name: 'Giz', hex: '#EDEDE6' },
+        { name: 'Menta', hex: '#7FD1AE' },
+        { name: 'Âmbar', hex: '#F5C542' },
+      ],
+      anos, comps,
+      contagem: contagem < 0 ? 0 : contagem,
+      abrirGaveta: () => {},
+      fichas: [
+        { comp: 'Matemática', ano: '9º ano', bncc: 'EF09MA05', titulo: 'Juros compostos na conta do mercado', metodo: 'Rotação por estações', duracao: '2 aulas' },
+        { comp: 'Matemática', ano: '9º ano', bncc: 'EF09MA14', titulo: 'Quem paga a conta da escola?', metodo: 'Estudo de caso', duracao: 'Sequência didática' },
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,59 @@
+# Infraestrutura da API no Render, em plano gratuito.
+#
+# Este arquivo descreve o serviço e NÃO carrega segredo nenhum.
+#
+# As chaves marcadas `sync: false` são preenchidas à mão no painel do Render,
+# uma única vez. É o que evita uma senha de banco viajar no repositório.
+services:
+  - type: web
+    name: planoteca-api
+    runtime: docker
+    plan: free
+    region: oregon
+    # O contexto é a pasta da API, não a raiz do monorepo: o Dockerfile copia
+    # `src/` por caminho relativo.
+    rootDir: planoteca-api
+    dockerfilePath: ./Dockerfile
+
+    # O plano gratuito HIBERNA após 15 minutos sem tráfego, e a primeira
+    # requisição depois disso leva ~50 segundos. O health check confirma que
+    # a aplicação subiu; ele não impede a hibernação.
+    healthCheckPath: /api/v1/vocabulary
+
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+
+      # A connection string do Neon. Precisa de `SSL Mode=Require`:
+      # Host=ep-xxx.us-east-1.aws.neon.tech;Database=planoteca;Username=...;Password=...;SSL Mode=Require;Trust Server Certificate=true
+      - key: ConnectionStrings__DefaultConnection
+        sync: false
+
+      # Cloudflare R2. O duplo sublinhado é como o .NET lê seção aninhada de
+      # configuração a partir de variável de ambiente.
+      - key: Armazenamento__R2__AccountId
+        sync: false
+      - key: Armazenamento__R2__AccessKey
+        sync: false
+      - key: Armazenamento__R2__SecretKey
+        sync: false
+      - key: Armazenamento__R2__Bucket
+        value: planoteca-planos
+      - key: Armazenamento__R2__UrlPublicaBase
+        sync: false
+
+      # O domínio do front, para o CORS. Sem ele o navegador recusa toda
+      # resposta da API — a tela carrega e fica vazia, sem erro visível
+      # fora do console. O valor vem do primeiro deploy no Vercel, sem
+      # barra final: https://planoteca.vercel.app
+      #
+      # O sufixo `__0` é o índice do array: `Cors:OrigensPermitidas[0]`.
+      # Um segundo domínio (o próprio, quando existir) entra como `__1`.
+      - key: Cors__OrigensPermitidas__0
+        sync: false
+
+      # O ID do projeto no Firebase. A API deriva dele os endereços de
+      # validação do token — não há segredo a guardar para VALIDAR.
+      # Sem ele, as rotas com [Authorize] respondem 401 e as públicas seguem.
+      - key: Firebase__ProjectId
+        sync: false

@@ -1,0 +1,27 @@
+# https://lefthook.dev/configuration/
+#
+# Instalacao (uma vez por maquina):
+#   winget install -e --id evilmartians.lefthook
+#   lefthook install
+#
+# O passo de Sonar em pre-push so roda se SONAR_HOST_URL, SONAR_PROJECT_KEY e
+# SONAR_TOKEN estiverem no ambiente (nao commitadas). Sem elas, o passo e pulado.
+
+pre-commit:
+  parallel: true
+  jobs:
+    - name: dotnet format
+      glob: "*.cs"
+      run: dotnet format --include {staged_files} --verify-no-changes
+
+pre-push:
+  follow: true
+  jobs:
+    - name: build
+      run: dotnet build
+
+    - name: test
+      run: dotnet test
+
+    - name: sonar analysis (informational, does not block push yet)
+      run: bash scripts/lefthook/sonar-analysis.sh

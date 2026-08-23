@@ -1,0 +1,7 @@
+<Project>
+
+  <Target Name="LefthookInstall" BeforeTargets="Restore" Condition="'$(CI)' == '' and Exists('$(MSBuildThisFileDirectory).git')">
+    <Exec Command="lefthook install" ContinueOnError="WarnAndContinue" StandardOutputImportance="low" />
+  </Target>
+
+</Project>

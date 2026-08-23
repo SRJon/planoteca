@@ -1,0 +1,43 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <IsPackable>false</IsPackable>
+    <!-- Cobertura valida dominio + orquestracao de caso de uso (AppServices); Api/Infra/contratos sao majoritariamente plumbing -->
+    <Include>[SaraivaTech.Planoteca.Domain]*,[SaraivaTech.Planoteca.Domain.Core]*,[SaraivaTech.Planoteca.Application.Core]*</Include>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="AutoFixture" />
+    <PackageReference Include="AutoFixture.AutoNSubstitute" />
+    <PackageReference Include="Bogus" />
+    <PackageReference Include="coverlet.msbuild">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="FluentAssertions" />
+    <PackageReference Include="FluentValidation" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="NSubstitute" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="Xunit.SkippableFact" />
+    <PackageReference Include="xunit.runner.visualstudio">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="coverlet.collector">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\SaraivaTech.Planoteca.Domain.Core\SaraivaTech.Planoteca.Domain.Core.csproj" />
+    <ProjectReference Include="..\..\src\SaraivaTech.Planoteca.Domain\SaraivaTech.Planoteca.Domain.csproj" />
+    <ProjectReference Include="..\..\src\SaraivaTech.Planoteca.Application.Core\SaraivaTech.Planoteca.Application.Core.csproj" />
+    <ProjectReference Include="..\..\src\SaraivaTech.Planoteca.Application\SaraivaTech.Planoteca.Application.csproj" />
+    <!-- O seed do vocabulario (DadosIniciais) mora em Infra.Data, e os testes
+         de RF-02 e RF-03 conferem a contagem e a grafia literal do guia. -->
+    <ProjectReference Include="..\..\src\SaraivaTech.Planoteca.Infra.Data\SaraivaTech.Planoteca.Infra.Data.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="TestResults\" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,164 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Faustina:ital,wght@0,500;0,600;0,700;1,500&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@500&display=swap">
+  <style>
+    body { margin: 0; font-family: 'Atkinson Hyperlegible', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+    a { color: #8A4F2A; } a:hover { color: #6b3d20; }
+    * { box-sizing: border-box; }
+    button { font: inherit; cursor: pointer; }
+    :focus-visible { outline: 3px solid #8A4F2A; outline-offset: 3px; }
+    @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+  </style>
+</helmet>
+
+<div style="width: 390px; min-height: 844px; background: #F8F5EE; font-family: 'Atkinson Hyperlegible', system-ui, sans-serif; color: #2A241D; display: flex; flex-direction: column;">
+
+  <div style="background: #2A241D; color: #F8F5EE; padding: 14px 18px 13px; display: flex; flex-direction: column; gap: 6px;">
+    <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px;">
+      <span style="font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase;">Direção H</span>
+      <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.06em; opacity: 0.9;">low-fi · 390×844</span>
+    </div>
+    <div style="font-family: 'Faustina', serif; font-weight: 700; font-size: 23px; line-height: 1.1;">Conversa de professor</div>
+    <div style="font-size: 13.5px; line-height: 1.5; opacity: 0.92;">Educação popular e rádio-escola: a interface pergunta, você responde. Toda seção abre com pergunta; os filtros são as respostas. Tipografia no lugar de cromo.</div>
+  </div>
+
+  <div style="display: flex; border-bottom: 1px solid #E0DACC;">
+    <sc-for list="{{swatches}}" as="sw" hint-placeholder-count="5">
+      <div style="flex-grow: 1; display: flex; flex-direction: column;">
+        <div style="height: 34px; background: {{sw.hex}};"></div>
+        <div style="padding: 5px 4px 6px; text-align: center; background: #F0EBDF; border-left: 1px solid #E0DACC;">
+          <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 8.5px; letter-spacing: 0.04em; text-transform: uppercase; color: #4E463B;">{{sw.name}}</div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 8px; color: #5C5347; margin-top: 1px;">{{sw.hex}}</div>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+
+  <div style="padding: 11px 18px 12px; background: #F0EBDF; border-bottom: 1px solid #E0DACC; display: flex; flex-direction: column; gap: 4px;">
+    <div style="font-family: 'Faustina', serif; font-weight: 700; font-size: 17px;">Faustina <span style="font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 9.5px; letter-spacing: 0.08em; text-transform: uppercase; color: #5C5347;">display · latino-americana</span></div>
+    <div style="font-weight: 400; font-size: 14.5px;">Atkinson Hyperlegible <span style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.08em; text-transform: uppercase; color: #5C5347;">corpo · legibilidade</span></div>
+    <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px;">IBM Plex Mono <span style="font-family: 'Atkinson Hyperlegible', sans-serif; font-size: 9.5px; letter-spacing: 0.08em; text-transform: uppercase; color: #5C5347;">BNCC · dados</span></div>
+  </div>
+
+  <div style="background: #F8F5EE; padding: 12px 18px; display: flex; align-items: center; justify-content: space-between; gap: 12px;">
+    <div style="display: flex; align-items: baseline; gap: 8px;">
+      <span style="font-family: 'Faustina', serif; font-weight: 700; font-size: 19px;">Planoteca</span>
+      <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: #8A4F2A;">grátis, sempre</span>
+    </div>
+    <button style="width: 44px; height: 44px; margin: -12px -8px -12px 0; background: none; border: 0; display: flex; align-items: center; justify-content: center;" aria-label="Menu">
+      <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#2A241D" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+  </div>
+
+  <div style="padding: 4px 18px 0 18px; display: flex; flex-direction: column;">
+    <div style="border-left: 3px solid #8A4F2A; padding: 2px 0 18px 15px; display: flex; flex-direction: column; gap: 12px;">
+      <div style="font-family: 'Faustina', serif; font-weight: 600; font-size: 21px; line-height: 1.25;">O que você vai ensinar amanhã?</div>
+      <div style="display: flex; align-items: center; gap: 10px; background: #FFFFFF; border: 1.5px solid #C9BFA9; border-radius: 4px; padding: 13px 14px;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5C5347" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6"/></svg>
+        <span style="font-size: 15px; color: #5C5347;">Assunto ou código BNCC</span>
+      </div>
+    </div>
+
+    <div style="border-left: 3px solid #C9BFA9; padding: 0 0 18px 15px; display: flex; flex-direction: column; gap: 10px;">
+      <div style="font-family: 'Faustina', serif; font-weight: 600; font-size: 17px; font-style: italic; color: #4E463B;">Para qual turma?</div>
+      <div style="display: flex; gap: 7px; flex-wrap: wrap;">
+        <sc-for list="{{anos}}" as="a" hint-placeholder-count="5">
+          <button onClick="{{a.pick}}" style="{{a.style}}">{{a.label}}</button>
+        </sc-for>
+      </div>
+    </div>
+
+    <div style="border-left: 3px solid #C9BFA9; padding: 0 0 18px 15px; display: flex; flex-direction: column; gap: 10px;">
+      <div style="font-family: 'Faustina', serif; font-weight: 600; font-size: 17px; font-style: italic; color: #4E463B;">De qual matéria?</div>
+      <div style="display: flex; gap: 7px; flex-wrap: wrap;">
+        <sc-for list="{{comps}}" as="c" hint-placeholder-count="4">
+          <button onClick="{{c.pick}}" style="{{c.style}}">{{c.label}}</button>
+        </sc-for>
+      </div>
+    </div>
+
+    <div style="border-left: 3px solid #5F6E58; padding: 0 0 16px 15px; display: flex; align-items: center; justify-content: space-between; gap: 12px;">
+      <span style="font-family: 'Faustina', serif; font-weight: 600; font-size: 16px; color: #2A241D;">{{contagemFrase}}</span>
+      <button onClick="{{abrirGaveta}}" style="background: none; border: 0; min-height: 44px; padding: 0; font-weight: 700; font-size: 14px; color: #8A4F2A; text-decoration: underline; text-underline-offset: 3px;">Mais filtros</button>
+    </div>
+  </div>
+
+  <div style="padding: 0 18px 20px; display: flex; flex-direction: column; flex-grow: 1;">
+    <sc-for list="{{fichas}}" as="f" hint-placeholder-count="2">
+      <div style="border-top: 1.5px solid #C9BFA9; padding: 16px 2px 18px; display: flex; flex-direction: column; gap: 10px;">
+        <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 10px;">
+          <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.06em; text-transform: uppercase; color: #5C5347;">{{f.comp}} · {{f.ano}} · {{f.duracao}}</span>
+          <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; color: #8A4F2A;">{{f.bncc}}</span>
+        </div>
+        <div style="font-family: 'Faustina', serif; font-weight: 700; font-size: 21px; line-height: 1.2;">{{f.titulo}}</div>
+        <div style="font-size: 14px; line-height: 1.5; color: #4E463B;">{{f.resumo}}</div>
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 3px;">
+          <span style="font-style: italic; font-size: 13.5px; color: #5F6E58;">{{f.metodo}}</span>
+          <button style="min-height: 46px; background: #2A241D; color: #F8F5EE; border: 0; border-radius: 4px; padding: 0 18px; font-weight: 700; font-size: 14.5px; display: flex; align-items: center; gap: 8px;">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#F8F5EE" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11"/><path d="m7.5 11 4.5 4.5 4.5-4.5"/><path d="M5 19h14"/></svg>
+            Baixar plano
+          </button>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+
+  <div style="background: #2A241D; color: #B5AB9B; padding: 12px 18px; font-size: 12px; line-height: 1.5;">
+    Assinatura: o <strong style="color: #F8F5EE;">fio de conversa</strong> — a linha vertical que costura perguntas e respostas. A interface fala como colega de sala dos professores, nunca como sistema.
+  </div>
+</div>
+</x-dc>
+
+<script data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { ano: '9º', comp: 'Matemática' };
+  }
+  chip(label, active) {
+    const base = 'min-height:44px;padding:10px 15px;font-family:\'Atkinson Hyperlegible\',sans-serif;font-weight:700;font-size:14px;border-radius:4px;';
+    return active
+      ? base + 'background:#8A4F2A;color:#F8F5EE;border:1.5px solid #8A4F2A;'
+      : base + 'background:#FFFFFF;color:#2A241D;border:1.5px solid #C9BFA9;';
+  }
+  renderVals() {
+    const anos = ['6º', '7º', '8º', '9º', '1ª EM'].map((label) => ({
+      label,
+      style: this.chip(label, this.state.ano === label),
+      pick: () => this.setState({ ano: this.state.ano === label ? null : label }),
+    }));
+    const comps = ['Matemática', 'Ciências', 'História', 'Arte'].map((label) => ({
+      label,
+      style: this.chip(label, this.state.comp === label),
+      pick: () => this.setState({ comp: this.state.comp === label ? null : label }),
+    }));
+    const contagem = 214 - (this.state.ano ? 150 : 0) - (this.state.comp ? 52 : 0);
+    const contagemFrase = contagem === 1 ? 'Tenho 1 plano pra você.' : 'Tenho ' + contagem + ' planos pra você.';
+    return {
+      swatches: [
+        { name: 'Tinta', hex: '#2A241D' },
+        { name: 'Papel', hex: '#F8F5EE' },
+        { name: 'Barro', hex: '#8A4F2A' },
+        { name: 'Mato', hex: '#5F6E58' },
+        { name: 'Palha', hex: '#C9BFA9' },
+      ],
+      anos, comps,
+      contagemFrase,
+      abrirGaveta: () => {},
+      fichas: [
+        { comp: 'Matemática', ano: '9º ano', duracao: '2 aulas', bncc: 'EF09MA05', titulo: 'Juros compostos na conta do mercado', resumo: 'A turma compara o preço à vista e o parcelado de produtos reais, em estações, e descobre a fórmula no caminho.', metodo: 'Rotação por estações' },
+        { comp: 'Matemática', ano: '9º ano', duracao: 'Sequência didática', bncc: 'EF09MA14', titulo: 'Quem paga a conta da escola?', resumo: 'Um caso real de orçamento escolar para discutir porcentagem, prioridade e escolha pública.', metodo: 'Estudo de caso' },
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>

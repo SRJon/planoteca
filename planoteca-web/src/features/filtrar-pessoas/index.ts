@@ -1,0 +1,5 @@
+export { useFiltroPessoas, TAMANHOS_PAGINA } from './useFiltroPessoas'
+export type { TamanhoPagina } from './useFiltroPessoas'
+export { FiltrosPessoas } from './FiltrosPessoas'
+export { paraSortApi, ORDENACAO_PADRAO_API } from './ordenacaoApi'
+export type { DirecaoOrdenacao, Ordenacao } from './ordenacao'

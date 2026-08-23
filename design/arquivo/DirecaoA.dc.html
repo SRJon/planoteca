@@ -1,0 +1,171 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bitter:ital,wght@0,500;0,700;1,500&family=Archivo+Narrow:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+  <style>
+    body { margin: 0; font-family: 'Bitter', Georgia, serif; -webkit-font-smoothing: antialiased; }
+    a { color: #1F5D46; } a:hover { color: #143b2d; }
+    * { box-sizing: border-box; }
+    button { font: inherit; cursor: pointer; }
+    :focus-visible { outline: 3px solid #C2412D; outline-offset: 2px; }
+    @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+  </style>
+</helmet>
+
+<div style="width: 390px; min-height: 844px; background: #EDE9DE; font-family: 'Bitter', Georgia, serif; color: #23211C; display: flex; flex-direction: column;">
+
+  <div style="background: #1F5D46; color: #EDE9DE; padding: 14px 18px 12px; display: flex; flex-direction: column; gap: 6px;">
+    <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px;">
+      <span style="font-family: 'Archivo Narrow', sans-serif; font-weight: 700; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;">Direção A</span>
+      <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.06em; opacity: 0.88;">low-fi · 390×844</span>
+    </div>
+    <div style="font-family: 'Bitter', serif; font-weight: 700; font-size: 19px; line-height: 1.15;">Ficha de biblioteca</div>
+    <div style="font-family: 'Archivo Narrow', sans-serif; font-weight: 500; font-size: 13px; line-height: 1.4; opacity: 0.88;">Catálogo de fichário: pauta, etiqueta de lombada, carimbo de data. O plano é uma ficha que se retira do fichário.</div>
+  </div>
+
+  <div style="display: flex; border-bottom: 1px solid #C9C2AF;">
+    <sc-for list="{{swatches}}" as="sw" hint-placeholder-count="5">
+      <div style="flex-grow: 1; display: flex; flex-direction: column;">
+        <div style="height: 34px; background: {{sw.hex}};"></div>
+        <div style="padding: 5px 4px 6px; text-align: center; background: #E3DECF; border-left: 1px solid #D6D0BE;">
+          <div style="font-family: 'Archivo Narrow', sans-serif; font-weight: 600; font-size: 8.5px; letter-spacing: 0.06em; text-transform: uppercase; color: #56503F;">{{sw.name}}</div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 8px; color: #5F5949; margin-top: 1px;">{{sw.hex}}</div>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+
+  <div style="padding: 10px 18px 12px; background: #E3DECF; border-bottom: 2px solid #23211C; display: flex; flex-direction: column; gap: 3px;">
+    <div style="font-family: 'Bitter', serif; font-weight: 700; font-size: 15px;">Bitter <span style="font-family: 'Archivo Narrow', sans-serif; font-weight: 500; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: #5F5949;">display · slab</span></div>
+    <div style="font-family: 'Archivo Narrow', sans-serif; font-weight: 500; font-size: 14px;">Archivo Narrow <span style="font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: #5F5949;">corpo · condensada</span></div>
+    <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px;">IBM Plex Mono <span style="font-family: 'Archivo Narrow', sans-serif; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: #5F5949;">BNCC · dados</span></div>
+  </div>
+
+  <div style="background: #1F5D46; color: #EDE9DE; padding: 11px 18px; display: flex; align-items: center; justify-content: space-between; gap: 12px;">
+    <div style="display: flex; align-items: center; gap: 9px;">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#EDE9DE" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h6a2 2 0 0 1 2 2v12a2 2 0 0 0-2-2H4z"/><path d="M20 5h-6a2 2 0 0 0-2 2v12a2 2 0 0 1 2-2h6z"/></svg>
+      <span style="font-family: 'Bitter', serif; font-weight: 700; font-size: 16px; letter-spacing: -0.01em;">Planoteca</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 14px;">
+      <span style="font-family: 'Archivo Narrow', sans-serif; font-weight: 600; font-size: 13px; border-bottom: 2px solid #E0A93B; padding-bottom: 2px;">Biblioteca</span>
+      <button style="width: 44px; height: 44px; margin: -12px -8px -12px 0; background: none; border: 0; display: flex; align-items: center; justify-content: center;" aria-label="Menu">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#EDE9DE" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <div style="padding: 16px 18px 0; display: flex; flex-direction: column; gap: 12px;">
+
+    <div style="display: flex; align-items: center; gap: 9px; background: #FBF9F3; border: 1.5px solid #23211C; box-shadow: 3px 3px 0 #C9C2AF; padding: 12px 13px;">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#56503F" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6"/></svg>
+      <span style="font-family: 'Archivo Narrow', sans-serif; font-size: 14.5px; color: #6B6454;">Assunto ou código BNCC</span>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 7px;">
+      <div style="font-family: 'Archivo Narrow', sans-serif; font-weight: 700; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: #56503F;">Ano</div>
+      <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+        <sc-for list="{{anos}}" as="a" hint-placeholder-count="5">
+          <button onClick="{{a.pick}}" style="{{a.style}}">{{a.label}}</button>
+        </sc-for>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 7px;">
+      <div style="font-family: 'Archivo Narrow', sans-serif; font-weight: 700; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: #56503F;">Componente</div>
+      <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+        <sc-for list="{{comps}}" as="c" hint-placeholder-count="4">
+          <button onClick="{{c.pick}}" style="{{c.style}}">{{c.label}}</button>
+        </sc-for>
+      </div>
+    </div>
+
+    <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; border-top: 1px solid #C9C2AF; border-bottom: 1px solid #C9C2AF; padding: 9px 0;">
+      <span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #23211C;">{{contagem}} planos</span>
+      <button onClick="{{abrirGaveta}}" style="display: flex; align-items: center; gap: 6px; background: none; border: 0; min-height: 44px; padding: 8px 0; font-family: 'Archivo Narrow', sans-serif; font-weight: 600; font-size: 13px; color: #1F5D46; text-decoration: underline; text-underline-offset: 3px;">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#1F5D46" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4"/></svg>
+        Mais filtros
+      </button>
+    </div>
+  </div>
+
+  <div style="padding: 14px 18px 20px; display: flex; flex-direction: column; gap: 12px; flex-grow: 1;">
+    <sc-for list="{{fichas}}" as="f" hint-placeholder-count="2">
+      <div style="background: #FBF9F3; border: 1.5px solid #23211C; box-shadow: 4px 4px 0 #C9C2AF; display: flex;">
+        <div style="width: 9px; background: {{f.lombada}}; border-right: 1.5px solid #23211C;"></div>
+        <div style="flex-grow: 1; padding: 12px 13px 13px; display: flex; flex-direction: column; gap: 9px; background-image: repeating-linear-gradient(#FBF9F3 0 25px, #DCD5C2 25px 26px);">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px;">
+            <div style="font-family: 'Archivo Narrow', sans-serif; font-weight: 700; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: #56503F;">{{f.comp}} · {{f.ano}}</div>
+            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; color: #C2412D; border: 1px solid #C2412D; padding: 2px 4px; transform: rotate(-2deg);">{{f.bncc}}</div>
+          </div>
+          <div style="font-family: 'Bitter', serif; font-weight: 700; font-size: 16px; line-height: 1.24;">{{f.titulo}}</div>
+          <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+            <span style="font-family: 'Archivo Narrow', sans-serif; font-weight: 600; font-size: 11.5px; background: #E0A93B; padding: 3px 7px;">{{f.metodo}}</span>
+            <span style="font-family: 'Archivo Narrow', sans-serif; font-size: 12px; color: #56503F;">{{f.duracao}}</span>
+          </div>
+          <button style="margin-top: 2px; min-height: 44px; background: #1F5D46; color: #EDE9DE; border: 1.5px solid #23211C; font-family: 'Archivo Narrow', sans-serif; font-weight: 700; font-size: 14px; letter-spacing: 0.02em; display: flex; align-items: center; justify-content: center; gap: 8px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#EDE9DE" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11"/><path d="m7.5 11 4.5 4.5 4.5-4.5"/><path d="M5 19h14"/></svg>
+            Baixar plano
+          </button>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+
+  <div style="background: #23211C; color: #B9B2A0; padding: 11px 18px; font-family: 'Archivo Narrow', sans-serif; font-size: 11.5px; line-height: 1.4;">
+    Assinatura: a <strong style="color: #E0A93B;">lombada colorida</strong> por componente — o catálogo se lê pela cor da borda antes de ler o título.
+  </div>
+</div>
+</x-dc>
+
+<script data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { ano: '9º', comp: 'Matemática' };
+  }
+  chip(label, active) {
+    const base = 'min-height:44px;padding:10px 13px;font-family:\'Archivo Narrow\',sans-serif;font-weight:600;font-size:13.5px;border:1.5px solid #23211C;';
+    return active
+      ? base + 'background:#1F5D46;color:#FBF9F3;box-shadow:2px 2px 0 #23211C;'
+      : base + 'background:#FBF9F3;color:#23211C;box-shadow:2px 2px 0 #D6D0BE;';
+  }
+  renderVals() {
+    const anos = ['6º', '7º', '8º', '9º', '1ª EM'].map((label) => ({
+      label,
+      style: this.chip(label, this.state.ano === label),
+      pick: () => this.setState({ ano: this.state.ano === label ? null : label }),
+    }));
+    const comps = ['Matemática', 'Ciências', 'História', 'Arte'].map((label) => ({
+      label,
+      style: this.chip(label, this.state.comp === label),
+      pick: () => this.setState({ comp: this.state.comp === label ? null : label }),
+    }));
+    const base = 214;
+    const contagem = base - (this.state.ano ? 150 : 0) - (this.state.comp ? 52 : 0);
+    return {
+      swatches: [
+        { name: 'Quadro', hex: '#1F5D46' },
+        { name: 'Pauta', hex: '#EDE9DE' },
+        { name: 'Carimbo', hex: '#C2412D' },
+        { name: 'Etiqueta', hex: '#E0A93B' },
+        { name: 'Grafite', hex: '#23211C' },
+      ],
+      anos, comps,
+      contagem: contagem < 0 ? 0 : contagem,
+      abrirGaveta: () => {},
+      fichas: [
+        { comp: 'Matemática', ano: '9º ano', bncc: 'EF09MA05', titulo: 'Juros compostos na conta do mercado', metodo: 'Rotação por estações', duracao: '2 aulas', lombada: '#C2412D' },
+        { comp: 'Matemática', ano: '9º ano', bncc: 'EF09MA14', titulo: 'Quem paga a conta da escola?', metodo: 'Estudo de caso', duracao: 'Sequência didática', lombada: '#E0A93B' },
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>

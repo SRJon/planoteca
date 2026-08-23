@@ -1,0 +1,228 @@
+/* ==========================================================================
+   Planoteca — tokens visuais
+   Direção B, "modernista didático". Fonte da verdade do sistema.
+
+   Regra: nenhum valor cru de cor, tipo, espaço ou traço em componente.
+   Se um valor não existe aqui, ou ele vira token, ou não entra.
+   ========================================================================== */
+
+:root {
+  /* ---------------------------------------------------------------------
+     1. Cor — primitivas
+     Rampas fechadas. Não invente degraus intermediários.
+     --------------------------------------------------------------------- */
+
+  /* Caneta — índigo de tinta. Cor de identidade e de seleção. */
+  --pt-caneta-900: #1B2739;
+  --pt-caneta-700: #2B4059;
+  --pt-caneta-500: #3A5578;  /* base */
+  --pt-caneta-300: #8496AF;
+  --pt-caneta-100: #E4E9F0;
+
+  /* Mimeógrafo — terracota queimada. Exclusiva da ação principal. */
+  --pt-mimeo-900: #5E2E19;
+  --pt-mimeo-700: #7F3F23;
+  --pt-mimeo-500: #A6522E;  /* base */
+  --pt-mimeo-100: #F4E7E0;
+
+  /* Régua — dourado empoeirado. Destaque e metodologia. */
+  --pt-regua-700: #8A6E28;
+  --pt-regua-500: #C9A54A;  /* base */
+  --pt-regua-100: #F7F0DC;
+
+  /* Tinta — neutros quentes. Texto, traço e superfícies. */
+  --pt-tinta-900: #14161C;  /* texto e traço */
+  --pt-tinta-700: #3A3F4D;
+  --pt-tinta-500: #55596A;  /* texto secundário */
+  --pt-tinta-300: #A9AEC0;
+  --pt-tinta-200: #D5D1C8;
+  --pt-tinta-100: #E7E4DD;
+  --pt-tinta-050: #F2F0EC;  /* papel */
+  --pt-branco:    #FFFFFF;
+
+  /* Sinal — estados de sistema. Fora da identidade, uso restrito. */
+  --pt-sinal-ok:    #2F6B4F;
+  --pt-sinal-erro:  #96331F;
+  --pt-sinal-aviso: #8A6E28;
+
+  /* ---------------------------------------------------------------------
+     2. Cor — semântica
+     Componentes consomem SÓ estes. Trocar tema = trocar este bloco.
+     --------------------------------------------------------------------- */
+
+  --pt-fundo:            var(--pt-tinta-050);
+  --pt-fundo-elevado:    var(--pt-branco);
+  --pt-fundo-afundado:   var(--pt-tinta-100);
+  --pt-fundo-inverso:    var(--pt-tinta-900);
+
+  --pt-texto:            var(--pt-tinta-900);
+  --pt-texto-secundario: var(--pt-tinta-500);
+  --pt-texto-inverso:    var(--pt-tinta-050);
+  --pt-texto-fraco:      var(--pt-tinta-300);   /* só sobre fundo inverso */
+
+  --pt-traco:            var(--pt-tinta-900);   /* o traço preto é estrutural */
+  --pt-traco-suave:      var(--pt-tinta-200);
+  --pt-traco-foco:       var(--pt-caneta-500);
+
+  --pt-acao:             var(--pt-mimeo-500);   /* baixar plano, e só */
+  --pt-acao-hover:       var(--pt-mimeo-700);
+  --pt-acao-ativa:       var(--pt-mimeo-900);
+  --pt-acao-texto:       var(--pt-branco);
+
+  --pt-selecao:          var(--pt-caneta-500);  /* chip ativo, link, nav atual */
+  --pt-selecao-hover:    var(--pt-caneta-700);
+  --pt-selecao-suave:    var(--pt-caneta-100);
+  --pt-selecao-texto:    var(--pt-branco);
+
+  --pt-destaque:         var(--pt-regua-500);   /* tag de metodologia */
+  --pt-destaque-texto:   var(--pt-tinta-900);
+
+  --pt-desabilitado:          var(--pt-tinta-100);
+  --pt-desabilitado-texto:    var(--pt-tinta-500);
+  --pt-desabilitado-traco:    var(--pt-tinta-300);
+
+  /* ---------------------------------------------------------------------
+     3. Componente curricular
+     A assinatura da direção: cada matéria tem cor e sigla fixas, iguais
+     no filtro, no card e no detalhe. Todas passam AA com texto branco.
+     --------------------------------------------------------------------- */
+
+  --pt-comp-portugues:  #7A3B4E;
+  --pt-comp-matematica: #3A5578;
+  --pt-comp-ciencias:   #2F6B5E;
+  --pt-comp-historia:   #8A5A2B;
+  --pt-comp-geografia:  #4A6B33;
+  --pt-comp-arte:       #6E4076;
+  --pt-comp-edfisica:   #2C5F6B;
+  --pt-comp-ingles:     #5B4A7A;
+  --pt-comp-texto:      var(--pt-branco);
+
+  /* ---------------------------------------------------------------------
+     4. Tipografia
+     Três famílias, três papéis. Nunca use uma no papel da outra.
+     --------------------------------------------------------------------- */
+
+  --pt-fonte-display: 'Space Grotesk', 'Trebuchet MS', system-ui, sans-serif;
+  --pt-fonte-corpo:   'Work Sans', -apple-system, 'Segoe UI', system-ui, sans-serif;
+  --pt-fonte-dados:   'IBM Plex Mono', ui-monospace, 'Courier New', monospace;
+
+  --pt-peso-normal:  400;
+  --pt-peso-medio:   500;
+  --pt-peso-forte:   600;
+  --pt-peso-display: 700;
+
+  /* Escala. Base 16px; mobile-first, sem fluid type — previsível vence. */
+  --pt-tam-mono:    0.625rem;  /* 10px — rótulo BNCC, etiqueta */
+  --pt-tam-micro:   0.6875rem; /* 11px — legenda */
+  --pt-tam-mini:    0.75rem;   /* 12px — metadado */
+  --pt-tam-peq:     0.8125rem; /* 13px — chip, apoio */
+  --pt-tam-base:    0.875rem;  /* 14px — corpo padrão de interface */
+  --pt-tam-leitura: 1rem;      /* 16px — corpo de texto longo (blog) */
+  --pt-tam-med:     1.125rem;  /* 18px — título de card */
+  --pt-tam-gr:      1.375rem;  /* 22px — título de seção */
+  --pt-tam-xgr:     1.75rem;   /* 28px — título de página */
+  --pt-tam-hero:    2.25rem;   /* 36px — hero da landing */
+
+  --pt-linha-apertada: 1.15;  /* display grande */
+  --pt-linha-titulo:   1.24;  /* título de card */
+  --pt-linha-normal:   1.45;  /* interface */
+  --pt-linha-leitura:  1.65;  /* post do blog */
+
+  --pt-espacejamento-display: -0.02em;
+  --pt-espacejamento-normal:  0;
+  --pt-espacejamento-etiqueta: 0.1em;  /* mono em caixa alta */
+
+  --pt-medida-leitura: 68ch;  /* 60–75 caracteres */
+
+  /* ---------------------------------------------------------------------
+     5. Espaço — escala de 4px
+     --------------------------------------------------------------------- */
+
+  --pt-esp-1:  0.25rem;  /*  4px */
+  --pt-esp-2:  0.375rem; /*  6px */
+  --pt-esp-3:  0.5rem;   /*  8px */
+  --pt-esp-4:  0.6875rem;/* 11px — respiro interno de card */
+  --pt-esp-5:  0.8125rem;/* 13px */
+  --pt-esp-6:  1rem;     /* 16px */
+  --pt-esp-7:  1.125rem; /* 18px — goteira da página no mobile */
+  --pt-esp-8:  1.5rem;   /* 24px */
+  --pt-esp-9:  2rem;     /* 32px */
+  --pt-esp-10: 3rem;     /* 48px — separação entre seções */
+
+  --pt-goteira-mobile:  var(--pt-esp-7);
+  --pt-goteira-desktop: var(--pt-esp-9);
+  --pt-largura-max:     1160px;
+
+  /* ---------------------------------------------------------------------
+     6. Traço e forma
+     O traço preto de 2px é a assinatura estrutural. Raio é quase zero:
+     esta direção é ortogonal por decisão, não por descuido.
+     --------------------------------------------------------------------- */
+
+  --pt-traco-fino:   1px;
+  --pt-traco-base:   2px;   /* padrão: card, chip, campo, botão */
+  --pt-traco-grosso: 3px;   /* separador de seção, régua sob a nav */
+
+  --pt-raio-0: 0;
+  --pt-raio-1: 2px;   /* tag, etiqueta */
+  --pt-raio-2: 4px;   /* nada maior sem motivo declarado */
+
+  /* Sem sombra difusa em nenhum lugar. Elevação se faz com traço. */
+  --pt-sombra-nenhuma: none;
+
+  /* ---------------------------------------------------------------------
+     7. Interação
+     --------------------------------------------------------------------- */
+
+  --pt-alvo-toque: 44px;   /* piso absoluto de qualquer clicável */
+  --pt-alvo-conforto: 48px;
+
+  --pt-foco-largura: 3px;
+  --pt-foco-offset:  2px;
+  --pt-foco-cor:     var(--pt-caneta-500);
+
+  --pt-transicao: 120ms ease-out;
+
+  --pt-z-base:    0;
+  --pt-z-gaveta:  100;
+  --pt-z-topo:    200;  /* nav fixa */
+  --pt-z-modal:   300;
+  --pt-z-aviso:   400;
+}
+
+/* ==========================================================================
+   Base
+   ========================================================================== */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--pt-fundo);
+  color: var(--pt-texto);
+  font-family: var(--pt-fonte-corpo);
+  font-size: var(--pt-tam-base);
+  line-height: var(--pt-linha-normal);
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: var(--pt-selecao);
+  text-underline-offset: 3px;
+}
+a:hover { color: var(--pt-selecao-hover); }
+
+/* Foco desenhado, nunca o outline padrão do navegador. */
+:focus-visible {
+  outline: var(--pt-foco-largura) solid var(--pt-foco-cor);
+  outline-offset: var(--pt-foco-offset);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

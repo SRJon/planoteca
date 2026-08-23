@@ -1,0 +1,4 @@
+export { PaginaCatalogar } from './PaginaCatalogar'
+export { PaginaPlanos } from './PaginaPlanos'
+export { PaginaModeracao } from './PaginaModeracao'
+export { PaginaEscrever } from './PaginaEscrever'

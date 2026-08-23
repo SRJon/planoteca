@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Entrega — a camada visual do fotus-default-web</title>
+<style>
+:root{
+--st-bg:#FAF9F5;--st-bg-alt:#F0EEE6;--st-surface:#FFFFFF;--st-border:#E3DACC;--st-border-soft:#F0EEE6;
+--st-ink:#141413;--st-ink-soft:#3D3D3A;--st-ink-muted:#87867F;--st-ink-faint:#D1CFC5;
+--st-accent:#D97757;--st-accent-soft:#F5E1D4;--st-rose:#E0897A;
+--st-olive:#788C5D;--st-olive-soft:#DCE3CC;--st-amber:#B47A3C;--st-amber-soft:#EDD9B7;
+--st-crimson:#B0533C;--st-crimson-soft:#F0CFC3;--st-azure:#3D6688;--st-azure-soft:#CDDAE6;
+--st-invert-bg:#141413;--st-invert-ink:#F0EEE6;
+--st-font-serif:ui-serif,"Iowan Old Style","Apple Garamond",Baskerville,"Times New Roman",Times,serif;
+--st-font-sans:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+--st-font-mono:ui-monospace,"SF Mono","Cascadia Code",Menlo,Consolas,monospace;
+--st-space-1:.25rem;--st-space-2:.5rem;--st-space-3:.75rem;--st-space-4:1rem;--st-space-5:1.25rem;
+--st-space-6:1.5rem;--st-space-8:2rem;--st-space-10:2.5rem;--st-space-12:3rem;--st-space-16:4rem;
+--st-radius-sm:4px;--st-radius:8px;--st-content-width:1100px;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:var(--st-font-sans);font-size:16px;line-height:1.65;color:var(--st-ink);background:var(--st-bg);-webkit-font-smoothing:antialiased}
+.st-doc{max-width:var(--st-content-width);margin:0 auto;padding:var(--st-space-16) var(--st-space-6) var(--st-space-12)}
+.st-eyebrow{font-family:var(--st-font-mono);font-size:.75rem;font-weight:500;text-transform:uppercase;letter-spacing:.08em;color:var(--st-ink-muted);margin:0 0 var(--st-space-4)}
+.st-title{font-family:var(--st-font-serif);font-weight:500;font-size:clamp(2rem,5vw,2.75rem);line-height:1.15;letter-spacing:-.01em;margin:0 0 var(--st-space-6)}
+.st-title em.st-accent{font-style:italic;color:var(--st-accent);font-weight:500}
+.st-lede{font-size:1.1rem;line-height:1.6;color:var(--st-ink-soft);margin:0 0 var(--st-space-8);max-width:62ch}
+h2{font-family:var(--st-font-serif);font-weight:500;font-size:clamp(1.4rem,3vw,1.75rem);margin:var(--st-space-16) 0 var(--st-space-4);display:flex;align-items:center;gap:var(--st-space-3)}
+h3{font-family:var(--st-font-serif);font-weight:500;font-size:1.2rem;margin:var(--st-space-8) 0 var(--st-space-3)}
+.st-section-num{display:inline-block;font-family:var(--st-font-mono);font-size:.7rem;font-weight:500;background:var(--st-bg-alt);color:var(--st-ink-muted);padding:3px var(--st-space-2);border-radius:var(--st-radius-sm);letter-spacing:.05em}
+p{margin:0 0 var(--st-space-4)}
+ul,ol{margin:0 0 var(--st-space-4);padding-left:var(--st-space-6)}
+li{margin-bottom:var(--st-space-2);line-height:1.6}
+li::marker{color:var(--st-accent)}
+strong{font-weight:600}
+em{color:var(--st-ink-soft);font-style:italic}
+code{font-family:var(--st-font-mono);font-size:.88em;background:var(--st-bg-alt);padding:2px 6px;border-radius:var(--st-radius-sm)}
+pre{background:var(--st-invert-bg);color:var(--st-invert-ink);padding:var(--st-space-4) var(--st-space-5);border-radius:var(--st-radius);overflow-x:auto;font-size:.85rem;line-height:1.55;margin:var(--st-space-4) 0;min-width:0;max-width:100%}
+pre code{background:none;padding:0;color:inherit;font-size:inherit}
+.st-pills{display:flex;gap:var(--st-space-2);flex-wrap:wrap;margin:0 0 var(--st-space-6)}
+.st-pill{display:inline-flex;align-items:center;gap:var(--st-space-2);padding:4px var(--st-space-3);border-radius:999px;font-family:var(--st-font-mono);font-size:.78rem;background:var(--st-bg-alt);color:var(--st-ink-soft);border:1px solid var(--st-border-soft)}
+.st-pill .st-pill-label{color:var(--st-ink-muted)}
+.st-pill .st-pill-value{color:var(--st-ink);font-weight:500}
+.st-pill--olive{background:var(--st-olive-soft);color:var(--st-olive);border-color:transparent}
+.st-pill--accent{background:var(--st-accent-soft);color:var(--st-accent);border-color:transparent}
+.st-tldr{background:var(--st-invert-bg);color:var(--st-invert-ink);padding:var(--st-space-6);border-radius:var(--st-radius);margin:0 0 var(--st-space-10);font-size:1.05rem;line-height:1.6}
+.st-tldr-label{font-family:var(--st-font-mono);font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--st-ink-muted);margin-bottom:var(--st-space-2)}
+.st-tldr p{margin:0 0 var(--st-space-3)}
+.st-tldr p:last-child{margin:0}
+.st-tldr strong{color:#FFFFFF}
+.st-tldr em{color:var(--st-accent-soft);font-style:italic}
+.st-tldr code{background:rgba(255,255,255,.1);color:var(--st-invert-ink)}
+.st-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:var(--st-space-3);margin:0 0 var(--st-space-10)}
+.st-stat{background:var(--st-surface);border:1px solid var(--st-border);border-radius:var(--st-radius);padding:var(--st-space-4)}
+.st-stat-label{font-family:var(--st-font-mono);font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:var(--st-ink-muted);margin-bottom:var(--st-space-2)}
+.st-stat-value{font-family:var(--st-font-serif);font-weight:500;font-size:1.15rem}
+.st-stat--accent .st-stat-value{color:var(--st-accent)}
+.st-stat--olive .st-stat-value{color:var(--st-olive)}
+.st-callout{background:var(--st-bg-alt);border-radius:var(--st-radius);padding:var(--st-space-4) var(--st-space-5);margin:var(--st-space-4) 0}
+.st-callout-label{font-family:var(--st-font-mono);font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--st-ink-muted);margin-bottom:var(--st-space-2)}
+.st-callout p:last-child{margin-bottom:0}
+.st-callout--accent{background:var(--st-accent-soft)}
+.st-callout--accent .st-callout-label{color:var(--st-accent)}
+.st-callout--olive{background:var(--st-olive-soft)}
+.st-callout--olive .st-callout-label{color:var(--st-olive)}
+.st-callout--amber{background:var(--st-amber-soft)}
+.st-callout--amber .st-callout-label{color:var(--st-amber)}
+.st-callout--crimson{background:var(--st-crimson-soft)}
+.st-callout--crimson .st-callout-label{color:var(--st-crimson)}
+.st-callout--azure{background:var(--st-azure-soft)}
+.st-callout--azure .st-callout-label{color:var(--st-azure)}
+table{width:100%;border-collapse:collapse;margin:var(--st-space-4) 0;font-size:.92rem;background:var(--st-surface);border-radius:var(--st-radius);overflow:hidden;border:1px solid var(--st-border)}
+thead{background:var(--st-bg-alt)}
+th{text-align:left;padding:var(--st-space-3) var(--st-space-4);font-family:var(--st-font-mono);font-weight:500;font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--st-ink-muted);border-bottom:1px solid var(--st-border)}
+td{padding:var(--st-space-3) var(--st-space-4);border-bottom:1px solid var(--st-border-soft);vertical-align:top}
+tr:last-child td{border-bottom:none}
+.st-diagram{display:block;margin:var(--st-space-6) auto;max-width:100%;height:auto}
+.st-footer{text-align:center;padding:var(--st-space-8) var(--st-space-6) var(--st-space-12);color:var(--st-ink-muted);font-size:.85rem}
+.st-mono{font-family:var(--st-font-mono);font-size:.85em}
+@media (max-width:768px){.st-doc{padding:var(--st-space-8) var(--st-space-4)}}
+</style>
+</head>
+<body>
+<main class="st-doc">
+
+<p class="st-eyebrow">Relatório de entrega · fotus-default-web</p>
+<h1 class="st-title">A camada visual virou <em class="st-accent">Tailwind e shadcn</em></h1>
+
+<div class="st-pills">
+  <span class="st-pill"><span class="st-pill-label">branch</span><span class="st-pill-value">main</span></span>
+  <span class="st-pill"><span class="st-pill-label">commits</span><span class="st-pill-value">17</span></span>
+  <span class="st-pill st-pill--olive"><span class="st-pill-value">bateria verde nos dois</span></span>
+  <span class="st-pill st-pill--accent"><span class="st-pill-value">9 de 9 tasks</span></span>
+</div>
+
+<p class="st-lede">
+O boilerplate tinha 15 componentes próprios e 24 folhas de estilo. Eles serviam, e custaram
+caro. Mas todo projeto novo quer Tailwind e shadcn, e a fundação embaixo deles não tinha nada
+a ver com a casca. Esta entrega troca a casca e prova que a fundação sobreviveu.
+</p>
+
+<div class="st-tldr">
+  <p class="st-tldr-label">Resumo</p>
+  <p>
+    Saiu o <code>shared/ui</code> inteiro. Entrou Tailwind v4 pelo plugin do Vite, shadcn sobre
+    Radix, e Phosphor no lugar dos ícones próprios.
+  </p>
+  <p>
+    <strong>A fundação de dados não foi tocada.</strong> O <code>entities/</code>, o
+    <code>shared/api</code>, o <code>shared/lib</code> e o <code>shared/config</code> tinham
+    <em>zero</em> import de CSS, e continuam intactos.
+  </p>
+  <p>
+    A tela <code>/pessoas</code> continua listando, paginando e filtrando. Ela é a prova.
+  </p>
+</div>
+
+<div class="st-stats">
+  <div class="st-stat"><div class="st-stat-label">arquivos em src</div><div class="st-stat-value">143 → 86</div></div>
+  <div class="st-stat"><div class="st-stat-label">folhas de estilo</div><div class="st-stat-value">24 → 0</div></div>
+  <div class="st-stat"><div class="st-stat-label">pacotes radix</div><div class="st-stat-value">5 → 1</div></div>
+  <div class="st-stat st-stat--olive"><div class="st-stat-label">testes</div><div class="st-stat-value">163 + 4</div></div>
+  <div class="st-stat st-stat--accent"><div class="st-stat-label">saldo de linhas</div><div class="st-stat-value">−188</div></div>
+</div>
+
+<h2><span class="st-section-num">01</span> O que foi entregue</h2>
+
+<table>
+<thead><tr><th>Antes</th><th>Depois</th></tr></thead>
+<tbody>
+<tr><td>15 componentes próprios, 1.457 linhas</td><td>15 do shadcn, em <code>src/components/ui/</code></td></tr>
+<tr><td>24 folhas de estilo de módulo, 1.608 linhas</td><td>nenhuma</td></tr>
+<tr><td>4 arquivos de estilo global, 530 linhas</td><td>um <code>tema.css</code>, com bloco <code>@theme</code></td></tr>
+<tr><td>catálogo próprio de ícone, 41 nomes</td><td>Phosphor, importado pelo caminho direto</td></tr>
+<tr><td>tema pelo atributo <code>data-theme</code></td><td>tema pela classe <code>.dark</code></td></tr>
+<tr><td>cinco pacotes <code>@radix-ui/react-*</code></td><td>um <code>radix-ui</code> unificado</td></tr>
+</tbody>
+</table>
+
+<p>
+O <code>shared/</code> ficou com <code>api</code>, <code>config</code> e <code>lib</code> —
+exatamente o que a spec prometeu não tocar.
+</p>
+
+<div class="st-callout st-callout--azure">
+  <p class="st-callout-label">A medição que sustentou a troca</p>
+  <p>
+    Antes de escrever a spec, o <code>grep</code> respondeu quanto do negócio conhecia a
+    interface: <strong>zero</strong> import de CSS em <code>entities/</code>,
+    <code>shared/api</code>, <code>shared/lib</code> e <code>shared/config</code>. Dois em
+    <code>features/</code>. Vinte em <code>pages/</code>.
+  </p>
+  <p>
+    A separação de camadas não era promessa de arquitetura. Era fato verificável, e foi ele
+    que tornou a troca viável em nove tasks.
+  </p>
+</div>
+
+<h2><span class="st-section-num">02</span> A prova</h2>
+
+<p>
+A bateria executa nos dois lugares: no boilerplate, e num projeto gerado do zero por
+<code>New-Project.ps1</code>. Um boilerplate verde que gera projeto quebrado não serve.
+</p>
+
+<table>
+<thead><tr><th>Verificação</th><th>Boilerplate</th><th>Projeto gerado</th></tr></thead>
+<tbody>
+<tr><td><code>npm ci</code></td><td>0</td><td>0</td></tr>
+<tr><td><code>npm run lint</code></td><td>0</td><td>0</td></tr>
+<tr><td><code>npm run typecheck</code></td><td>0</td><td>0</td></tr>
+<tr><td><code>npx vitest run</code></td><td>163 testes</td><td>163 testes</td></tr>
+<tr><td><code>npm run api:check</code></td><td>0</td><td>0</td></tr>
+<tr><td><code>npm run build</code></td><td>0</td><td>0</td></tr>
+<tr><td><code>npm run e2e</code></td><td>4 specs</td><td>4 specs</td></tr>
+</tbody>
+</table>
+
+<h3>2.1 A prova negativa do z-index</h3>
+
+<p>
+Um dos testes ponta a ponta afirma que a lista do <code>select</code> pinta acima do véu do
+<code>dialog</code>. É um defeito clássico de empilhamento, e só aparece num navegador de
+verdade.
+</p>
+
+<p>
+Ver o teste verde não bastava. Baixei o <code>z-50</code> do <code>SelectContent</code> para
+<code>z-40</code> e executei de novo: <strong>o teste falhou</strong>. Ele protege contra
+regressão real, e não apenas passa.
+</p>
+
+<div class="st-callout st-callout--olive">
+  <p class="st-callout-label">Sem defeito no shadcn</p>
+  <p>
+    O <code>SelectContent</code> e o <code>DialogOverlay</code> usam ambos <code>z-50</code>.
+    Os dois portais do Radix são irmãos no corpo do documento, e a lista monta depois — a
+    ordem do documento desempata a favor dela.
+  </p>
+</div>
+
+<h2><span class="st-section-num">03</span> A guarda que mudou de alvo</h2>
+
+<p>
+O boilerplate tinha um verificador que proibia cor literal fora do arquivo de token. Com o
+Tailwind, esse alvo deixou de existir, e o significado de <em>cor solta</em> mudou:
+<code>bg-slate-950</code> no JSX não é um hex, mas espalha cor do mesmo jeito.
+</p>
+
+<p>A guarda passou a recusar três coisas em arquivo de componente:</p>
+
+<table>
+<thead><tr><th>Recusa</th><th>Exemplo</th><th>Por quê</th></tr></thead>
+<tbody>
+<tr><td>cor literal</td><td><code>#0163a2</code>, <code>rgb()</code></td><td>a cor mora no tema, e em nenhum outro lugar</td></tr>
+<tr><td>classe crua da paleta</td><td><code>bg-slate-950</code></td><td>usa a paleta do framework em vez do tema</td></tr>
+<tr><td>primitiva do tema</td><td><code>bg-red-500</code></td><td>primitiva é matéria-prima, não nome semântico</td></tr>
+</tbody>
+</table>
+
+<p>
+O que passa é a classe que aponta para o tema: <code>bg-background</code>,
+<code>text-primary</code>, <code>border-border</code>.
+</p>
+
+<div class="st-callout st-callout--accent">
+  <p class="st-callout-label">A guarda pegou o próprio shadcn</p>
+  <p>
+    Os componentes instalados vieram com <code>bg-black/10</code> e
+    <code>hover:bg-[color-mix(...)]</code>. A guarda reprovou os dois, e a correção apontou
+    para o token de véu que já existia — em vez de inventar cor nova.
+  </p>
+  <p>
+    Foi exatamente para isso que ela foi reescrita.
+  </p>
+</div>
+
+<h2><span class="st-section-num">04</span> O que a execução ensinou</h2>
+
+<p>
+Nove tasks, e nenhuma delas correu como o plano previa. O que segue é o que o plano errou, e
+como apareceu.
+</p>
+
+<h3>4.1 O comando de instalação destruiu a paleta</h3>
+
+<p>
+O plano mandava <code>shadcn init -d</code>. Essa opção trava o preset numa variante que usa
+outra biblioteca de primitivos, e sobrescreve o arquivo de estilo principal. A paleta Fotus se
+perdeu na primeira tentativa.
+</p>
+
+<p>O comando correto preserva a escolha:</p>
+
+<pre><code>npx shadcn@latest init -y -b radix -p nova --template vite</code></pre>
+
+<h3>4.2 Um comando que passa sem fazer nada</h3>
+
+<p>
+O plano mandava instalar o componente <code>form</code>. Ele não existe no registro deste
+preset. O comando termina com código zero e não grava arquivo nenhum — o pior modo de falha,
+porque nenhum erro avisa. A substituta é o <code>field</code>.
+</p>
+
+<h3>4.3 Uma bateria verde que não era verde</h3>
+
+<div class="st-callout st-callout--crimson">
+  <p class="st-callout-label">Erro de quem coordenou</p>
+  <p>
+    Depois de três tasks em paralelo, declarei a bateria completa verde. Havia executado os
+    testes de unidade, o lint, a checagem de tipo e a construção — <strong>mas não o teste de
+    navegador</strong>, que estava vermelho havia dois commits.
+  </p>
+  <p>
+    A causa: o <code>CardTitle</code> do shadcn renderiza uma <code>div</code>, e não um
+    cabeçalho. É estilo, não semântica. O teste procurava cabeçalho e não achava.
+  </p>
+  <p>
+    O conserto foi na origem — a página voltou a ter cabeçalho de verdade, e a asserção ficou
+    mais forte do que era. Mas o defeito passou dois commits porque a verificação que só o
+    navegador faz não foi executada.
+  </p>
+</div>
+
+<h3>4.4 O índice do git é compartilhado</h3>
+
+<p>
+Três subagentes reescreveram telas ao mesmo tempo, no mesmo repositório. Instruí cada um a
+commitar por caminho explícito, o que é necessário e não suficiente: o <code>git add</code> de
+um pegou o que os outros tinham acabado de preparar.
+</p>
+
+<p>
+Um deles percebeu, desfez com <code>git reset</code> e recommitou o escopo certo. Para trabalho
+paralelo no mesmo repositório, o correto é limpar o índice antes de preparar, ou dar uma área
+de trabalho por agente.
+</p>
+
+<h3>4.5 Uma alegação que não se sustentou</h3>
+
+<p>
+Um subagente afirmou que a guarda deriva os nomes do tema, e que declarar um token novo o
+tornaria aceito. Testei: o nome já passava antes, e qualquer nome inventado também.
+</p>
+
+<p>
+A guarda é lista negra — recusa a paleta conhecida e deixa passar o desconhecido. A escolha
+está certa, porque lista branca reprovaria gradiente e classe de plugin. Mas o comentário no
+código dizia outra coisa, e enganaria quem lesse depois. Corrigido.
+</p>
+
+<h2><span class="st-section-num">05</span> O que continua aberto</h2>
+
+<p>
+As duas lacunas do ciclo anterior seguem abertas, e são do back-end:
+</p>
+
+<ul>
+  <li>
+    O <code>fotus-default-api</code> não expõe <code>POST /api/v1/auth/login</code> nem
+    <code>GET /api/v1/auth/userinfo</code>. Ele tem um controlador só. O contrato que ele
+    precisa implementar está escrito em <code>contracts/openapi-v1.json</code>.
+  </li>
+  <li>
+    O <code>PersonSampleController</code> tem a anotação de autorização comentada. O front
+    manda o cabeçalho e a API ignora.
+  </li>
+</ul>
+
+<p>
+Há também uma fragilidade no <code>FilterDto</code> do back-end: o acessador de
+<code>sort</code> não devolve o que recebeu, e o campo sem inicialização lança quando um
+cliente manda filtro sem ordenação. O front se protege mandando ordenação sempre, mas o
+defeito é do servidor.
+</p>
+
+<h2><span class="st-section-num">06</span> Como usar</h2>
+
+<pre><code>.\New-Project.ps1 -Name acme-financeiro-web `
+                  -Titulo "Acme Financeiro" `
+                  -OutputPath C:\DEV\acme-financeiro-web</code></pre>
+
+<p>
+A fatia <code>pessoa</code> fica no projeto gerado de propósito: é mais fácil apagar um exemplo
+que funciona do que escrever o primeiro sem referência. O <code>README</code> lista os oito
+caminhos a remover quando a primeira tela real nascer.
+</p>
+
+<p>Para acrescentar um componente novo:</p>
+
+<pre><code>npx shadcn@latest add sheet</code></pre>
+
+<p>
+Para um ícone, importe pelo caminho direto. Importar da raiz do pacote transpila mais de nove
+mil módulos e deixa o desenvolvimento lento.
+</p>
+
+<pre><code>import { House } from '@phosphor-icons/react/dist/csr/House'</code></pre>
+
+</main>
+<footer class="st-footer"><span class="st-mono">2026-08-22</span></footer>
+</body>
+</html>

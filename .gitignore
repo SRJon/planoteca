@@ -1,0 +1,48 @@
+# ── Segredo ──────────────────────────────────────────────────────────────
+#
+# Esta lista é a REDE DE SEGURANÇA da raiz. `planoteca-api/.gitignore` e
+# `planoteca-web/.gitignore` já cobrem as próprias pastas; o que se ganha
+# repetindo aqui é o arquivo que nasce fora delas — um `.env` de script na
+# raiz, um dump com credencial, uma chave baixada para conferir.
+#
+# A ordem importa: a exceção com `!` precisa vir DEPOIS do padrão que ela
+# abre, senão o git ignora a exceção.
+.env
+.env.*
+!.env.example
+!.env.template
+
+**/appsettings.Local.json
+**/appsettings.*.Local.json
+
+# Chave e certificado, em qualquer lugar da árvore.
+*.pem
+*.pfx
+*.p12
+*.key
+*.jks
+# `key.json` é o nome que o console do Google dá à chave de conta de
+# serviço ao baixar. Ela assina como o projeto inteiro.
+**/serviceAccount*.json
+**/*-firebase-adminsdk-*.json
+
+# ── Dependência e artefato de build ──────────────────────────────────────
+node_modules/
+dist/
+coverage/
+bin/
+obj/
+*.user
+
+# ── Ferramenta e ambiente local ──────────────────────────────────────────
+.claude/settings.local.json
+.superpowers/
+.remember/
+.vs/
+.idea/
+.vscode/settings.json
+
+# ── Sistema operacional ──────────────────────────────────────────────────
+Thumbs.db
+Desktop.ini
+.DS_Store

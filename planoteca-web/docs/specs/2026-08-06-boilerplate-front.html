@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Boilerplate de front-end — fotus-default-web</title>
+<style>
+:root {
+  --st-bg:#FAF9F5; --st-bg-alt:#F0EEE6; --st-surface:#FFFFFF;
+  --st-border:#E3DACC; --st-border-soft:#F0EEE6;
+  --st-ink:#141413; --st-ink-soft:#3D3D3A; --st-ink-muted:#87867F; --st-ink-faint:#D1CFC5;
+  --st-accent:#D97757; --st-accent-soft:#F5E1D4;
+  --st-rose:#E0897A; --st-rose-soft:#F8DDD5;
+  --st-olive:#788C5D; --st-olive-soft:#DCE3CC; --st-olive-light:#A3B88A;
+  --st-amber:#B47A3C; --st-amber-soft:#EDD9B7;
+  --st-crimson:#B0533C; --st-crimson-soft:#F0CFC3;
+  --st-azure:#3D6688; --st-azure-soft:#CDDAE6;
+  --st-invert-bg:#141413; --st-invert-ink:#F0EEE6;
+  --st-font-serif: ui-serif, "Iowan Old Style", "Apple Garamond", Baskerville, "Times New Roman", "Droid Serif", Times, "Source Serif Pro", serif;
+  --st-font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --st-font-mono: ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, "Liberation Mono", monospace;
+  --st-space-1:0.25rem; --st-space-2:0.5rem; --st-space-3:0.75rem; --st-space-4:1rem;
+  --st-space-5:1.25rem; --st-space-6:1.5rem; --st-space-8:2rem; --st-space-10:2.5rem;
+  --st-space-12:3rem; --st-space-16:4rem; --st-space-20:5rem;
+  --st-radius-sm:4px; --st-radius:8px; --st-radius-lg:12px; --st-radius-xl:16px;
+  --st-shadow:0 1px 2px rgba(20,20,19,0.04), 0 2px 8px rgba(20,20,19,0.04);
+  --st-content-width:1100px; --st-wide-width:1320px;
+}
+* { box-sizing: border-box; }
+body {
+  margin:0; padding:0; font-family:var(--st-font-sans); font-size:16px;
+  line-height:1.65; color:var(--st-ink); background:var(--st-bg);
+  -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+}
+.st-doc { max-width:var(--st-content-width); margin:0 auto; padding:var(--st-space-16) var(--st-space-6) var(--st-space-12); }
+.st-eyebrow {
+  font-family:var(--st-font-mono); font-size:0.75rem; font-weight:500;
+  text-transform:uppercase; letter-spacing:0.08em; color:var(--st-ink-muted);
+  margin:0 0 var(--st-space-4);
+}
+.st-title {
+  font-family:var(--st-font-serif); font-weight:500;
+  font-size:clamp(2rem,5vw,2.75rem); line-height:1.15; letter-spacing:-0.01em;
+  color:var(--st-ink); margin:0 0 var(--st-space-6);
+}
+.st-title em.st-accent { font-style:italic; color:var(--st-accent); font-weight:500; }
+.st-lede { font-size:1.1rem; line-height:1.6; color:var(--st-ink-soft); margin:0 0 var(--st-space-8); max-width:64ch; }
+h2 {
+  font-family:var(--st-font-serif); font-weight:500;
+  font-size:clamp(1.4rem,3vw,1.75rem); letter-spacing:-0.005em;
+  margin:var(--st-space-16) 0 var(--st-space-4);
+  display:flex; align-items:center; gap:var(--st-space-3);
+}
+h3 { font-family:var(--st-font-serif); font-weight:500; font-size:1.2rem; margin:var(--st-space-8) 0 var(--st-space-3); }
+h4 { font-family:var(--st-font-sans); font-weight:600; font-size:1rem; margin:var(--st-space-6) 0 var(--st-space-2); }
+.st-section-num {
+  display:inline-block; font-family:var(--st-font-mono); font-size:0.7rem; font-weight:500;
+  background:var(--st-bg-alt); color:var(--st-ink-muted); padding:3px var(--st-space-2);
+  border-radius:var(--st-radius-sm); letter-spacing:0.05em; vertical-align:middle;
+}
+p { margin:0 0 var(--st-space-4); }
+a { color:var(--st-accent); text-decoration:underline; text-decoration-thickness:1px; text-underline-offset:3px; }
+a:hover { color:var(--st-rose); }
+ul, ol { margin:0 0 var(--st-space-4); padding-left:var(--st-space-6); }
+li { margin-bottom:var(--st-space-2); line-height:1.6; }
+li::marker { color:var(--st-accent); }
+strong { font-weight:600; color:var(--st-ink); }
+em { color:var(--st-ink-soft); font-style:italic; }
+hr { border:none; border-top:1px solid var(--st-border); margin:var(--st-space-10) 0; }
+code {
+  font-family:var(--st-font-mono); font-size:0.88em; background:var(--st-bg-alt);
+  padding:2px 6px; border-radius:var(--st-radius-sm); color:var(--st-ink);
+}
+pre {
+  background:var(--st-invert-bg); color:var(--st-invert-ink);
+  padding:var(--st-space-4) var(--st-space-5); border-radius:var(--st-radius);
+  overflow-x:auto; font-size:0.85rem; line-height:1.55; margin:var(--st-space-4) 0;
+  min-width:0; max-width:100%;
+}
+pre code { background:none; padding:0; color:inherit; font-size:inherit; }
+.st-pills { display:flex; gap:var(--st-space-2); flex-wrap:wrap; margin:0 0 var(--st-space-6); }
+.st-pill {
+  display:inline-flex; align-items:center; gap:var(--st-space-2);
+  padding:4px var(--st-space-3); border-radius:999px;
+  font-family:var(--st-font-mono); font-size:0.78rem; letter-spacing:0.01em;
+  background:var(--st-bg-alt); color:var(--st-ink-soft); border:1px solid var(--st-border-soft);
+}
+.st-pill .st-pill-label { color:var(--st-ink-muted); }
+.st-pill .st-pill-value { color:var(--st-ink); font-weight:500; }
+.st-pill--accent { background:var(--st-accent-soft); color:var(--st-accent); border-color:transparent; }
+.st-pill--olive { background:var(--st-olive-soft); color:var(--st-olive); border-color:transparent; }
+.st-pill--amber { background:var(--st-amber-soft); color:var(--st-amber); border-color:transparent; }
+.st-pill--crimson { background:var(--st-crimson-soft); color:var(--st-crimson); border-color:transparent; }
+.st-pill--azure { background:var(--st-azure-soft); color:var(--st-azure); border-color:transparent; }
+.st-tldr {
+  background:var(--st-invert-bg); color:var(--st-invert-ink);
+  padding:var(--st-space-6); border-radius:var(--st-radius);
+  margin:0 0 var(--st-space-10); font-size:1.05rem; line-height:1.6;
+}
+.st-tldr-label {
+  font-family:var(--st-font-mono); font-size:0.72rem; text-transform:uppercase;
+  letter-spacing:0.1em; color:var(--st-ink-muted); margin-bottom:var(--st-space-2);
+}
+.st-tldr p { margin:0 0 var(--st-space-3); }
+.st-tldr p:last-child { margin:0; }
+.st-tldr strong { color:#FFFFFF; }
+.st-tldr em { color:var(--st-accent-soft); font-style:italic; }
+.st-tldr code { background:rgba(255,255,255,0.1); color:var(--st-invert-ink); }
+.st-stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:var(--st-space-3); margin:0 0 var(--st-space-10); }
+.st-stat { background:var(--st-surface); border:1px solid var(--st-border); border-radius:var(--st-radius); padding:var(--st-space-4); }
+.st-stat-label { font-family:var(--st-font-mono); font-size:0.7rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--st-ink-muted); margin-bottom:var(--st-space-2); }
+.st-stat-value { font-family:var(--st-font-serif); font-weight:500; font-size:1.15rem; color:var(--st-ink); }
+.st-stat--accent .st-stat-value { color:var(--st-accent); }
+.st-tag { display:inline-block; font-family:var(--st-font-mono); font-size:0.78rem; background:var(--st-bg-alt); color:var(--st-ink-soft); padding:2px var(--st-space-2); border-radius:var(--st-radius-sm); margin:2px 4px 2px 0; }
+.st-callout { background:var(--st-bg-alt); border-radius:var(--st-radius); padding:var(--st-space-4) var(--st-space-5); margin:var(--st-space-4) 0; }
+.st-callout-label { font-family:var(--st-font-mono); font-size:0.72rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--st-ink-muted); margin-bottom:var(--st-space-2); }
+.st-callout p:last-child { margin-bottom:0; }
+.st-callout--accent { background:var(--st-accent-soft); }
+.st-callout--accent .st-callout-label { color:var(--st-accent); }
+.st-callout--olive { background:var(--st-olive-soft); }
+.st-callout--olive .st-callout-label { color:var(--st-olive); }
+.st-callout--amber { background:var(--st-amber-soft); }
+.st-callout--amber .st-callout-label { color:var(--st-amber); }
+.st-callout--crimson { background:var(--st-crimson-soft); }
+.st-callout--crimson .st-callout-label { color:var(--st-crimson); }
+.st-callout--azure { background:var(--st-azure-soft); }
+.st-callout--azure .st-callout-label { color:var(--st-azure); }
+.st-card-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:var(--st-space-4); margin:var(--st-space-6) 0; }
+.st-card { background:var(--st-surface); border:1px solid var(--st-border); border-radius:var(--st-radius); padding:var(--st-space-5); display:flex; flex-direction:column; gap:var(--st-space-3); }
+.st-card-eyebrow { font-family:var(--st-font-mono); font-size:0.7rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--st-ink-muted); }
+.st-card-title { font-family:var(--st-font-serif); font-weight:500; font-size:1.15rem; margin:0; }
+.st-card-body { font-size:0.95rem; color:var(--st-ink-soft); margin:0; flex:1; }
+table { width:100%; border-collapse:collapse; margin:var(--st-space-4) 0; font-size:0.92rem; background:var(--st-surface); border-radius:var(--st-radius); overflow:hidden; border:1px solid var(--st-border); }
+thead { background:var(--st-bg-alt); }
+th { text-align:left; padding:var(--st-space-3) var(--st-space-4); font-family:var(--st-font-mono); font-weight:500; font-size:0.72rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--st-ink-muted); border-bottom:1px solid var(--st-border); }
+td { padding:var(--st-space-3) var(--st-space-4); border-bottom:1px solid var(--st-border-soft); vertical-align:top; }
+tr:last-child td { border-bottom:none; }
+.st-checklist { list-style:none; padding:0; margin:var(--st-space-4) 0; }
+.st-checklist li { position:relative; padding:var(--st-space-3) 0 var(--st-space-3) calc(14px + var(--st-space-3)); border-bottom:1px solid var(--st-border-soft); min-width:0; }
+.st-checklist li:last-child { border-bottom:none; }
+.st-checklist li::before { content:""; position:absolute; left:0; top:calc(var(--st-space-3) + 0.3em); width:14px; height:14px; border:1.5px solid var(--st-ink-muted); border-radius:3px; }
+details { background:var(--st-surface); border:1px solid var(--st-border); border-radius:var(--st-radius); padding:var(--st-space-3) var(--st-space-4); margin:var(--st-space-3) 0; }
+details summary { cursor:pointer; font-weight:500; color:var(--st-ink); list-style:none; display:flex; align-items:center; gap:var(--st-space-2); }
+details summary::before { content:"\25B8"; color:var(--st-accent); font-size:0.85rem; transition:transform 0.15s; }
+details[open] summary::before { transform:rotate(90deg); }
+details > *:not(summary) { margin-top:var(--st-space-3); }
+.st-diagram { display:block; margin:var(--st-space-6) auto; max-width:100%; height:auto; }
+.st-footer { text-align:center; padding:var(--st-space-8) var(--st-space-6) var(--st-space-12); color:var(--st-ink-muted); font-size:0.85rem; }
+.st-mono { font-family:var(--st-font-mono); font-size:0.85em; }
+@media (max-width:768px) { .st-doc { padding:var(--st-space-8) var(--st-space-4); } }
+</style>
+</head>
+<body>
+<main class="st-doc">
+
+<p class="st-eyebrow">Spec · Grau 2 · Fotus</p>
+<h1 class="st-title">Boilerplate de front-end <em class="st-accent">fotus-default-web</em></h1>
+
+<div class="st-pills">
+  <span class="st-pill"><span class="st-pill-label">origem</span><span class="st-pill-value">csc-importacao-web-react</span></span>
+  <span class="st-pill"><span class="st-pill-label">par</span><span class="st-pill-value">fotus-default-api</span></span>
+  <span class="st-pill st-pill--accent">React 19 · Vite · TypeScript estrito</span>
+  <span class="st-pill st-pill--azure">docs/plans/2026-08-06-boilerplate-front.md</span>
+</div>
+
+<p class="st-lede">
+A fundação do front-end de importação ficou pronta e é boa demais para servir um projeto só.
+Esta spec descreve como extrair dela um boilerplate genérico, par do <code>fotus-default-api</code>,
+que nasce por um comando.
+</p>
+
+<div class="st-tldr">
+  <p class="st-tldr-label">Resumo</p>
+  <p>
+    O repositório <code>csc-importacao-web-react</code> vira <code>fotus-default-web</code>.
+    Sai tudo que fala de importação. Fica a fundação: <strong>15 componentes de interface com teste</strong>,
+    cliente HTTP, tema, camadas com fronteira imposta por lint, e a bateria de verificação.
+  </p>
+  <p>
+    Entra uma fatia de exemplo chamada <code>pessoa</code>, que consome o
+    <code>/api/v1/person-samples</code> — o <em>próprio exemplo do back-end boilerplate</em>.
+    Os dois passam a formar um par que funciona ponta a ponta no primeiro dia.
+  </p>
+  <p>
+    Um projeto novo nasce de <code>New-Project.ps1</code>, o mesmo ritual que o time já usa no back-end.
+  </p>
+</div>
+
+<div class="st-stats">
+  <div class="st-stat"><div class="st-stat-label">arquivos em src</div><div class="st-stat-value">148</div></div>
+  <div class="st-stat"><div class="st-stat-label">arquivos de teste</div><div class="st-stat-value">33</div></div>
+  <div class="st-stat st-stat--accent"><div class="st-stat-label">linhas aproveitadas</div><div class="st-stat-value">9.100</div></div>
+  <div class="st-stat"><div class="st-stat-label">linhas removidas</div><div class="st-stat-value">1.412</div></div>
+  <div class="st-stat"><div class="st-stat-label">tasks no plano</div><div class="st-stat-value">12</div></div>
+</div>
+
+<h2><span class="st-section-num">01</span> Problema</h2>
+
+<p>
+A fundação do <code>csc-importacao-web-react</code> custou caro e resolve problemas que
+todo projeto de front-end enfrenta. Autenticação, guarda de rota, tema, tabela densa,
+paginação, formulário, erro de API, fronteira entre camadas e uma bateria de verificação
+que roda sem rede.
+</p>
+
+<p>
+Hoje esse valor está preso a um domínio. Quem começa o próximo front-end da Fotus copia o
+repositório à mão e remove o que é de importação. Semanas depois descobre o que faltou remover.
+O back-end já resolveu isso com o <code>fotus-default-api</code> e o <code>New-Project.ps1</code>.
+O front-end não tem par.
+</p>
+
+<div class="st-callout st-callout--amber">
+  <p class="st-callout-label">O que agrava</p>
+  <p>
+    O <code>csc-importacao-web-react</code> continua vivo e em produção. Ele evolui por conta própria.
+    Cada semana sem o boilerplate aumenta a distância entre a fundação e a cópia que alguém fará dela.
+  </p>
+</div>
+
+<h2><span class="st-section-num">02</span> Escopo</h2>
+
+<h3>Dentro</h3>
+
+<ul>
+  <li>Criar <code>DEV/boilerplate/fotus-default-web</code> como repositório git novo, sem remote.</li>
+  <li>Remover o domínio de importação do código, dos testes e da documentação.</li>
+  <li>Reduzir o tema às duas variantes claro e escuro.</li>
+  <li>Trocar o contrato de autenticação para o <code>TokenDto</code> do back-end boilerplate.</li>
+  <li>Trocar a matriz de permissão do Sankhya por grupos.</li>
+  <li>Escrever a fatia de exemplo <code>pessoa</code> contra <code>/api/v1/person-samples</code>.</li>
+  <li>Escrever <code>contracts/openapi-v1.json</code> à mão e gerar os tipos dele.</li>
+  <li>Escrever <code>New-Project.ps1</code>.</li>
+  <li>Reescrever <code>README.md</code>, <code>CLAUDE.md</code> e <code>CONTRIBUTING.md</code>.</li>
+</ul>
+
+<h3>Fora</h3>
+
+<ul>
+  <li>Alterar o <code>csc-importacao-web-react</code>. Ele é somente leitura nesta tarefa.</li>
+  <li>Alterar o <code>fotus-default-api</code>. O front se adapta ao contrato dele.</li>
+  <li>Criar o repositório no GitHub e publicar. O git nasce local, sem remote.</li>
+  <li>Trocar a paleta por cor neutra. O boilerplate é da Fotus e mantém o azul e o dourado.</li>
+  <li>Adicionar biblioteca nova. O conjunto de dependências fica como está.</li>
+</ul>
+
+<h2><span class="st-section-num">03</span> Solução</h2>
+
+<p>
+Os dois boilerplates viram um par. Cada um gera o seu projeto pelo próprio script, e os dois
+projetos gerados falam o mesmo dialeto HTTP sem ajuste nenhum.
+</p>
+
+<svg class="st-diagram" viewBox="0 0 880 400" role="img" aria-label="Os dois boilerplates e os projetos gerados por eles">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#87867F"/>
+    </marker>
+    <marker id="arrow-accent" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#D97757"/>
+    </marker>
+  </defs>
+
+  <rect x="60" y="24" width="250" height="72" rx="10" fill="#FFFFFF" stroke="#E3DACC" stroke-width="1.5"/>
+  <text x="80" y="54" font-family="ui-serif, Georgia, serif" font-size="14" font-weight="500" fill="#141413">fotus-default-api</text>
+  <text x="80" y="76" font-family="ui-monospace, Menlo, monospace" font-size="11" fill="#87867F">.NET 10 · PersonSampleController</text>
+
+  <rect x="570" y="24" width="250" height="72" rx="10" fill="#F5E1D4" stroke="#D97757" stroke-width="1.5"/>
+  <text x="590" y="54" font-family="ui-serif, Georgia, serif" font-size="14" font-weight="500" fill="#141413">fotus-default-web</text>
+  <text x="590" y="76" font-family="ui-monospace, Menlo, monospace" font-size="11" fill="#87867F">React 19 · fatia pessoa</text>
+
+  <line x1="315" y1="60" x2="562" y2="60" stroke="#87867F" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="438" y="46" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="11" fill="#87867F">/api/v1 · X-Total-Count</text>
+  <text x="438" y="80" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="11" fill="#87867F">FilterDto · TokenDto</text>
+
+  <line x1="185" y1="100" x2="185" y2="160" stroke="#87867F" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="695" y1="100" x2="695" y2="160" stroke="#87867F" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <rect x="70" y="166" width="230" height="52" rx="10" fill="#141413" stroke="none"/>
+  <text x="90" y="188" font-family="ui-monospace, Menlo, monospace" font-size="12" fill="#F0EEE6">New-Project.ps1</text>
+  <text x="90" y="206" font-family="ui-monospace, Menlo, monospace" font-size="10" fill="#D1CFC5">-Company -Project</text>
+
+  <rect x="580" y="166" width="230" height="52" rx="10" fill="#141413" stroke="none"/>
+  <text x="600" y="188" font-family="ui-monospace, Menlo, monospace" font-size="12" fill="#F0EEE6">New-Project.ps1</text>
+  <text x="600" y="206" font-family="ui-monospace, Menlo, monospace" font-size="10" fill="#D1CFC5">-Name -Titulo</text>
+
+  <line x1="185" y1="222" x2="185" y2="282" stroke="#87867F" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="695" y1="222" x2="695" y2="282" stroke="#87867F" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <rect x="60" y="288" width="250" height="72" rx="10" fill="#FFFFFF" stroke="#E3DACC" stroke-width="1.5"/>
+  <text x="80" y="318" font-family="ui-serif, Georgia, serif" font-size="14" font-weight="500" fill="#141413">Acme.Financeiro</text>
+  <text x="80" y="340" font-family="ui-monospace, Menlo, monospace" font-size="11" fill="#87867F">projeto novo de back-end</text>
+
+  <rect x="570" y="288" width="250" height="72" rx="10" fill="#FFFFFF" stroke="#E3DACC" stroke-width="1.5"/>
+  <text x="590" y="318" font-family="ui-serif, Georgia, serif" font-size="14" font-weight="500" fill="#141413">acme-financeiro-web</text>
+  <text x="590" y="340" font-family="ui-monospace, Menlo, monospace" font-size="11" fill="#87867F">projeto novo de front-end</text>
+
+  <line x1="315" y1="324" x2="562" y2="324" stroke="#D97757" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#arrow-accent)"/>
+  <text x="438" y="314" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="11" fill="#D97757">npm run api:sync</text>
+</svg>
+
+<h3>3.1 O que passa intacto</h3>
+
+<p>
+Esta é a maior parte do repositório, e é o que dá valor ao boilerplate. Nenhum destes
+blocos cita importação.
+</p>
+
+<table>
+<thead><tr><th>Bloco</th><th>Conteúdo</th></tr></thead>
+<tbody>
+<tr><td><code>shared/ui</code></td><td>15 componentes com teste: tabela, diálogo, seleção, paginação, abas, campo, botão, entrada, etiqueta, menu, dica, cartão, estado vazio, ícone, marca</td></tr>
+<tr><td><code>shared/api</code></td><td><code>cliente.ts</code> e <code>erro.ts</code>. O cliente já fixa o prefixo <code>/api/v1</code>, lê <code>X-Total-Count</code> e serializa array na forma que o binder do ASP.NET aceita</td></tr>
+<tr><td><code>shared/config</code></td><td>Ambiente que lança erro no carregamento quando falta <code>VITE_URL_API</code></td></tr>
+<tr><td><code>shared/lib</code></td><td><code>cn</code>, <code>data</code> e <code>dinheiro</code></td></tr>
+<tr><td>Estilos</td><td><code>base.css</code>, <code>espaco.css</code>, <code>tipografia.css</code></td></tr>
+<tr><td>Providers</td><td><code>TemaProvider</code> e <code>queryClient</code></td></tr>
+<tr><td>Ferramenta</td><td><code>api-sync.mjs</code>, <code>verifica-tokens.mjs</code>, <code>eslint.config.js</code>, os três <code>tsconfig</code>, Vitest, MSW, Playwright, o fluxo de CI</td></tr>
+<tr><td>Ponta a ponta</td><td><code>camadas.spec.ts</code> e <code>producao.spec.ts</code></td></tr>
+
+</tbody>
+</table>
+
+<div class="st-callout st-callout--olive">
+  <p class="st-callout-label">Verificado</p>
+  <p>
+    O <code>verifica-tokens.mjs</code> e o <code>eslint.config.js</code> não citam nome de domínio.
+    O primeiro proíbe cor literal fora de <code>tokens.css</code>, raio fora da escala e
+    <code>z-index</code> numérico. O segundo impõe a ordem das camadas e o ponto de entrada de
+    cada fatia. Os dois passam sem alteração.
+  </p>
+</div>
+
+<h3>3.2 O que sai</h3>
+
+<p>
+Vinte e dois arquivos, cerca de 1.412 linhas: <code>entities/projeto</code>,
+<code>entities/empresa</code>, <code>features/filtrar-projetos</code>, <code>pages/projetos</code>,
+<code>app/shell/empresas.ts</code> e <code>EscopoEmpresaProvider.tsx</code>.
+</p>
+
+<p>
+Saem junto o seletor de empresa na barra superior, os ícones <code>solar</code> e
+<code>textil</code>, e a pasta <code>docs/</code> inteira. Sai também o
+<code>contracts/openapi-v1.json</code> atual, com 12.454 linhas geradas da API real. Sai
+junto o <code>src/shared/api/schema.d.ts</code> que nasceu dele: sem o contrato de origem,
+o arquivo gerado fica órfão. A Task 6 escreve os dois de novo, na ordem certa.
+</p>
+
+<h3>3.3 A fatia de exemplo</h3>
+
+<p>
+O <code>fotus-default-api</code> já traz o próprio exemplo: <code>PersonSampleController</code>,
+em <code>/api/v1/person-samples</code>. Ele aceita <code>page</code>, <code>per_page</code>,
+<code>sort</code> e <code>filter</code> do <code>FilterDto</code>, e devolve o total no
+cabeçalho <code>X-Total-Count</code>.
+</p>
+
+<p>
+O front atual já manda exatamente esses quatro parâmetros. A fatia <code>pessoa</code>
+nasce dessa correspondência, e não de dado fabricado.
+</p>
+
+<table>
+<thead><tr><th>Camada</th><th>Arquivo</th><th>Papel</th></tr></thead>
+<tbody>
+<tr><td>entities</td><td><code>pessoa/modelo.ts</code></td><td>O tipo do domínio. Sete campos, e o id é <code>Guid</code>, não inteiro</td></tr>
+<tr><td>entities</td><td><code>pessoa/mapeador.ts</code></td><td>Converte o DTO gerado para o domínio. É o único arquivo da fatia que importa <code>schema.d.ts</code></td></tr>
+<tr><td>entities</td><td><code>pessoa/api.ts</code></td><td>Recebe o <code>Cliente</code> por parâmetro e devolve domínio</td></tr>
+<tr><td>entities</td><td><code>pessoa/usePessoas.ts</code></td><td>A consulta do TanStack Query</td></tr>
+<tr><td>features</td><td><code>filtrar-pessoas/</code></td><td>Estado do filtro na URL e tradução da ordenação</td></tr>
+<tr><td>pages</td><td><code>pessoas/</code></td><td>Monta tabela, paginação e filtro num fluxo</td></tr>
+</tbody>
+</table>
+
+<div class="st-callout st-callout--crimson">
+  <p class="st-callout-label">Duas armadilhas do controller</p>
+  <p>
+    O <code>GET</code> devolve <strong>204 sem corpo</strong> quando o total é zero, e não
+    <code>200</code> com lista vazia. O <code>cliente.listar</code> já absorve esse caso.
+  </p>
+  <p>
+    O <code>sort</code> pede o nome da propriedade em PascalCase, com prefixo <code>-</code>
+    para descendente. Exemplo: <code>-FirstName</code>. O <code>ordenacaoApi.ts</code> já faz
+    essa tradução; basta alterar o mapa de campos.
+  </p>
+</div>
+
+<h3>3.4 Autenticação e permissão</h3>
+
+<p>
+O back-end boilerplate não expõe login. Ele verifica o bearer contra um
+<code>UserinfoEndpoint</code> externo e guarda o resultado em cache. Os DTOs de
+autorização, porém, já estão declarados. O front assume esse contrato:
+</p>
+
+<table>
+<thead><tr><th>Rota</th><th>Resposta</th><th>Uso no front</th></tr></thead>
+<tbody>
+<tr><td><code>POST /api/v1/auth/login</code></td><td><code>TokenDto</code></td><td>Cinco campos: <code>access_token</code>, <code>token_type</code>, <code>expires_in</code>, <code>refresh_token</code> e <code>id_token</code>. O <code>access_token</code> vai no cabeçalho; o <code>expires_in</code> define a expiração da sessão</td></tr>
+<tr><td><code>GET /api/v1/auth/userinfo</code></td><td><code>UserInfoDto</code></td><td><code>groupMembership</code> alimenta o menu e a guarda de rota</td></tr>
+</tbody>
+</table>
+
+<p>
+A expiração passa a vir de <code>expires_in</code>, e não de decodificar a claim
+<code>exp</code> do JWT. Isso <strong>encurta</strong> o <code>deposito.ts</code>: some a
+decodificação de claims, e some o risco de tratar um token malformado como válido.
+</p>
+
+<div class="st-callout st-callout--azure">
+  <p class="st-callout-label">Regra que o boilerplate carrega</p>
+  <p>
+    Permissão aqui desenha interface. Ela esconde o que não cabe e evita caminho sem saída.
+    Ela não autoriza nada. A autorização real é do servidor, por operação, e cobre também o
+    <code>GET</code>. Quem alcançar a URL direta tem de esbarrar no servidor, nunca no menu.
+  </p>
+</div>
+
+<h3>3.5 O script de geração</h3>
+
+<p>
+O <code>New-Project.ps1</code> repete o ritual do back-end. O código carrega dois marcadores
+literais, como o <code>Fotus.Default</code> de lá:
+</p>
+
+<table>
+<thead><tr><th>Marcador</th><th>Onde aparece</th><th>Vira</th></tr></thead>
+<tbody>
+<tr><td><code>fotus-default-web</code></td><td><code>package.json</code>, <code>package-lock.json</code>, <code>.env.example</code>, README</td><td>O valor de <code>-Name</code></td></tr>
+<tr><td><code>Fotus Default</code></td><td><code>index.html</code>, <code>Marca.tsx</code>, cabeçalho do README</td><td>O valor de <code>-Titulo</code></td></tr>
+</tbody>
+</table>
+
+<pre><code>.\New-Project.ps1 -Name acme-financeiro-web `
+                  -Titulo "Acme Financeiro" `
+                  -OutputPath C:\DEV\acme-financeiro-web</code></pre>
+
+<p>
+O script copia, substitui os dois marcadores, remove <code>.git</code>,
+<code>node_modules</code>, <code>dist</code>, <code>coverage</code>, <code>.env.local</code>
+e a si mesmo. Depois imprime os próximos passos.
+</p>
+
+<div class="st-callout">
+  <p class="st-callout-label">Por que a fatia de exemplo fica no projeto gerado</p>
+  <p>
+    Remover a fatia por script é frágil: ela toca rota, menu e simulação de rede, e uma
+    remoção parcial quebra em silêncio. O README traz a lista dos caminhos a remover quando
+    a primeira tela real nascer. Uma lista que o humano segue é mais honesta que uma opção
+    que falha sozinha.
+  </p>
+</div>
+
+<h2><span class="st-section-num">04</span> Componentes</h2>
+
+<p>A ordem das camadas continua a mesma, e o lint continua a impor.</p>
+
+<pre><code>app → pages → features → entities → shared</code></pre>
+
+<table>
+<thead><tr><th>Componente</th><th>Estado</th><th>Trabalho</th></tr></thead>
+<tbody>
+<tr><td><code>shared/ui</code>, <code>shared/lib</code>, <code>shared/config</code></td><td>Intacto</td><td>Nenhum</td></tr>
+<tr><td><code>shared/api/cliente.ts</code></td><td>Quase intacto</td><td>Trocar o comentário que cita o middleware do Sankhya</td></tr>
+<tr><td><code>app/estilos/tokens.css</code></td><td>Reescrito em parte</td><td>Colapsar os blocos <code>[data-empresa]</code>; manter azul e dourado</td></tr>
+<tr><td><code>app/shell/</code></td><td>Reescrito em parte</td><td>Remover o seletor de empresa; permissão por grupo</td></tr>
+<tr><td><code>pages/design-system/</code></td><td>Reescrito em parte</td><td>A estrutura e os 15 componentes permanecem. Sai o dado de exemplo do domínio: as quatro grades de cor por empresa viram duas por tema, e a prosa de amostra perde o vocabulário de importação</td></tr>
+<tr><td><code>entities/sessao</code></td><td>Reescrito</td><td><code>TokenDto</code> e <code>expires_in</code></td></tr>
+<tr><td><code>features/autenticar</code></td><td>Reescrito</td><td>Nova rota de login e nova resposta</td></tr>
+<tr><td><code>entities/pessoa</code>, <code>features/filtrar-pessoas</code>, <code>pages/pessoas</code></td><td>Novo</td><td>A fatia de exemplo inteira, com teste</td></tr>
+<tr><td><code>contracts/openapi-v1.json</code></td><td>Novo</td><td>Escrito à mão: seis rotas de <code>person-samples</code>, incluindo o <code>GET /All</code>, mais as duas de autenticação</td></tr>
+<tr><td><code>New-Project.ps1</code></td><td>Novo</td><td>O script de geração</td></tr>
+<tr><td><code>README.md</code>, <code>CLAUDE.md</code>, <code>CONTRIBUTING.md</code></td><td>Reescrito</td><td>Sem domínio, com o ritual de geração</td></tr>
+</tbody>
+</table>
+
+<h2><span class="st-section-num">05</span> Riscos</h2>
+
+<table>
+<thead><tr><th>Risco</th><th>Efeito</th><th>Mitigação</th></tr></thead>
+<tbody>
+<tr>
+  <td>O contrato escrito à mão diverge da API real</td>
+  <td>O projeto gerado compila, e a primeira chamada real falha</td>
+  <td>Derivar cada rota do <code>PersonSampleController.cs</code> lido, campo a campo. Um cabeçalho no arquivo manda rodar <code>npm run api:sync</code> contra a API viva</td>
+</tr>
+<tr>
+  <td>As rotas de autenticação não existem no back-end</td>
+  <td>O login do projeto gerado não funciona contra o <code>fotus-default-api</code> puro</td>
+  <td>Declarar a lacuna no README e no <code>CLAUDE.md</code>, com o contrato exato que o back-end precisa implementar</td>
+</tr>
+<tr>
+  <td>Sobra referência ao domínio de importação</td>
+  <td>O boilerplate carrega vocabulário que ninguém entende</td>
+  <td>Varredura final por <code>projeto</code>, <code>importacao</code>, <code>empresa</code>, <code>sankhya</code>, <code>CODEMP</code>, <code>Fotus</code> e <code>Litoral</code> em todo o repositório</td>
+</tr>
+<tr>
+  <td>O <code>package-lock.json</code> guarda o nome antigo</td>
+  <td>O <code>npm ci</code> do projeto gerado reclama do nome</td>
+  <td>O marcador <code>fotus-default-web</code> entra na lista de substituição do script, e o teste do projeto gerado roda <code>npm ci</code></td>
+</tr>
+<tr>
+  <td>O projeto gerado não sobe, mesmo com o boilerplate verde</td>
+  <td>O defeito aparece no primeiro uso real, não aqui</td>
+  <td>A última task roda o script para um destino temporário e repete a bateria inteira lá</td>
+</tr>
+</tbody>
+</table>
+
+<h2><span class="st-section-num">06</span> Decisões</h2>
+
+<table>
+<thead><tr><th>#</th><th>Decisão</th><th>Motivo</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>Fundação mais uma fatia de exemplo, e não fundação nua</td><td>Sem exemplo, o padrão de página some junto com os testes de integração. Quem chega inventa o próprio padrão</td></tr>
+<tr><td>2</td><td>A fatia de exemplo é <code>pessoa</code>, espelho de <code>person-samples</code></td><td>O par fica real. Sobe o back-end, roda <code>api:sync</code>, e a tela funciona contra uma API de verdade</td></tr>
+<tr><td>3</td><td><code>New-Project.ps1</code>, e não pacote <code>npx</code> nem repositório modelo do GitHub</td><td>Mesmo ritual do back-end. Sem registry, sem rede, sem dependência do GitHub</td></tr>
+<tr><td>4</td><td>Tema só claro e escuro</td><td>A dimensão de empresa serve a um grupo com duas marcas. Nenhum projeto novo nasce assim</td></tr>
+<tr><td>5</td><td>A paleta continua azul e dourado</td><td>O boilerplate é da Fotus. Cor neutra obrigaria todo projeto a escolher paleta antes da primeira tela</td></tr>
+<tr><td>6</td><td>Autenticação pelo <code>TokenDto</code> do back-end</td><td>É o DTO que o par já declara. O formato do Sankhya não serve a projeto nenhum fora do CSC</td></tr>
+<tr><td>7</td><td>Permissão por grupo, e não pela matriz de quatro flags</td><td>A matriz vem do Sankhya e nenhum back-end novo a devolve. O <code>groupMembership</code> já existe no <code>UserInfoDto</code></td></tr>
+<tr><td>8</td><td>O contrato nasce escrito à mão</td><td>As rotas de autenticação não existem no back-end, então essa parte seria manual de todo jeito. Oito rotas legíveis valem mais que um despejo de 12 mil linhas</td></tr>
+<tr><td>9</td><td>A fatia de exemplo fica no projeto gerado</td><td>Removê-la por script é frágil. Uma lista no README falha na cara do humano, não em silêncio</td></tr>
+<tr><td>10</td><td>O git nasce local, sem remote</td><td>O clone de origem ainda aponta para <code>grupo-litoral-csc</code>. Publicar é decisão sua, num passo separado</td></tr>
+</tbody>
+</table>
+
+<h2><span class="st-section-num">07</span> Critérios de aceite</h2>
+
+<h3>No boilerplate</h3>
+
+<ul class="st-checklist">
+  <li><code>npm ci</code> termina sem erro</li>
+  <li><code>npm run lint</code> passa, incluindo o verificador de tokens</li>
+  <li><code>npm run typecheck</code> passa nos três <code>tsconfig</code></li>
+  <li><code>npm test</code> passa, e a fatia <code>pessoa</code> tem teste próprio</li>
+  <li><code>npm run api:check</code> confirma que <code>schema.d.ts</code> bate com o contrato</li>
+  <li><code>npm run build</code> gera o artefato</li>
+  <li><code>npm run e2e</code> passa nos três specs</li>
+  <li><code>npm run dev</code> sobe, o login funciona pela simulação e a tela de pessoas lista, pagina e filtra</li>
+  <li>Nenhuma ocorrência de <code>importacao</code>, <code>projeto</code>, <code>CODEMP</code>, <code>sankhya</code> ou <code>Litoral</code> fora de um comentário histórico justificado</li>
+</ul>
+
+<h3>No projeto gerado</h3>
+
+<ul class="st-checklist">
+  <li>O script cria o destino e recusa destino que já existe</li>
+  <li>O destino não tem <code>.git</code>, <code>node_modules</code> nem <code>New-Project.ps1</code></li>
+  <li><code>package.json</code> e <code>index.html</code> carregam o nome e o título passados</li>
+  <li>Nenhuma ocorrência de <code>fotus-default-web</code> nem de <code>Fotus Default</code> sobra no destino</li>
+  <li>A bateria inteira do critério anterior passa dentro do destino</li>
+</ul>
+
+<h2><span class="st-section-num">08</span> Lacunas declaradas</h2>
+
+<p>
+Duas coisas ficam abertas de propósito. O boilerplate as declara em vez de fingir que as resolve.
+</p>
+
+<table>
+<thead><tr><th>Lacuna</th><th>Quem fecha</th></tr></thead>
+<tbody>
+<tr>
+  <td>O <code>fotus-default-api</code> não tem <code>POST /api/v1/auth/login</code> nem <code>GET /api/v1/auth/userinfo</code></td>
+  <td>O back-end, num trabalho separado. O contrato exato fica escrito no <code>CLAUDE.md</code> do boilerplate</td>
+</tr>
+<tr>
+  <td>O <code>PersonSampleController</code> tem <code>[Authorize]</code> comentado</td>
+  <td>O back-end. Enquanto isso o front manda o cabeçalho e a API ignora, o que não quebra nada</td>
+</tr>
+</tbody>
+</table>
+
+</main>
+
+<footer class="st-footer">
+  <span class="st-mono">2026-08-06</span>
+</footer>
+</body>
+</html>

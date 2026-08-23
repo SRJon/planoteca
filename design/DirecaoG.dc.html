@@ -1,0 +1,175 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
+  <style>
+    body { margin: 0; font-family: 'Barlow', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+    a { color: #1D4E70; } a:hover { color: #143850; }
+    * { box-sizing: border-box; }
+    button { font: inherit; cursor: pointer; }
+    :focus-visible { outline: 3px solid #35684A; outline-offset: 2px; }
+    @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+  </style>
+</helmet>
+
+<div style="width: 390px; min-height: 844px; background: #F4F3EF; font-family: 'Barlow', system-ui, sans-serif; color: #171A1C; display: flex; flex-direction: column;">
+
+  <div style="background: #1D4E70; color: #F4F3EF; padding: 14px 18px 13px; display: flex; flex-direction: column; gap: 6px;">
+    <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px;">
+      <span style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase;">Direção G</span>
+      <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.06em; opacity: 0.9;">low-fi · 390×844</span>
+    </div>
+    <div style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 24px; line-height: 1.05; letter-spacing: 0.01em; text-transform: uppercase;">Serviço público</div>
+    <div style="font-size: 13.5px; line-height: 1.45; opacity: 0.94;">Ferramenta pública veste o uniforme com orgulho: a linguagem da boa sinalização civil — placa, rota, seta. Estado bem-feito, não startup.</div>
+  </div>
+
+  <div style="display: flex; border-bottom: 1px solid #D8D6CE;">
+    <sc-for list="{{swatches}}" as="sw" hint-placeholder-count="5">
+      <div style="flex-grow: 1; display: flex; flex-direction: column;">
+        <div style="height: 34px; background: {{sw.hex}};"></div>
+        <div style="padding: 5px 4px 6px; text-align: center; background: #ECEAE3; border-left: 1px solid #D8D6CE;">
+          <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 8.5px; letter-spacing: 0.04em; text-transform: uppercase; color: #46505A;">{{sw.name}}</div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 8px; color: #545E68; margin-top: 1px;">{{sw.hex}}</div>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+
+  <div style="padding: 11px 18px 12px; background: #ECEAE3; border-bottom: 2px solid #171A1C; display: flex; flex-direction: column; gap: 4px;">
+    <div style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 18px; text-transform: uppercase; letter-spacing: 0.02em;">Barlow Condensed <span style="font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 9.5px; letter-spacing: 0.08em; color: #545E68;">display · sinalização</span></div>
+    <div style="font-weight: 500; font-size: 14.5px;">Barlow <span style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.08em; text-transform: uppercase; color: #545E68;">corpo</span></div>
+    <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px;">IBM Plex Mono <span style="font-family: 'Barlow', sans-serif; font-size: 9.5px; letter-spacing: 0.08em; text-transform: uppercase; color: #545E68;">BNCC · dados</span></div>
+  </div>
+
+  <div style="background: #F4F3EF; border-bottom: 2px solid #171A1C; padding: 11px 18px; display: flex; align-items: center; justify-content: space-between; gap: 12px;">
+    <div style="display: flex; align-items: center; gap: 10px;">
+      <svg width="26" height="26" viewBox="0 0 26 26" fill="none" aria-hidden="true"><rect x="1" y="1" width="24" height="24" rx="3" fill="#1D4E70"/><path d="M7 17V9h4.5a3 3 0 0 1 0 6H9" stroke="#F4F3EF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M15 13h5m0 0-2.2-2.2M20 13l-2.2 2.2" stroke="#35684A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 19px; letter-spacing: 0.02em; text-transform: uppercase;">Planoteca</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 13px;">
+      <button style="background: none; border: 0; border-bottom: 3px solid #35684A; min-height: 44px; padding: 0 2px 2px; font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 15px; letter-spacing: 0.04em; text-transform: uppercase; color: #1D4E70;">Biblioteca</button>
+      <button style="width: 44px; height: 44px; margin: -12px -8px -12px 0; background: none; border: 0; display: flex; align-items: center; justify-content: center;" aria-label="Menu">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#171A1C" stroke-width="2.1" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <div style="padding: 16px 18px 0; display: flex; flex-direction: column; gap: 14px;">
+
+    <div style="display: flex; align-items: center; gap: 10px; background: #FFFFFF; border: 2px solid #171A1C; border-radius: 4px; padding: 13px 14px;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#545E68" stroke-width="2.1" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6"/></svg>
+      <span style="font-size: 15px; color: #545E68;">Para onde vai sua aula?</span>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 8px;">
+      <div style="font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; color: #46505A;">Ano</div>
+      <div style="display: flex; gap: 7px; flex-wrap: wrap;">
+        <sc-for list="{{anos}}" as="a" hint-placeholder-count="5">
+          <button onClick="{{a.pick}}" style="{{a.style}}">{{a.label}}</button>
+        </sc-for>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 8px;">
+      <div style="font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; color: #46505A;">Componente</div>
+      <div style="display: flex; gap: 7px; flex-wrap: wrap;">
+        <sc-for list="{{comps}}" as="c" hint-placeholder-count="4">
+          <button onClick="{{c.pick}}" style="{{c.style}}">{{c.label}}</button>
+        </sc-for>
+      </div>
+    </div>
+
+    <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; border-top: 2px solid #171A1C; padding-top: 10px;">
+      <span style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 12.5px;">{{contagemTexto}}</span>
+      <button onClick="{{abrirGaveta}}" style="display: flex; align-items: center; gap: 6px; background: none; border: 0; min-height: 44px; padding: 0; font-weight: 600; font-size: 14px; color: #1D4E70;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1D4E70" stroke-width="2.1" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4"/></svg>
+        Mais filtros
+      </button>
+    </div>
+  </div>
+
+  <div style="padding: 13px 18px 20px; display: flex; flex-direction: column; gap: 13px; flex-grow: 1;">
+    <sc-for list="{{fichas}}" as="f" hint-placeholder-count="2">
+      <div style="background: #FFFFFF; border: 2px solid #171A1C; border-radius: 6px; overflow: hidden; display: flex; flex-direction: column;">
+        <div style="display: flex; align-items: stretch; border-bottom: 2px solid #171A1C;">
+          <div style="width: 64px; background: #1D4E70; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; padding: 9px 4px;">
+            <span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 23px; line-height: 1; color: #FFFFFF;">{{f.rota}}</span>
+            <span style="font-family: 'IBM Plex Mono', monospace; font-size: 8.5px; letter-spacing: 0.06em; color: #B8CBD9; text-transform: uppercase;">{{f.rotaSub}}</span>
+          </div>
+          <div style="flex-grow: 1; padding: 11px 14px; display: flex; flex-direction: column; gap: 4px; justify-content: center;">
+            <div style="font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 12.5px; letter-spacing: 0.08em; text-transform: uppercase; color: #46505A;">{{f.comp}} · {{f.metodo}}</div>
+            <div style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 19.5px; line-height: 1.12;">{{f.titulo}}</div>
+          </div>
+        </div>
+        <div style="padding: 10px 14px 13px; display: flex; align-items: center; justify-content: space-between; gap: 12px;">
+          <div style="display: flex; flex-direction: column; gap: 3px;">
+            <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #1D4E70;">{{f.bncc}}</span>
+            <span style="font-size: 13px; color: #46505A;">{{f.duracao}}</span>
+          </div>
+          <button style="min-height: 46px; background: #35684A; color: #FFFFFF; border: 2px solid #171A1C; border-radius: 4px; padding: 0 16px; font-weight: 700; font-size: 14.5px; display: flex; align-items: center; justify-content: center; gap: 8px;">
+            Baixar plano
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11"/><path d="m7.5 11 4.5 4.5 4.5-4.5"/><path d="M5 19h14"/></svg>
+          </button>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+
+  <div style="background: #171A1C; color: #A7ADB3; padding: 12px 18px; font-size: 12px; line-height: 1.5;">
+    Assinatura: a <strong style="color: #35684A;">placa de rota</strong> — todo plano carrega o número do ano como uma linha de ônibus. Público, gratuito, e com o orgulho de uma sinalização bem-feita.
+  </div>
+</div>
+</x-dc>
+
+<script data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { ano: '9º', comp: 'Matemática' };
+  }
+  chip(label, active) {
+    const base = 'min-height:44px;padding:10px 15px;font-family:\'Barlow\',sans-serif;font-weight:600;font-size:14px;border-radius:4px;border:2px solid #171A1C;';
+    return active
+      ? base + 'background:#1D4E70;color:#FFFFFF;'
+      : base + 'background:#FFFFFF;color:#171A1C;';
+  }
+  renderVals() {
+    const anos = ['6º', '7º', '8º', '9º', '1ª EM'].map((label) => ({
+      label,
+      style: this.chip(label, this.state.ano === label),
+      pick: () => this.setState({ ano: this.state.ano === label ? null : label }),
+    }));
+    const comps = ['Matemática', 'Ciências', 'História', 'Arte'].map((label) => ({
+      label,
+      style: this.chip(label, this.state.comp === label),
+      pick: () => this.setState({ comp: this.state.comp === label ? null : label }),
+    }));
+    const contagem = 214 - (this.state.ano ? 150 : 0) - (this.state.comp ? 52 : 0);
+    const contagemTexto = contagem === 1 ? '1 plano nesta rota' : contagem + ' planos nesta rota';
+    return {
+      swatches: [
+        { name: 'Placa', hex: '#1D4E70' },
+        { name: 'Concreto', hex: '#F4F3EF' },
+        { name: 'Sinal', hex: '#35684A' },
+        { name: 'Via', hex: '#46505A' },
+        { name: 'Asfalto', hex: '#171A1C' },
+      ],
+      anos, comps,
+      contagemTexto,
+      abrirGaveta: () => {},
+      fichas: [
+        { rota: '9º', rotaSub: 'ano', comp: 'Matemática', metodo: 'Rotação por estações', titulo: 'Juros compostos na conta do mercado', bncc: 'EF09MA05', duracao: '2 aulas' },
+        { rota: '9º', rotaSub: 'ano', comp: 'Matemática', metodo: 'Estudo de caso', titulo: 'Quem paga a conta da escola?', bncc: 'EF09MA14', duracao: 'Sequência didática' },
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>

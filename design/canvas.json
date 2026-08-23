@@ -1,0 +1,38 @@
+{
+  "artboards": [
+    {
+      "file": "Main.dc.html",
+      "x": 0,
+      "y": 0,
+      "w": 860,
+      "h": 1590
+    },
+    {
+      "file": "DirecaoB.dc.html",
+      "x": 980,
+      "y": 0,
+      "w": 390,
+      "h": 900
+    }
+  ],
+  "annotations": [
+    {
+      "id": "tokens",
+      "x": 0,
+      "y": -150,
+      "w": 860,
+      "text": "Sistema visual da Planoteca — direção B fechada.\nO arquivo tokens.css na pasta design/ é a fonte da verdade; este quadro é a leitura visual dele."
+    },
+    {
+      "id": "origem",
+      "x": 980,
+      "y": -150,
+      "w": 390,
+      "text": "A tela de origem, com a paleta final aplicada.\nTodo valor do sistema saiu daqui."
+    }
+  ],
+  "launch": {
+    "view": "focused",
+    "file": "Main.dc.html"
+  }
+}
