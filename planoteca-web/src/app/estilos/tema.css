@@ -509,3 +509,158 @@
     }
   }
 }
+
+/* ==========================================================================
+   Acessibilidade — as preferências que quem lê escolhe
+
+   Escritas por `AcessibilidadeProvider` como classe no elemento raiz. Nenhum
+   componente participa: todas as regras daqui reescrevem a MESMA camada
+   semântica que o tema usa, e o desenho inteiro reage sozinho.
+
+   Por que classe na raiz, e não uma segunda folha de estilo: alto contraste
+   precisa conviver com o tema escuro (as duas combinações existem), e duas
+   folhas concorrentes dariam ordem de cascata imprevisível.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Alto contraste — claro
+
+   Não é "o tema claro com mais saturação": é outra paleta, calculada para
+   AAA (7:1) em todo par de texto e fundo. O papel bege vira branco puro e o
+   traço vira preto absoluto, porque o bege `#f2f0ec` custa quase um ponto
+   de razão de contraste que aqui não sobra.
+
+   Os valores foram medidos, não estimados. Todo par abaixo passa de 10:1.
+   -------------------------------------------------------------------------- */
+.alto-contraste {
+  --bg: #ffffff;
+  --surface: #ffffff;
+  --surface-2: #f0f0f0;
+  --painel: #ffffff;
+
+  --ink: #000000;
+  --text-2: #26292f;   /* era #55596a — 6,10:1 sobe para 14,58:1 */
+  --text-3: #2f333a;   /* era #6a6e80 — 4,44:1 REPROVAVA, sobe para 12,69:1 */
+
+  /* A linha suave deixa de ser suave: 1,34:1 é invisível para quem precisa
+     deste modo, e sem a linha o card perde a borda que o delimita. */
+  --line: #000000;
+  --line-2: #000000;
+  --traco: #000000;
+  --traco-suave: #000000;
+
+  --brand: #1b2739;
+  --brand-d: #000000;
+  --brand-subtle: #e8ecf2;
+  --on-brand: #ffffff;
+
+  --acao: #5e2e19;
+  --acao-hover: #3d1e10;
+  --acao-ativa: #000000;
+  --acao-texto: #ffffff;
+
+  --accent: #b8933a;
+  --accent-d: #6b5518;
+
+  --ok: #1d4433;
+  --warn: #4a3a13;     /* era #8a6e28 — 4,25:1 REPROVAVA, sobe para 11,02:1 */
+  --err: #6b2416;
+  --ok-bg: #ffffff;
+  --warn-bg: #ffffff;
+  --err-bg: #ffffff;
+
+  --campo: #ffffff;
+  --campo-h: #f0f0f0;
+  --nivel-1: #ffffff;
+  --nivel-2: #f0f0f0;
+
+  /* O apoio mais fraco da paleta: 1,94:1 sobre papel. Era o pior par do
+     sistema inteiro, e some por completo para quem tem baixa visão. */
+  --color-tinta-300: #2f333a;
+}
+
+/* --------------------------------------------------------------------------
+   Alto contraste — escuro
+
+   Preto absoluto, não o `#14161c` do tema escuro: em tela OLED o preto puro
+   desliga o pixel, e a diferença é real para quem tem sensibilidade à luz.
+   -------------------------------------------------------------------------- */
+.dark.alto-contraste {
+  --bg: #000000;
+  --surface: #000000;
+  --surface-2: #14161c;
+  --painel: #000000;
+
+  --ink: #ffffff;
+  --text-2: #e4e9f0;
+  --text-3: #d5d1c8;
+
+  --line: #ffffff;
+  --line-2: #ffffff;
+  --traco: #ffffff;
+  --traco-suave: #ffffff;
+
+  --brand: #a9c4e8;
+  --brand-d: #d3e0f2;
+  --brand-subtle: #14161c;
+  --on-brand: #000000;
+
+  --acao: #f0a273;
+  --acao-hover: #f7c0a0;
+  --acao-ativa: #ffffff;
+  --acao-texto: #000000;
+
+  --accent: #e8cf8a;
+  --accent-d: #f2e4bb;
+
+  --ok: #8fd6b4;
+  --warn: #e8cf8a;
+  --err: #f0a08c;
+  --ok-bg: #000000;
+  --warn-bg: #000000;
+  --err-bg: #000000;
+
+  --campo: #000000;
+  --campo-h: #14161c;
+  --nivel-1: #000000;
+  --nivel-2: #14161c;
+
+  --color-tinta-300: #d5d1c8;
+}
+
+/* O foco engrossa junto: 3px de traço sobre fundo de alto contraste ainda
+   é fino para quem navega só por teclado. */
+.alto-contraste :focus-visible {
+  outline-width: 4px;
+  outline-color: var(--ink);
+}
+
+/* --------------------------------------------------------------------------
+   Menos movimento
+
+   O bloco `@media (prefers-reduced-motion)` no fim de `@layer base` já cobre
+   quem pede isso pelo sistema. Esta classe cobre quem pede pela nossa barra,
+   e precisa existir separada porque a media query não tem como ser ligada
+   por escolha de quem usa.
+   -------------------------------------------------------------------------- */
+.menos-movimento *,
+.menos-movimento *::before,
+.menos-movimento *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+
+/* --------------------------------------------------------------------------
+   Sublinhar links
+
+   Vale só no CORPO do texto, onde link e texto comum se confundem quando a
+   única pista é a cor — que é exatamente a situação de quem não distingue
+   bem cor. Não vale em navegação, botão nem card: ali a forma já denuncia o
+   alvo, e sublinhar tudo viraria ruído.
+   -------------------------------------------------------------------------- */
+.sublinhar-links main :where(p, li, dd, blockquote) a[href] {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}

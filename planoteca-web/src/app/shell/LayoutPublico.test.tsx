@@ -4,6 +4,7 @@ import userEvent from '@testing-library/user-event'
 import { MemoryRouter, Route, Routes } from 'react-router'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { ComAutenticacao, sessaoDeTeste } from '@/teste/autenticacao'
+import { AcessibilidadeProvider } from '@/shared/acessibilidade'
 import { TemaProvider } from '../providers/TemaProvider'
 import { LayoutPublico } from './LayoutPublico'
 
@@ -17,13 +18,15 @@ function renderizar(
     <QueryClientProvider client={queryClient}>
       <ComAutenticacao sessao={sessao} {...extra}>
         <TemaProvider>
-          <MemoryRouter initialEntries={['/biblioteca']}>
-            <Routes>
-              <Route element={<LayoutPublico />}>
-                <Route path="/biblioteca" element={<p>acervo</p>} />
-              </Route>
-            </Routes>
-          </MemoryRouter>
+          <AcessibilidadeProvider>
+            <MemoryRouter initialEntries={['/biblioteca']}>
+              <Routes>
+                <Route element={<LayoutPublico />}>
+                  <Route path="/biblioteca" element={<p>acervo</p>} />
+                </Route>
+              </Routes>
+            </MemoryRouter>
+          </AcessibilidadeProvider>
         </TemaProvider>
       </ComAutenticacao>
     </QueryClientProvider>,

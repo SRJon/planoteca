@@ -1,5 +1,6 @@
 import { QueryClientProvider } from '@tanstack/react-query'
 import { BrowserRouter } from 'react-router'
+import { AcessibilidadeProvider } from '@/shared/acessibilidade'
 import { AutenticacaoProvider } from './providers/AutenticacaoProvider'
 import { TemaProvider } from './providers/TemaProvider'
 import { queryClient } from './providers/queryClient'
@@ -7,7 +8,7 @@ import { Rotas } from './rotas/Rotas'
 
 /**
  * Ordem dos provedores, de fora para dentro: autenticação, cliente de dados,
- * tema, rotas.
+ * tema, acessibilidade, rotas.
  *
  * Autenticação primeiro: constrói o `Cliente` HTTP único da aplicação, e a
  * guarda de rota (lá dentro, em `Rotas`) depende do estado de sessão para
@@ -25,15 +26,24 @@ import { Rotas } from './rotas/Rotas'
  * SDK na inicialização, e passá-la por prop só empurraria o acoplamento um
  * nível acima sem ganhar testabilidade — os testes montam o provedor real
  * com o Firebase ausente, que é um caminho legítimo da aplicação.
+ *
+ * Acessibilidade DEPOIS de tema, e não antes: o alto contraste reescreve a
+ * mesma camada semântica que o tema define, e `.dark.alto-contraste` precisa
+ * que as duas classes convivam no elemento raiz. A ordem dos provedores não
+ * altera a cascata do CSS, mas mantê-los adjacentes deixa claro que são a
+ * mesma família de preferência — ambas guardadas no navegador, ambas válidas
+ * sem conta.
  */
 export function App() {
   return (
     <AutenticacaoProvider>
       <QueryClientProvider client={queryClient}>
         <TemaProvider>
-          <BrowserRouter>
-            <Rotas />
-          </BrowserRouter>
+          <AcessibilidadeProvider>
+            <BrowserRouter>
+              <Rotas />
+            </BrowserRouter>
+          </AcessibilidadeProvider>
         </TemaProvider>
       </QueryClientProvider>
     </AutenticacaoProvider>

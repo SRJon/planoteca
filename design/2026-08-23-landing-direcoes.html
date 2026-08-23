@@ -1,0 +1,529 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Planoteca — duas direções para a landing</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Work+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --caneta-900:#1B2739; --caneta-700:#2B4059; --caneta-500:#3A5578; --caneta-100:#E4E9F0;
+  --mimeo-900:#5E2E19; --mimeo-700:#7F3F23; --mimeo-500:#A6522E; --mimeo-100:#F4E7E0;
+  --regua-700:#8A6E28; --regua-500:#C9A54A; --regua-100:#F7F0DC;
+  --tinta-900:#14161C; --tinta-700:#3A3F4D; --tinta-500:#55596A; --tinta-300:#A9AEC0;
+  --tinta-200:#D5D1C8; --tinta-100:#E7E4DD; --tinta-050:#F2F0EC; --branco:#fff;
+  --comp-portugues:#7A3B4E; --comp-matematica:#3A5578; --comp-ciencias:#2F6B5E;
+  --comp-historia:#8A5A2B; --comp-geografia:#4A6B33; --comp-arte:#6E4076;
+  --comp-edfisica:#2C5F6B; --comp-ingles:#5B4A7A;
+  --comp-filosofia:#5C4630; --comp-sociologia:#6B5340;
+  --comp-biologia:#3E7A54; --comp-quimica:#2F6B6B;
+  --display:"Space Grotesk","Trebuchet MS",system-ui,sans-serif;
+  --corpo:"Work Sans",-apple-system,"Segoe UI",system-ui,sans-serif;
+  --dados:"IBM Plex Mono",ui-monospace,"Courier New",monospace;
+  --traco:var(--tinta-900);
+}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--tinta-200);color:var(--tinta-900);
+  font-family:var(--corpo);font-size:14px;line-height:1.45;-webkit-font-smoothing:antialiased}
+
+/* ---- casca do documento de apresentação ---- */
+.doc{max-width:1420px;margin:0 auto;padding:40px 24px 80px}
+.doc-cabeca{max-width:70ch;margin-bottom:40px}
+.doc-cabeca h1{font-family:var(--display);font-size:32px;line-height:1.15;
+  letter-spacing:-.02em;margin:0 0 12px}
+.doc-cabeca p{margin:0 0 8px;color:var(--tinta-700);font-size:15px;line-height:1.6}
+.doc-cabeca code{font-family:var(--dados);font-size:12.5px;background:var(--tinta-100);
+  padding:1px 5px;border:1px solid var(--tinta-300)}
+
+.faixa-diag{border:2px solid var(--traco);background:var(--regua-100);
+  padding:16px 20px;margin-bottom:44px;max-width:80ch}
+.faixa-diag h2{font-family:var(--display);font-size:15px;margin:0 0 8px;
+  text-transform:uppercase;letter-spacing:.08em}
+.faixa-diag ul{margin:0;padding-left:20px}
+.faixa-diag li{margin-bottom:5px;color:var(--tinta-700)}
+.faixa-diag li b{color:var(--tinta-900)}
+
+.rotulo-dir{display:flex;align-items:baseline;gap:14px;margin:0 0 4px;flex-wrap:wrap}
+.rotulo-dir .tag{font-family:var(--dados);font-size:11px;font-weight:600;
+  letter-spacing:.1em;text-transform:uppercase;background:var(--tinta-900);
+  color:var(--tinta-050);padding:4px 9px}
+.rotulo-dir h2{font-family:var(--display);font-size:25px;letter-spacing:-.02em;margin:0}
+.rotulo-nota{max-width:76ch;margin:0 0 18px;color:var(--tinta-700);font-size:14.5px;line-height:1.6}
+
+/* moldura que simula a janela do navegador em 1866px */
+.moldura{border:3px solid var(--traco);background:var(--tinta-050);margin-bottom:64px;
+  overflow:hidden}
+.moldura-barra{background:var(--tinta-900);color:var(--tinta-300);
+  font-family:var(--dados);font-size:10.5px;letter-spacing:.08em;padding:6px 12px}
+
+/* ---- peças compartilhadas da aplicação real ---- */
+.app{background:var(--tinta-050)}
+.topo{border-bottom:2px solid var(--traco);background:var(--branco)}
+.topo-in{max-width:1180px;margin:0 auto;height:60px;padding:0 24px;
+  display:flex;align-items:center;gap:24px}
+.marca{display:flex;align-items:center;gap:8px;font-weight:700;font-size:16px;
+  letter-spacing:-.02em}
+.marca-sim{width:22px;height:22px;border:2px solid var(--traco);display:grid;
+  grid-template-columns:1fr 1fr}
+.marca-sim i{display:block}
+.marca-sim i:first-child{background:var(--caneta-500)}
+.marca-sim i:last-child{background:var(--mimeo-500)}
+.topo nav{flex:1;display:flex;gap:4px}
+.topo nav a{padding:6px 12px;font-size:14px;color:var(--tinta-500);text-decoration:none}
+.topo nav a.atual{background:var(--caneta-100);color:var(--tinta-900);font-weight:700}
+.topo-fim{display:flex;align-items:center;gap:12px}
+.bt-conta{border:2px solid var(--traco);background:var(--branco);padding:6px 14px;
+  font-size:13.5px;font-weight:700}
+.rodape{border-top:2px solid var(--traco);background:var(--branco);
+  font-size:13px;color:var(--tinta-500)}
+.rodape-in{max-width:1180px;margin:0 auto;padding:22px 24px}
+.palco{max-width:1180px;margin:0 auto;padding:0 24px}
+
+/* bloco de sigla — o mesmo do FichaPlano */
+.sigla{display:grid;place-items:center;color:#fff;font-family:var(--display);
+  font-weight:700;flex:none}
+.c-pt{background:var(--comp-portugues)} .c-ma{background:var(--comp-matematica)}
+.c-cn{background:var(--comp-ciencias)}  .c-hi{background:var(--comp-historia)}
+.c-ge{background:var(--comp-geografia)} .c-ar{background:var(--comp-arte)}
+.c-ef{background:var(--comp-edfisica)}  .c-in{background:var(--comp-ingles)}
+.c-fl{background:var(--comp-filosofia)} .c-so{background:var(--comp-sociologia)}
+.c-bi{background:var(--comp-biologia)}  .c-qu{background:var(--comp-quimica)}
+.c-fi{background:var(--comp-edfisica)}
+
+/* ============================================================
+   DIREÇÃO 1 — "Mesa de trabalho"
+   ============================================================ */
+.d1-hero{display:grid;grid-template-columns:minmax(0,1fr) 468px;gap:56px;
+  align-items:start;padding:60px 0 56px}
+.d1-hero h1{font-family:var(--display);font-size:60px;line-height:1.02;
+  letter-spacing:-.03em;margin:0 0 22px;max-width:15ch}
+.d1-hero h1 em{font-style:normal;background-image:linear-gradient(var(--regua-500),var(--regua-500));
+  background-repeat:no-repeat;background-size:100% 26%;background-position:0 88%}
+.d1-lead{font-size:18.5px;line-height:1.55;color:var(--tinta-700);
+  max-width:46ch;margin:0 0 30px}
+.d1-acoes{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.bt-acao{display:inline-flex;align-items:center;gap:9px;border:2px solid var(--traco);
+  background:var(--mimeo-500);color:#fff;padding:15px 26px;font-size:16px;
+  font-weight:700;text-decoration:none}
+.bt-acao .seta{font-size:18px}
+.d1-nota{font-family:var(--dados);font-size:12px;color:var(--tinta-500);
+  letter-spacing:.02em}
+.d1-numeros{display:flex;gap:0;margin-top:38px;border:2px solid var(--traco);
+  background:var(--branco)}
+.d1-numeros div{padding:13px 20px;border-right:2px solid var(--traco);flex:1}
+.d1-numeros div:last-child{border-right:0}
+.d1-numeros b{display:block;font-family:var(--display);font-size:23px;line-height:1.1}
+.d1-numeros span{font-family:var(--dados);font-size:10px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--tinta-500)}
+
+.d1-pilha{position:relative;padding-top:6px}
+.d1-pilha-rot{font-family:var(--dados);font-size:10px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--tinta-500);margin-bottom:10px}
+.ficha{border:2px solid var(--traco);background:var(--branco);display:flex;
+  flex-direction:column;margin-bottom:-2px}
+.ficha-topo{display:flex;align-items:stretch}
+.ficha .sigla{width:56px;border-right:2px solid var(--traco);font-size:21px}
+.ficha-corpo{padding:11px 13px;display:flex;flex-direction:column;gap:5px;flex:1;min-width:0}
+.ficha-meta{font-family:var(--dados);font-size:10px;font-weight:600;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--tinta-500);margin:0}
+.ficha h3{font-size:16px;line-height:1.22;margin:0;font-weight:500}
+.ficha-obj{font-size:12px;color:var(--tinta-500);margin:0}
+.ficha-pe{border-top:2px solid var(--traco);padding:10px 13px;display:flex;
+  align-items:center;justify-content:space-between;gap:12px}
+.tag-met{background:var(--regua-500);color:var(--tinta-900);padding:3px 7px;
+  font-size:11.5px;font-weight:700}
+.ficha-dur{font-size:12.5px;color:var(--tinta-500)}
+.d1-baixar{display:flex;align-items:center;justify-content:center;gap:8px;
+  border:2px solid var(--traco);background:var(--mimeo-500);color:#fff;
+  padding:12px;font-size:14.5px;font-weight:700;margin-top:-2px}
+
+.d1-faixa{border-top:3px solid var(--traco);border-bottom:3px solid var(--traco);
+  background:var(--branco)}
+.d1-faixa-in{max-width:1180px;margin:0 auto;padding:34px 24px}
+.cab-secao{display:flex;align-items:baseline;justify-content:space-between;
+  gap:20px;margin-bottom:18px;flex-wrap:wrap}
+.cab-secao h2{font-family:var(--display);font-size:22px;letter-spacing:-.02em;margin:0}
+.cab-secao p{margin:0;color:var(--tinta-500);font-size:13.5px}
+.mosaico{display:grid;grid-template-columns:repeat(4,1fr);gap:0;
+  border:2px solid var(--traco)}
+.mos-item{display:flex;align-items:center;gap:12px;padding:0;
+  border-right:2px solid var(--traco);border-bottom:2px solid var(--traco);
+  background:var(--branco);text-decoration:none;color:inherit;min-height:64px}
+.mosaico .mos-item:nth-child(4n){border-right:0}
+.mosaico .mos-item:nth-last-child(-n+4){border-bottom:0}
+.mos-item .sigla{width:64px;align-self:stretch;font-size:19px}
+.mos-nome{font-size:15px;font-weight:500}
+.mos-qtd{margin-left:auto;padding-right:14px;font-family:var(--dados);
+  font-size:11px;color:var(--tinta-300)}
+
+.d1-series{max-width:1180px;margin:0 auto;padding:34px 24px 10px}
+.regua{display:flex;border:2px solid var(--traco);background:var(--branco)}
+.regua a{flex:1;text-align:center;padding:15px 6px;text-decoration:none;color:inherit;
+  border-right:2px solid var(--traco);font-weight:500;font-size:15px}
+.regua a:last-child{border-right:0}
+.regua a span{display:block;font-family:var(--dados);font-size:9.5px;
+  letter-spacing:.09em;text-transform:uppercase;color:var(--tinta-300);margin-top:3px}
+
+.d1-blog{max-width:1180px;margin:44px auto 0;padding:0 24px 56px}
+.d1-blog-in{border:2px solid var(--traco);background:var(--caneta-900);color:var(--tinta-050);
+  padding:36px 40px;display:grid;grid-template-columns:minmax(0,1fr) auto;
+  gap:40px;align-items:center}
+.d1-blog h2{font-family:var(--display);font-size:26px;letter-spacing:-.02em;margin:0 0 10px}
+.d1-blog p{margin:0;color:var(--tinta-300);max-width:56ch;line-height:1.6}
+.d1-blog-acoes{display:flex;gap:14px;align-items:center;flex:none}
+.bt-claro{border:2px solid var(--tinta-050);background:transparent;color:var(--tinta-050);
+  padding:12px 20px;font-weight:700;text-decoration:none;font-size:14.5px;white-space:nowrap}
+.lk-claro{color:var(--tinta-050);font-weight:700;text-decoration:underline;
+  text-underline-offset:4px;font-size:14.5px;white-space:nowrap}
+
+/* ============================================================
+   DIREÇÃO 2 — "Índice do acervo"
+   ============================================================ */
+.d2-hero{padding:56px 0 0}
+.d2-topo{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,352px);
+  gap:60px;align-items:end;padding-bottom:34px}
+.d2-hero h1{font-family:var(--display);font-size:66px;line-height:.98;
+  letter-spacing:-.035em;margin:0;max-width:13ch}
+.d2-hero h1 .risco{display:block;color:var(--mimeo-500)}
+.d2-dir{border-left:3px solid var(--traco);padding-left:22px}
+.d2-dir p{margin:0 0 20px;font-size:17px;line-height:1.55;color:var(--tinta-700)}
+.d2-dir .bt-acao{width:100%;justify-content:center}
+.d2-selo{font-family:var(--dados);font-size:11px;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--tinta-500);margin-top:12px;text-align:center}
+
+.d2-grade{border-top:3px solid var(--traco);border-bottom:3px solid var(--traco);
+  display:grid;grid-template-columns:repeat(4,1fr)}
+.d2-cel{border-right:2px solid var(--traco);background:var(--branco);
+  padding:0;text-decoration:none;color:inherit;display:flex;flex-direction:column;
+  min-height:132px}
+.d2-cel:nth-child(4n){border-right:0}
+.d2-cel:nth-child(n+5){border-top:2px solid var(--traco)}
+.d2-cel-topo{display:flex;align-items:stretch;border-bottom:2px solid var(--traco)}
+.d2-cel .sigla{width:52px;height:52px;font-size:18px}
+.d2-cel-nome{display:flex;align-items:center;padding:0 14px;font-size:15.5px;
+  font-weight:600;letter-spacing:-.01em}
+.d2-cel-pe{padding:12px 14px;display:flex;flex-direction:column;gap:6px;flex:1}
+.d2-cel-ex{font-size:12.5px;color:var(--tinta-500);line-height:1.4;margin:0}
+.d2-cel-qtd{margin-top:auto;font-family:var(--dados);font-size:10px;
+  letter-spacing:.09em;text-transform:uppercase;color:var(--tinta-300)}
+
+.d2-serie{background:var(--caneta-900);border-bottom:3px solid var(--traco)}
+.d2-serie-in{max-width:1180px;margin:0 auto;padding:26px 24px;display:flex;
+  align-items:center;gap:26px;flex-wrap:wrap}
+.d2-serie h2{font-family:var(--dados);font-size:11px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--tinta-300);margin:0;flex:none}
+.d2-serie-lista{display:flex;gap:10px;flex-wrap:wrap;flex:1}
+.d2-serie-lista a{border:2px solid var(--tinta-050);color:var(--tinta-050);
+  padding:9px 17px;text-decoration:none;font-weight:600;font-size:14.5px}
+
+.d2-pe{max-width:1180px;margin:0 auto;padding:44px 24px 56px;
+  display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:56px}
+.d2-pe-bloco h2{font-family:var(--display);font-size:23px;letter-spacing:-.02em;margin:0 0 10px}
+.d2-pe-bloco p{margin:0 0 18px;color:var(--tinta-700);line-height:1.6;max-width:50ch}
+.d2-pe-acoes{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.bt-linha{border:2px solid var(--traco);background:var(--branco);padding:11px 19px;
+  font-weight:700;text-decoration:none;color:inherit;font-size:14.5px}
+.lk-sub{font-weight:700;text-decoration:underline;text-underline-offset:4px;
+  color:var(--caneta-500);font-size:14.5px}
+.d2-passos{border:2px solid var(--traco);background:var(--branco)}
+.d2-passo{display:flex;gap:15px;padding:15px 18px;border-bottom:2px solid var(--traco)}
+.d2-passo:last-child{border-bottom:0}
+.d2-passo b{font-family:var(--display);font-size:20px;color:var(--tinta-300);
+  flex:none;width:22px;line-height:1.3}
+.d2-passo p{margin:0;font-size:14.5px;line-height:1.5}
+.d2-passo p span{display:block;color:var(--tinta-500);font-size:13px;margin-top:2px}
+</style>
+</head>
+<body>
+<div class="doc">
+
+<div class="doc-cabeca">
+  <h1>Landing da Planoteca — duas direções</h1>
+  <p>As duas mantêm a regra escrita em <code>PaginaInicio.tsx</code>: sem grade de features,
+  sem depoimento, sem newsletter. O ganho vem de layout, escala e ritmo, não de seção nova.
+  Nenhuma imagem: só CSS e os tokens da direção B.</p>
+  <p>As duas estão desenhadas para o palco real de 1180px do <code>LayoutPublico</code>,
+  simulado abaixo em janela de 1866px.</p>
+</div>
+
+<div class="faixa-diag">
+  <h2>O que está errado hoje</h2>
+  <ul>
+    <li><b>O hero ocupa 40% do palco.</b> <code>main</code> tem 1180px, mas o h1 tem
+    <code>max-w-[18ch]</code> e o parágrafo <code>max-w-[52ch]</code>. Sobram cerca de 800px
+    vazios à direita — é isso que lê como "pobre", não a falta de conteúdo.</li>
+    <li><b>A ação principal não usa a cor da ação.</b> "Ver os planos" está em
+    <code>bg-primary</code> (índigo). O sistema reserva o terracota <code>--acao</code>
+    para exatamente esse papel, e ele não aparece na página inteira.</li>
+    <li><b>Tudo tem o mesmo peso.</b> Quatro seções empilhadas com <code>gap-12</code>,
+    todas com o mesmo fundo, duas com o mesmo rótulo cinza em caixa alta. Sem faixa,
+    sem inversão, sem acento — a página não respira.</li>
+    <li><b>Os atalhos parecem sobra.</b> Doze chips de 28px de altura embrulhando em duas
+    linhas irregulares. A cor dos componentes — a assinatura da direção — vira confete
+    de 7px em vez de estrutura.</li>
+    <li><b>O h1 está fora da escala.</b> <code>text-5xl</code> são 48px;
+    <code>--pt-tam-hero</code> é 36px. Cresceu no olho, sem passar pelo sistema.</li>
+  </ul>
+</div>
+
+<div class="rotulo-dir">
+  <span class="tag">Direção 1</span>
+  <h2>Mesa de trabalho</h2>
+</div>
+<p class="rotulo-nota">A fala à esquerda, o acervo em carne viva à direita: três fichas reais,
+  as mesmas da Biblioteca. O professor vê o produto antes de clicar, e o vazio de 800px vira
+  a prova. Abaixo, o componente deixa de ser chip e vira mosaico de blocos travados no traço;
+  a série vira uma régua de sete casas. Fecha com o bloco do blog invertido em índigo, o único
+  respiro escuro da página.</p>
+
+<div class="moldura">
+  <div class="moldura-barra">planoteca.com.br — 1866 × 947</div>
+  <div class="app">
+    <div class="topo"><div class="topo-in">
+      <div class="marca"><span class="marca-sim"><i></i><i></i></span>Planoteca</div>
+      <nav><a class="atual" href="#">Início</a><a href="#">Biblioteca</a><a href="#">Blog</a></nav>
+      <div class="topo-fim"><span class="bt-conta">Minha área</span></div>
+    </div></div>
+
+    <div class="palco">
+      <div class="d1-hero">
+        <div>
+          <h1>Plano de aula pronto, com <em>metodologia ativa</em>.</h1>
+          <p class="d1-lead">Um acervo aberto, catalogado por série, componente e metodologia.
+            Você filtra, abre e baixa o PDF.</p>
+          <div class="d1-acoes">
+            <a class="bt-acao" href="#">Ver os planos <span class="seta">→</span></a>
+            <span class="d1-nota">Sem cadastro. Sem espera.</span>
+          </div>
+          <div class="d1-numeros">
+            <div><b>12</b><span>Componentes</span></div>
+            <div><b>7</b><span>Séries</span></div>
+            <div><b>PDF</b><span>Download direto</span></div>
+          </div>
+        </div>
+
+        <div class="d1-pilha">
+          <p class="d1-pilha-rot">Do acervo, agora</p>
+          <article class="ficha">
+            <div class="ficha-topo">
+              <div class="sigla c-hi">HI</div>
+              <div class="ficha-corpo">
+                <p class="ficha-meta">História · 8º</p>
+                <h3>Revolução Industrial em três estações</h3>
+                <p class="ficha-obj">Trabalho e técnica no século XIX</p>
+              </div>
+            </div>
+            <div class="ficha-pe">
+              <span class="tag-met">Rotação por estações</span>
+              <span class="ficha-dur">2 aulas</span>
+            </div>
+          </article>
+          <article class="ficha">
+            <div class="ficha-topo">
+              <div class="sigla c-cn">CN</div>
+              <div class="ficha-corpo">
+                <p class="ficha-meta">Ciências · 7º</p>
+                <h3>Ecossistemas locais: sair e registrar</h3>
+                <p class="ficha-obj">Cadeias alimentares e interdependência</p>
+              </div>
+            </div>
+            <div class="ficha-pe">
+              <span class="tag-met">Aprendizagem por projetos</span>
+              <span class="ficha-dur">4 aulas</span>
+            </div>
+          </article>
+          <article class="ficha">
+            <div class="ficha-topo">
+              <div class="sigla c-ma">MA</div>
+              <div class="ficha-corpo">
+                <p class="ficha-meta">Matemática · 9º</p>
+                <h3>Função afim com dados da própria turma</h3>
+                <p class="ficha-obj">Representação algébrica e gráfica</p>
+              </div>
+            </div>
+            <div class="ficha-pe">
+              <span class="tag-met">Estudo de casos</span>
+              <span class="ficha-dur">3 aulas</span>
+            </div>
+          </article>
+          <div class="d1-baixar">↓ Baixar plano</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="d1-faixa"><div class="d1-faixa-in">
+      <div class="cab-secao">
+        <h2>Comece pelo componente</h2>
+        <p>Entra na Biblioteca com o filtro já aplicado.</p>
+      </div>
+      <div class="mosaico">
+        <a class="mos-item" href="#"><span class="sigla c-hi">HI</span><span class="mos-nome">História</span><span class="mos-qtd">→</span></a>
+        <a class="mos-item" href="#"><span class="sigla c-ge">GE</span><span class="mos-nome">Geografia</span><span class="mos-qtd">→</span></a>
+        <a class="mos-item" href="#"><span class="sigla c-fl">FL</span><span class="mos-nome">Filosofia</span><span class="mos-qtd">→</span></a>
+        <a class="mos-item" href="#"><span class="sigla c-so">SO</span><span class="mos-nome">Sociologia</span><span class="mos-qtd">→</span></a>
+        <a class="mos-item" href="#"><span class="sigla c-cn">CN</span><span class="mos-nome">Ciências</span><span class="mos-qtd">→</span></a>
+        <a class="mos-item" href="#"><span class="sigla c-bi">BI</span><span class="mos-nome">Biologia</span><span class="mos-qtd">→</span></a>
+        <a class="mos-item" href="#"><span class="sigla c-fi">FI</span><span class="mos-nome">Física</span><span class="mos-qtd">→</span></a>
+        <a class="mos-item" href="#"><span class="sigla c-qu">QU</span><span class="mos-nome">Química</span><span class="mos-qtd">→</span></a>
+        <a class="mos-item" href="#"><span class="sigla c-pt">PT</span><span class="mos-nome">Língua Portuguesa</span><span class="mos-qtd">→</span></a>
+        <a class="mos-item" href="#"><span class="sigla c-ar">AR</span><span class="mos-nome">Arte</span><span class="mos-qtd">→</span></a>
+        <a class="mos-item" href="#"><span class="sigla c-ef">EF</span><span class="mos-nome">Educação Física</span><span class="mos-qtd">→</span></a>
+        <a class="mos-item" href="#"><span class="sigla c-in">IN</span><span class="mos-nome">Língua Inglesa</span><span class="mos-qtd">→</span></a>
+      </div>
+    </div></div>
+
+    <div class="d1-series">
+      <div class="cab-secao">
+        <h2>Ou pela série</h2>
+        <p>Do 6º ano à 3ª série do ensino médio.</p>
+      </div>
+      <div class="regua">
+        <a href="#">6º ano<span>Fundamental</span></a>
+        <a href="#">7º ano<span>Fundamental</span></a>
+        <a href="#">8º ano<span>Fundamental</span></a>
+        <a href="#">9º ano<span>Fundamental</span></a>
+        <a href="#">1ª série<span>Médio</span></a>
+        <a href="#">2ª série<span>Médio</span></a>
+        <a href="#">3ª série<span>Médio</span></a>
+      </div>
+    </div>
+
+    <div class="d1-blog"><div class="d1-blog-in">
+      <div>
+        <h2>Escreve também?</h2>
+        <p>O Blog é dos professores: relato de sala de aula, o que funcionou, o que não.
+          Quem tem conta escreve; um administrador lê e publica.</p>
+      </div>
+      <div class="d1-blog-acoes">
+        <a class="bt-claro" href="#">Ler o Blog</a>
+        <a class="lk-claro" href="#">Entrar para escrever</a>
+      </div>
+    </div></div>
+
+    <div class="rodape"><div class="rodape-in">
+      Planoteca — acervo de planos de aula com metodologias ativas. De professor para professor.
+    </div></div>
+  </div>
+</div>
+
+<div class="rotulo-dir">
+  <span class="tag">Direção 2</span>
+  <h2>Índice do acervo</h2>
+</div>
+<p class="rotulo-nota">Aqui o catálogo <b>é</b> o hero. Título grande em duas linhas à esquerda,
+  a fala e o botão numa coluna estreita à direita — e logo abaixo a grade de doze componentes
+  toma a largura inteira, sangrando de borda a borda, cada célula com um exemplo real do que
+  há dentro. A página vira o próprio índice em vez de falar sobre ele. A faixa escura de séries
+  corta o meio e separa o acervo do rodapé de conteúdo, onde o blog e os três passos dividem
+  o espaço.</p>
+
+<div class="moldura">
+  <div class="moldura-barra">planoteca.com.br — 1866 × 947</div>
+  <div class="app">
+    <div class="topo"><div class="topo-in">
+      <div class="marca"><span class="marca-sim"><i></i><i></i></span>Planoteca</div>
+      <nav><a class="atual" href="#">Início</a><a href="#">Biblioteca</a><a href="#">Blog</a></nav>
+      <div class="topo-fim"><span class="bt-conta">Minha área</span></div>
+    </div></div>
+
+    <div class="palco"><div class="d2-hero"><div class="d2-topo">
+      <h1>Plano de aula pronto.<span class="risco">Metodologia ativa.</span></h1>
+      <div class="d2-dir">
+        <p>Um acervo aberto, catalogado por série, componente e metodologia.
+          Você filtra, abre e baixa o PDF.</p>
+        <a class="bt-acao" href="#">Ver os planos <span class="seta">→</span></a>
+        <p class="d2-selo">Sem cadastro · Sem espera</p>
+      </div>
+    </div></div></div>
+
+    <div class="d2-grade">
+      <a class="d2-cel" href="#">
+        <div class="d2-cel-topo"><span class="sigla c-hi">HI</span><span class="d2-cel-nome">História</span></div>
+        <div class="d2-cel-pe"><p class="d2-cel-ex">Revolução Industrial em três estações</p><span class="d2-cel-qtd">Ver planos →</span></div>
+      </a>
+      <a class="d2-cel" href="#">
+        <div class="d2-cel-topo"><span class="sigla c-ge">GE</span><span class="d2-cel-nome">Geografia</span></div>
+        <div class="d2-cel-pe"><p class="d2-cel-ex">Ler o bairro pelo mapa</p><span class="d2-cel-qtd">Ver planos →</span></div>
+      </a>
+      <a class="d2-cel" href="#">
+        <div class="d2-cel-topo"><span class="sigla c-fl">FL</span><span class="d2-cel-nome">Filosofia</span></div>
+        <div class="d2-cel-pe"><p class="d2-cel-ex">Ética em júri simulado</p><span class="d2-cel-qtd">Ver planos →</span></div>
+      </a>
+      <a class="d2-cel" href="#">
+        <div class="d2-cel-topo"><span class="sigla c-so">SO</span><span class="d2-cel-nome">Sociologia</span></div>
+        <div class="d2-cel-pe"><p class="d2-cel-ex">Trabalho e renda na própria rua</p><span class="d2-cel-qtd">Ver planos →</span></div>
+      </a>
+      <a class="d2-cel" href="#">
+        <div class="d2-cel-topo"><span class="sigla c-cn">CN</span><span class="d2-cel-nome">Ciências</span></div>
+        <div class="d2-cel-pe"><p class="d2-cel-ex">Ecossistemas locais: sair e registrar</p><span class="d2-cel-qtd">Ver planos →</span></div>
+      </a>
+      <a class="d2-cel" href="#">
+        <div class="d2-cel-topo"><span class="sigla c-bi">BI</span><span class="d2-cel-nome">Biologia</span></div>
+        <div class="d2-cel-pe"><p class="d2-cel-ex">Genética com estudo de casos</p><span class="d2-cel-qtd">Ver planos →</span></div>
+      </a>
+      <a class="d2-cel" href="#">
+        <div class="d2-cel-topo"><span class="sigla c-fi">FI</span><span class="d2-cel-nome">Física</span></div>
+        <div class="d2-cel-pe"><p class="d2-cel-ex">Movimento medido no pátio</p><span class="d2-cel-qtd">Ver planos →</span></div>
+      </a>
+      <a class="d2-cel" href="#">
+        <div class="d2-cel-topo"><span class="sigla c-qu">QU</span><span class="d2-cel-nome">Química</span></div>
+        <div class="d2-cel-pe"><p class="d2-cel-ex">Reações na cozinha da escola</p><span class="d2-cel-qtd">Ver planos →</span></div>
+      </a>
+      <a class="d2-cel" href="#">
+        <div class="d2-cel-topo"><span class="sigla c-pt">PT</span><span class="d2-cel-nome">Língua Portuguesa</span></div>
+        <div class="d2-cel-pe"><p class="d2-cel-ex">Crônica a partir do cotidiano</p><span class="d2-cel-qtd">Ver planos →</span></div>
+      </a>
+      <a class="d2-cel" href="#">
+        <div class="d2-cel-topo"><span class="sigla c-ar">AR</span><span class="d2-cel-nome">Arte</span></div>
+        <div class="d2-cel-pe"><p class="d2-cel-ex">Colagem e memória de bairro</p><span class="d2-cel-qtd">Ver planos →</span></div>
+      </a>
+      <a class="d2-cel" href="#">
+        <div class="d2-cel-topo"><span class="sigla c-ef">EF</span><span class="d2-cel-nome">Educação Física</span></div>
+        <div class="d2-cel-pe"><p class="d2-cel-ex">Jogos de invasão adaptados</p><span class="d2-cel-qtd">Ver planos →</span></div>
+      </a>
+      <a class="d2-cel" href="#">
+        <div class="d2-cel-topo"><span class="sigla c-in">IN</span><span class="d2-cel-nome">Língua Inglesa</span></div>
+        <div class="d2-cel-pe"><p class="d2-cel-ex">Storytelling com a turma</p><span class="d2-cel-qtd">Ver planos →</span></div>
+      </a>
+    </div>
+
+    <div class="d2-serie"><div class="d2-serie-in">
+      <h2>Ou pela série</h2>
+      <div class="d2-serie-lista">
+        <a href="#">6º ano</a><a href="#">7º ano</a><a href="#">8º ano</a><a href="#">9º ano</a>
+        <a href="#">1ª série</a><a href="#">2ª série</a><a href="#">3ª série</a>
+      </div>
+    </div></div>
+
+    <div class="d2-pe">
+      <div class="d2-pe-bloco">
+        <h2>Escreve também?</h2>
+        <p>O Blog é dos professores: relato de sala de aula, o que funcionou, o que não.
+          Quem tem conta escreve; um administrador lê e publica.</p>
+        <div class="d2-pe-acoes">
+          <a class="bt-linha" href="#">Ler o Blog</a>
+          <a class="lk-sub" href="#">Entrar para escrever</a>
+        </div>
+      </div>
+      <div class="d2-pe-bloco">
+        <h2>Como funciona</h2>
+        <div class="d2-passos">
+          <div class="d2-passo"><b>1</b><p>Filtre por componente, série ou metodologia
+            <span>Os filtros combinam, e o link guarda a busca.</span></p></div>
+          <div class="d2-passo"><b>2</b><p>Abra a ficha e leia o plano por inteiro
+            <span>Objetos de conhecimento, duração, referências.</span></p></div>
+          <div class="d2-passo"><b>3</b><p>Baixe o PDF
+            <span>Sem conta, sem e-mail, sem espera.</span></p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="rodape"><div class="rodape-in">
+      Planoteca — acervo de planos de aula com metodologias ativas. De professor para professor.
+    </div></div>
+  </div>
+</div>
+
+</div>
+</body>
+</html>
