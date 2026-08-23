@@ -96,7 +96,20 @@ jobs:
 
       - name: Instalar
         working-directory: planoteca-web
-        run: npm ci
+        # `npm ci` e não `npm install` seria o certo — instalação
+        # reproduzível, travada no lock. Mas ele exige que o lock liste TODA
+        # dependência opcional de TODA plataforma, e o lock deste projeto
+        # nasce no Windows: o npm de lá omite as variantes de Linux
+        # (`@emnapi/core` e `@emnapi/runtime`, empacotadas dentro do
+        # `@tailwindcss/oxide-wasm32-wasi`), e o `ci` falha no runner Ubuntu
+        # com "can only install packages when your package.json and
+        # package-lock.json are in sync".
+        #
+        # `--no-save` mantém a garantia que importa: as versões saem do lock,
+        # e o arquivo não é reescrito pelo CI. O que se perde é a recusa em
+        # instalar algo fora dele — troca aceitável enquanto o lock for
+        # gerado numa plataforma e consumido em outra.
+        run: npm install --no-save --no-audit --no-fund
 
       - name: Lint
         working-directory: planoteca-web
