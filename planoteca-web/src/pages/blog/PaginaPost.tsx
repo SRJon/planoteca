@@ -15,11 +15,15 @@ import { mensagemDe } from '@/shared/api'
 /**
  * Um texto do blog.
  *
- * O corpo é texto simples com quebras de linha preservadas
- * (`whitespace-pre-line`), e NÃO HTML: o texto vem de um professor pelo
- * formulário, e renderizar HTML de entrada de usuário abriria injeção de
- * script. Quando o blog precisar de negrito e link, o caminho é markdown
- * sanitizado, não `dangerouslySetInnerHTML`.
+ * O corpo é HTML rico, escrito no editor Tiptap de `PaginaEscrever`. Ele
+ * chega a este componente JÁ sanitizado — a API roda o mesmo
+ * `HtmlSanitizerService` (`Ganss.Xss`, lista de permissão estrita: `p`,
+ * `br`, `strong`, `em`, `h2`, `h3`, `ul`, `ol`, `li`, `a[href]`) tanto ao
+ * GRAVAR quanto ao SERVIR, então mesmo um post antigo, gravado antes desta
+ * mudança, ou um `corpo` inserido direto no banco, passa pelo filtro antes
+ * de chegar aqui. É essa garantia do SERVIDOR — não algo que este
+ * componente verifica — que torna `dangerouslySetInnerHTML` aceitável
+ * nesta única linha do produto.
  */
 export function PaginaPost({ cliente }: { cliente: Cliente }) {
   const { id } = useParams<{ id: string }>()
@@ -97,8 +101,14 @@ export function PaginaPost({ cliente }: { cliente: Cliente }) {
       </header>
 
       {/* `max-w-[68ch]`: linha longa demais cansa a leitura, e este é o único
-          lugar do produto com texto corrido de verdade. */}
-      <div className="max-w-[68ch] leading-[1.7] whitespace-pre-line">{post.corpo}</div>
+          lugar do produto com texto corrido de verdade.
+          `dangerouslySetInnerHTML`: seguro aqui porque `post.corpo` já
+          passou pela sanitização do servidor — ver o comentário do
+          componente, acima. */}
+      <div
+        className="max-w-[68ch] leading-[1.7] [&_h2]:mt-6 [&_h2]:text-2xl [&_h2]:font-bold [&_h3]:mt-5 [&_h3]:text-xl [&_h3]:font-bold [&_p]:mt-4 [&_p:first-child]:mt-0 [&_ul]:mt-4 [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:mt-4 [&_ol]:list-decimal [&_ol]:pl-6 [&_a]:text-primary [&_a]:underline"
+        dangerouslySetInnerHTML={{ __html: post.corpo }}
+      />
     </article>
   )
 }

@@ -84,4 +84,18 @@ test('entra e percorre as quatro telas do painel', async ({ page }) => {
 
   await menu.getByRole('link', { name: 'Escrever', exact: true }).click()
   await expect(page.getByRole('heading', { name: 'Escrever para o Blog', level: 1 })).toBeVisible()
+
+  // O editor de texto rico: escreve, aplica negrito, e o botão reflete o
+  // cursor — a mesma garantia que `PaginaEscrever.test.tsx` cobre em
+  // isolamento, aqui contra o roteador e o layout de verdade.
+  await page.getByLabel('Título', { exact: true }).fill('Um relato de sala, pelo e2e')
+  const editor = page.getByRole('textbox', { name: '' }).last()
+  await editor.click()
+  await page.keyboard.type('texto em negrito')
+  await page.keyboard.press('ControlOrMeta+a')
+
+  const botaoNegrito = page.getByRole('button', { name: 'Negrito' })
+  await botaoNegrito.click()
+  await expect(botaoNegrito).toHaveAttribute('aria-pressed', 'true')
+  await expect(editor.locator('strong')).toHaveText('texto em negrito')
 })

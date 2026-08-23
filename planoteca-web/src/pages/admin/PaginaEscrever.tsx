@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useForm } from 'react-hook-form'
+import { Controller, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { CheckCircle } from '@phosphor-icons/react/dist/csr/CheckCircle'
@@ -10,6 +10,7 @@ import {
   useEscreverPost,
   usePostsAdmin,
 } from '@/entities/post'
+import { EditorTexto } from '@/features/escrever-post'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -28,10 +29,20 @@ const AUTOR_PROVISORIO = '55555555-5555-5555-5555-555555555555'
 
 const OBRIGATORIO = 'Campo obrigatório.'
 
+/**
+ * Se o HTML do editor está "vazio" para fins de validação.
+ *
+ * Um editor Tiptap sem conteúdo ainda produz `<p></p>`, então `.min(1)` no
+ * `z.string()` nunca dispararia — precisa olhar o TEXTO, não a marcação.
+ */
+function corpoEstaVazio(html: string): boolean {
+  return html.replace(/<[^>]*>/g, '').trim().length === 0
+}
+
 const esquema = z.object({
   titulo: z.string().min(1, OBRIGATORIO).max(300),
   resumo: z.string().max(500),
-  corpo: z.string().min(1, OBRIGATORIO),
+  corpo: z.string().refine((html) => !corpoEstaVazio(html), OBRIGATORIO),
 })
 
 type Campos = z.infer<typeof esquema>
@@ -136,7 +147,19 @@ export function PaginaEscrever({ cliente }: { cliente: Cliente }) {
 
         <div className="flex flex-col gap-1.5">
           <Label htmlFor="corpo">Texto</Label>
-          <Textarea id="corpo" rows={14} {...form.register('corpo')} aria-invalid={!!erros.corpo} />
+          <Controller
+            name="corpo"
+            control={form.control}
+            render={({ field }) => (
+              <EditorTexto
+                id="corpo"
+                valor={field.value}
+                aoMudar={field.onChange}
+                aoTocar={field.onBlur}
+                invalido={!!erros.corpo}
+              />
+            )}
+          />
           {erros.corpo && (
             <p role="alert" className="text-sm text-err">
               {erros.corpo.message}

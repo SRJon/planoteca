@@ -1,0 +1,1 @@
+export { EditorTexto } from './EditorTexto'

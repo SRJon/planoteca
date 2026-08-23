@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using SaraivaTech.Planoteca.Application.Dto;
 using SaraivaTech.Planoteca.Application.Services;
@@ -16,11 +17,13 @@ namespace SaraivaTech.Planoteca.Application.Core.Services
     {
         private readonly IPostRepository _repositorio;
         private readonly IUnitOfWork _uow;
+        private readonly IHtmlSanitizerService _sanitizador;
 
-        public PostAppService(IPostRepository repositorio, IUnitOfWork uow)
+        public PostAppService(IPostRepository repositorio, IUnitOfWork uow, IHtmlSanitizerService sanitizador)
         {
             _repositorio = repositorio;
             _uow = uow;
+            _sanitizador = sanitizador;
         }
 
         private static PostResumoDto ParaResumo(Post p) => new()
@@ -60,7 +63,11 @@ namespace SaraivaTech.Planoteca.Application.Core.Services
                 PublicadoEm = resumo.PublicadoEm,
                 CriadoEm = resumo.CriadoEm,
                 ComentarioModeracao = resumo.ComentarioModeracao,
-                Corpo = post.Corpo,
+                // Sanitiza também na LEITURA: um texto gravado antes desta
+                // sanitização existir — ou inserido direto no banco — não
+                // pode chegar ao navegador só porque já está na tabela. Ver
+                // `IHtmlSanitizerService`.
+                Corpo = _sanitizador.Sanitizar(post.Corpo),
             };
         }
 
@@ -72,12 +79,20 @@ namespace SaraivaTech.Planoteca.Application.Core.Services
             if (string.IsNullOrWhiteSpace(entrada.Corpo))
                 return Result<Guid>.Failure("O texto está vazio.");
 
+            // Sanitiza ao GRAVAR: quem escreve pode chamar a API direto,
+            // sem passar pelo editor — confiar no que o cliente mandou não é
+            // sanitizar. `Corpo` só entra no banco depois de passar pela
+            // lista de permissão (ver `IHtmlSanitizerService`).
+            var corpoSanitizado = _sanitizador.Sanitizar(entrada.Corpo);
+            if (string.IsNullOrWhiteSpace(TextoSemTags(corpoSanitizado)))
+                return Result<Guid>.Failure("O texto está vazio.");
+
             var post = new Post
             {
                 AutorId = autorId,
                 Titulo = entrada.Titulo.Trim(),
                 Resumo = entrada.Resumo?.Trim(),
-                Corpo = entrada.Corpo.Trim(),
+                Corpo = corpoSanitizado,
                 // Nasce PENDENTE, sempre. Não há caminho de escrita que crie
                 // um texto já publicado — nem para professor veterano, nem
                 // para o administrador que escreve. Quem publica é a
@@ -99,6 +114,13 @@ namespace SaraivaTech.Planoteca.Application.Core.Services
                 throw;
             }
         }
+
+        /// <summary>O texto puro de um HTML já sanitizado — usado só para
+        /// checar se sobrou conteúdo depois da sanitização (ex.: um corpo
+        /// que era só `&lt;script&gt;` sanitiza para vazio, e isso também
+        /// conta como "texto vazio").</summary>
+        private static string TextoSemTags(string html) =>
+            Regex.Replace(html, "<[^>]*>", string.Empty);
 
         public async Task<Result> ModerarAsync(Guid id, ModeracaoDto decisao, Guid moderadorId)
         {

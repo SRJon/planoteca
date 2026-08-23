@@ -118,6 +118,10 @@ namespace SaraivaTech.Planoteca.Infra.CrossCutting.IoC
             services.AddScoped<IPostAppService, PostAppService>();
             services.AddScoped<ISessaoAppService, SessaoAppService>();
             services.AddScoped<IPessoaAdminAppService, PessoaAdminAppService>();
+            // Singleton: a configuração da allowlist (`HtmlSanitizerService`)
+            // não guarda estado por requisição — reconstruí-la a cada
+            // requisição só custaria CPU sem ganhar nada.
+            services.AddSingleton<IHtmlSanitizerService, HtmlSanitizerService>();
         }
 
 

@@ -121,6 +121,44 @@ describe('PaginaPost — o contador de visualizações', () => {
     expect(screen.getByText(/Relato completo da prática/)).toBeInTheDocument()
   })
 
+  it('renderiza o HTML do corpo — negrito, título e lista aparecem formatados', async () => {
+    servidor.use(
+      http.get('*/api/v1/posts/:id', ({ params }) =>
+        HttpResponse.json({
+          id: params['id'],
+          titulo: 'Escape Room na aula de Química',
+          resumo: null,
+          corpo: '<p>Um <strong>relato</strong> com lista:</p><ul><li>Item um</li></ul>',
+          autorNome: 'Professora Ana',
+          situacao: 'publicado',
+          publicadoEm: '2026-08-10T12:00:00Z',
+          criadoEm: '2026-08-08T12:00:00Z',
+          comentarioModeracao: null,
+          visualizacoes: 42,
+        }),
+      ),
+    )
+
+    renderizar(PUBLICADO)
+
+    await screen.findByRole('heading', { name: 'Escape Room na aula de Química', level: 1 })
+    expect(screen.getByText('relato', { selector: 'strong' })).toBeInTheDocument()
+    expect(screen.getByText('Item um', { selector: 'li' })).toBeInTheDocument()
+  })
+
+  it('post antigo (texto puro, sem tag) continua legível', async () => {
+    // A fixture do post publicado (`src/teste/planos.ts`) é texto puro com
+    // `\n\n` — o formato de antes do editor rico existir. O front não
+    // reformata: quem separa em parágrafo é o `HtmlSanitizerService` da API
+    // (`PrepararConteudoLegado`), e este teste cobre só a metade do front —
+    // que o texto aparece, inteiro, sem quebrar a tela.
+    renderizar(PUBLICADO)
+
+    await screen.findByRole('heading', { name: 'Escape Room na aula de Química', level: 1 })
+    expect(screen.getByText(/Relato completo da prática/)).toBeInTheDocument()
+    expect(screen.getByText(/Segundo parágrafo do relato/)).toBeInTheDocument()
+  })
+
   it('não quebra quando o localStorage lança (modo anônimo)', async () => {
     const original = window.localStorage.getItem.bind(window.localStorage)
     vi.spyOn(window.localStorage, 'getItem').mockImplementation((chave) => {

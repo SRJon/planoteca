@@ -4,6 +4,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Serilog" />
+    <PackageReference Include="HtmlSanitizer" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SaraivaTech.Planoteca.Application\SaraivaTech.Planoteca.Application.csproj" />

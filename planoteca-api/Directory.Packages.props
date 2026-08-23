@@ -14,6 +14,9 @@
     <PackageVersion Include="Dapper.Contrib" Version="2.0.78" />
     <PackageVersion Include="FluentAssertions" Version="8.8.0" />
     <PackageVersion Include="FluentValidation" Version="12.1.1" />
+    <!-- Sanitiza o HTML do editor do blog, na gravação E na leitura — ver
+         `HtmlSanitizerService` em Application.Core. -->
+    <PackageVersion Include="HtmlSanitizer" Version="9.2.995" />
     <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.0" />
     <PackageVersion Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.3.9" />
     <PackageVersion Include="Asp.Versioning.Mvc" Version="8.1.0" />
