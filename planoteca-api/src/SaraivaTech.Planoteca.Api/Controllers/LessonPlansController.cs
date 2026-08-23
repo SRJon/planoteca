@@ -50,9 +50,9 @@ namespace SaraivaTech.Planoteca.Api.Controllers
             var filtro = new FiltroPlano
             {
                 Busca = requisicao.Busca,
-                ComponenteId = requisicao.ComponenteId,
-                SerieId = requisicao.SerieId,
-                MetodologiaId = requisicao.MetodologiaId,
+                ComponentesIds = requisicao.ComponenteId ?? Array.Empty<Guid>(),
+                SeriesIds = requisicao.SerieId ?? Array.Empty<Guid>(),
+                MetodologiasIds = requisicao.MetodologiaId ?? Array.Empty<Guid>(),
                 DuracaoMinima = requisicao.DuracaoMinima,
                 DuracaoMaxima = requisicao.DuracaoMaxima,
                 Pagina = requisicao.Pagina,
@@ -93,9 +93,13 @@ namespace SaraivaTech.Planoteca.Api.Controllers
     public class FiltroPlanoRequest
     {
         [FromQuery(Name = "q")] public string? Busca { get; set; }
-        [FromQuery(Name = "componente")] public Guid? ComponenteId { get; set; }
-        [FromQuery(Name = "serie")] public Guid? SerieId { get; set; }
-        [FromQuery(Name = "metodologia")] public Guid? MetodologiaId { get; set; }
+
+        // `Guid[]`, não `Guid?`: `?serie=a&serie=b` liga ao array pela MESMA
+        // chave repetida — é assim que o model binder do ASP.NET lê uma lista
+        // simples da querystring, sem precisar de convenção `serie[0]=a`.
+        [FromQuery(Name = "componente")] public Guid[]? ComponenteId { get; set; }
+        [FromQuery(Name = "serie")] public Guid[]? SerieId { get; set; }
+        [FromQuery(Name = "metodologia")] public Guid[]? MetodologiaId { get; set; }
         [FromQuery(Name = "duracaoMin")] public int? DuracaoMinima { get; set; }
         [FromQuery(Name = "duracaoMax")] public int? DuracaoMaxima { get; set; }
         [FromQuery(Name = "page")] public int Pagina { get; set; } = 1;

@@ -70,6 +70,60 @@ test('filtra a biblioteca por componente e pagina, sem entrar', async ({ page })
 })
 
 /**
+ * Multisseleção: dois chips do MESMO grupo somam (OU); um chip de outro
+ * grupo restringe (E). Prova também que a chave repetida sobrevive a um
+ * recarregamento — a mesma exigência de "manda o link desse filtro" que o
+ * teste acima cobre para um único valor.
+ */
+test('combina dois chips do mesmo grupo por OU, e grupos diferentes por E', async ({ page }) => {
+  await instalarSimulacao(page)
+
+  await page.goto('/biblioteca')
+  await expect(page.getByText('14 planos')).toBeVisible()
+
+  // Fixture cicla 5 componentes por índice: Matemática (0) pega 1/6/11,
+  // Língua Portuguesa (1) pega 2/7/12 — seis planos ao todo, sem repetição.
+  await page.getByRole('button', { name: 'Matemática' }).click()
+  await page.getByRole('button', { name: 'Língua Portuguesa' }).click()
+
+  await expect(page).toHaveURL(/componente=.*componente=/)
+  await expect(page.getByText('6 planos')).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Matemática' })).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  )
+  await expect(page.getByRole('button', { name: 'Língua Portuguesa' })).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  )
+
+  // A chave repetida sobrevive ao recarregamento — o mesmo mecanismo do
+  // valor único, agora com dois ids na mesma chave.
+  await page.reload()
+  await expect(page.getByText('6 planos')).toBeVisible()
+
+  // Um chip de OUTRO grupo restringe (E): só quem casa (Matemática OU
+  // Português) E 6º ano. Na fixture, Português nunca cai em 6º ano — sobra
+  // só Matemática + 6º ano (índices 0, 5, 10), três planos.
+  await page.getByRole('button', { name: '6º ano do Ensino Fundamental' }).click()
+  await expect(page.getByText('3 planos')).toBeVisible()
+
+  // Remover um dos dois chips do grupo componente não derruba o outro nem a
+  // série: tirar Português (que aqui não casava nada) deixa o resultado
+  // igual — a prova de que os grupos continuam independentes.
+  await page.getByRole('button', { name: 'Língua Portuguesa' }).click()
+  await expect(page.getByRole('button', { name: 'Matemática' })).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  )
+  await expect(page.getByRole('button', { name: '6º ano do Ensino Fundamental' })).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  )
+  await expect(page.getByText('3 planos')).toBeVisible()
+})
+
+/**
  * Do card para a ficha, sem login.
  *
  * É o caminho completo de quem chega ao acervo: filtra, escolhe, lê a ficha

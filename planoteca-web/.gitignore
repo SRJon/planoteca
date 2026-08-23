@@ -23,3 +23,6 @@ blob-report/
 # Artefato de trabalho, não do projeto: o que documenta desenho mora em
 # `design/`, e o que prova comportamento é o e2e.
 captura-*.png
+
+# Cache incremental do TypeScript. Nasce do `tsc -b` e é local por máquina.
+*.tsbuildinfo

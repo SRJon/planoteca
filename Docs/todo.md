@@ -221,3 +221,37 @@ O produto está completo em relação ao briefing:
 ## Revisão
 
 (preencher ao final)
+
+## 2026-08-23 — UX: catalogar em passos, filtros com multisseleção
+
+Origem: uso real depois do primeiro deploy. Duas queixas do João.
+
+### Frente A — formulário de catalogar em 4 passos
+
+18 campos numa página só. Decisão: 4 passos com barra de progresso,
+validação ao avançar, rascunho em `localStorage`.
+
+- [ ] A1. Extrair os passos de `FormularioCatalogar.tsx` sem mudar campo nenhum
+- [ ] A2. Navegação entre passos + validação por passo (Zod já existe)
+- [ ] A3. Rascunho em `localStorage` — fechar a aba não perde o trabalho
+- [ ] A4. Testes: hoje NÃO existe nenhum para este formulário
+
+Passos: 1) Arquivo e identificação · 2) Onde se aplica · 3) A prática ·
+4) Como conduzir
+
+### Frente B — filtros da Biblioteca
+
+3 grupos, 36+ opções, todos de seleção única. Empurram o acervo para baixo
+da dobra. Decisão: barra recolhida + painel lateral, com multisseleção.
+
+- [ ] B1. `FiltroPlano` de `string | null` para `string[]` nos três grupos
+- [ ] B2. URL com valor repetido (`?serie=a&serie=b`) e API recebendo lista
+- [ ] B3. Painel lateral + fichas removíveis dos filtros ativos
+- [ ] B4. Testes de multisseleção; e2e continua sem login
+
+**Incoerência que isto corrige:** o formulário já cataloga em N séries e N
+componentes, mas o filtro só aceita um. Quem cataloga um plano em duas
+séries não consegue achá-lo filtrando pelas duas.
+
+**Ordem:** B primeiro. Ela toca contrato de API e URL — quanto antes o
+formato da querystring estabilizar, menos link quebrado depois.

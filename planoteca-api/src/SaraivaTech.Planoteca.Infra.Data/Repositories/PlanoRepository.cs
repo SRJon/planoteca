@@ -47,17 +47,22 @@ namespace SaraivaTech.Planoteca.Infra.Data.Repositories
             }
 
             // Os três filtros de vocabulário atravessam a tabela de ligação.
-            // No caso do componente, `Any` sem checar `EPrincipal` é o
+            // Dentro de um grupo a semântica é OU: `Contains` casa com
+            // QUALQUER id da lista (série 6º OU 7º). Entre grupos é E — cada
+            // `Where` encadeado estreita mais o resultado (série E
+            // componente). Lista vazia não entra na árvore: `is { Length: >
+            // 0 }` é o guarda que faz "sem filtro" != "filtro que não casa
+            // nada". No caso do componente, `Any` sem checar `EPrincipal` é o
             // comportamento correto: buscar por "Arte" precisa achar a prática
             // interdisciplinar em que Arte é secundária (RF-08).
-            if (filtro.ComponenteId.HasValue)
-                consulta = consulta.Where(p => p.Componentes.Any(c => c.ComponenteId == filtro.ComponenteId));
+            if (filtro.ComponentesIds is { Length: > 0 })
+                consulta = consulta.Where(p => p.Componentes.Any(c => filtro.ComponentesIds.Contains(c.ComponenteId)));
 
-            if (filtro.SerieId.HasValue)
-                consulta = consulta.Where(p => p.Series.Any(s => s.SerieId == filtro.SerieId));
+            if (filtro.SeriesIds is { Length: > 0 })
+                consulta = consulta.Where(p => p.Series.Any(s => filtro.SeriesIds.Contains(s.SerieId)));
 
-            if (filtro.MetodologiaId.HasValue)
-                consulta = consulta.Where(p => p.Metodologias.Any(m => m.MetodologiaId == filtro.MetodologiaId));
+            if (filtro.MetodologiasIds is { Length: > 0 })
+                consulta = consulta.Where(p => p.Metodologias.Any(m => filtro.MetodologiasIds.Contains(m.MetodologiaId)));
 
             // Plano sem duração declarada fica FORA do recorte por duração:
             // `null` não é "zero aulas", é "não sabemos". Incluí-lo faria o

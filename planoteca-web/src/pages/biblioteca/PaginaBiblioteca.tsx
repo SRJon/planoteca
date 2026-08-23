@@ -64,9 +64,9 @@ export function PaginaBiblioteca({ cliente }: { cliente: Cliente }) {
     busca,
     definirBusca,
     pagina,
-    componenteId,
-    serieId,
-    metodologiaId,
+    componentesIds,
+    seriesIds,
+    metodologiasIds,
     alternarComponente,
     alternarSerie,
     alternarMetodologia,
@@ -99,11 +99,11 @@ export function PaginaBiblioteca({ cliente }: { cliente: Cliente }) {
         pesquisa={busca}
         aoMudarPesquisa={definirBusca}
         vocabulario={vocabulario}
-        componenteId={componenteId}
+        componentesIds={componentesIds}
         aoAlternarComponente={alternarComponente}
-        serieId={serieId}
+        seriesIds={seriesIds}
         aoAlternarSerie={alternarSerie}
-        metodologiaId={metodologiaId}
+        metodologiasIds={metodologiasIds}
         aoAlternarMetodologia={alternarMetodologia}
         total={total}
         temFiltro={temFiltro}

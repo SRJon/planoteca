@@ -148,9 +148,12 @@ export function paginarPlanos(
   const busca = (parametros.get('q') ?? '').toLowerCase()
   const pagina = Number(parametros.get('page') ?? '1')
   const porPagina = Number(parametros.get('perPage') ?? '12')
-  const componente = parametros.get('componente')
-  const serie = parametros.get('serie')
-  const metodologia = parametros.get('metodologia')
+  // `getAll`, não `get`: a multisseleção manda a MESMA chave repetida
+  // (`?componente=a&componente=b`). Lista vazia é "sem filtro" — nenhum dos
+  // `.some`/`.length` abaixo entra na árvore quando o array está vazio.
+  const componentes = parametros.getAll('componente')
+  const series = parametros.getAll('serie')
+  const metodologias = parametros.getAll('metodologia')
   const duracaoMax = parametros.get('duracaoMax')
 
   let filtrados = todos
@@ -164,17 +167,20 @@ export function paginarPlanos(
     )
   }
   // O componente casa com o principal OU com um secundário: buscar por Arte
-  // precisa achar a prática em que Arte é secundária.
-  if (componente) {
+  // precisa achar a prática em que Arte é secundária. Dentro do grupo, a
+  // semântica é OU: qualquer um dos ids selecionados casa.
+  if (componentes.length > 0) {
     filtrados = filtrados.filter(
       (p) =>
-        p.componentePrincipal?.id === componente ||
-        p.componentesSecundarios.some((c) => c.id === componente),
+        (p.componentePrincipal && componentes.includes(p.componentePrincipal.id)) ||
+        p.componentesSecundarios.some((c) => componentes.includes(c.id)),
     )
   }
-  if (serie) filtrados = filtrados.filter((p) => p.series.some((s) => s.id === serie))
-  if (metodologia) {
-    filtrados = filtrados.filter((p) => p.metodologias.some((m) => m.id === metodologia))
+  if (series.length > 0) {
+    filtrados = filtrados.filter((p) => p.series.some((s) => series.includes(s.id)))
+  }
+  if (metodologias.length > 0) {
+    filtrados = filtrados.filter((p) => p.metodologias.some((m) => metodologias.includes(m.id)))
   }
   // Plano sem duração declarada fica FORA do recorte: `null` não é zero.
   if (duracaoMax) {

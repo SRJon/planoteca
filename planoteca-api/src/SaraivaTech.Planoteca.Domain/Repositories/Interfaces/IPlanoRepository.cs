@@ -15,9 +15,13 @@ namespace SaraivaTech.Planoteca.Domain.Repositories.Interfaces
         /// trazem código BNCC.</summary>
         public string? Busca { get; set; }
 
-        public Guid? ComponenteId { get; set; }
-        public Guid? SerieId { get; set; }
-        public Guid? MetodologiaId { get; set; }
+        /// <summary>OU dentro do grupo: casa com QUALQUER um dos ids da
+        /// lista. Vazio (o padrão) significa "sem filtro", não "nenhum
+        /// resultado" — o repositório só aplica a cláusula quando a lista tem
+        /// item.</summary>
+        public Guid[] ComponentesIds { get; set; } = Array.Empty<Guid>();
+        public Guid[] SeriesIds { get; set; } = Array.Empty<Guid>();
+        public Guid[] MetodologiasIds { get; set; } = Array.Empty<Guid>();
 
         /// <summary>Duração em aulas, como intervalo fechado.</summary>
         public int? DuracaoMinima { get; set; }

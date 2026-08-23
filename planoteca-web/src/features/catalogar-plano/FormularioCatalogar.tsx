@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Plus } from '@phosphor-icons/react/dist/csr/Plus'
 import { Trash } from '@phosphor-icons/react/dist/csr/Trash'
 import { useFieldArray } from 'react-hook-form'
@@ -8,7 +9,9 @@ import { Chip } from '@/components/ui/chip'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import type { EtapaEnvio, useCatalogarPlano } from './useCatalogarPlano'
+import { BarraProgresso } from './BarraProgresso'
+import { CAMPOS_POR_PASSO, PASSOS, type EtapaEnvio, type NumeroPasso, type useCatalogarPlano } from './useCatalogarPlano'
+import { useRascunho } from './useRascunho'
 
 type Catalogacao = ReturnType<typeof useCatalogarPlano>
 
@@ -54,20 +57,56 @@ const ROTULO_ETAPA: Record<EtapaEnvio, string> = {
   catalogando: 'Gravando o plano…',
 }
 
+/** O rótulo do banner de rascunho — separado porque tem seu próprio par de
+ * botões, e não é mais um `Bloco`. */
+function AvisoRascunho({
+  aoRetomar,
+  aoDescartar,
+}: {
+  aoRetomar: () => void
+  aoDescartar: () => void
+}) {
+  return (
+    <div
+      role="alert"
+      className="flex flex-wrap items-center gap-3 border-2 border-traco bg-card px-4 py-3"
+    >
+      <p className="text-sm">
+        Existe um rascunho salvo de uma catalogação anterior. O arquivo PDF precisa ser
+        escolhido de novo — ele não fica guardado.
+      </p>
+      <div className="ml-auto flex gap-2">
+        <Button type="button" variant="outline" className="rounded-none border-2" onClick={aoDescartar}>
+          Descartar
+        </Button>
+        <Button type="button" className="rounded-none" onClick={aoRetomar}>
+          Retomar rascunho
+        </Button>
+      </div>
+    </div>
+  )
+}
+
 /**
- * O formulário de catalogação.
+ * O formulário de catalogação, em 4 passos.
  *
  * ── Desenhado para a DÉCIMA vez, não para a primeira ─────────────────────
  *
  * O briefing é explícito: este formulário será preenchido "dezenas de vezes
- * seguidas na fase de povoamento". Três decisões saem daí:
+ * seguidas na fase de povoamento". Decisões que saem daí:
  *
- * 1. **Um único fluxo vertical**, sem passos nem abas. Quem cataloga está
- *    com o PDF aberto ao lado e desce copiando campo a campo; um assistente
- *    de três etapas obrigaria a navegar para conferir o que já foi digitado.
- * 2. **Chips para o vocabulário**, o mesmo controle do filtro da Biblioteca.
+ * 1. **Quatro passos, com barra de progresso** — ver `BarraProgresso`. Os 18
+ *    campos numa página só cansavam e escondiam o progresso; divididos, quem
+ *    cataloga sabe onde está e o que falta.
+ * 2. **"Continuar" valida só o passo atual** (`trigger` do RHF, com a lista
+ *    de campos de `CAMPOS_POR_PASSO`). Erro trava o avanço e aparece perto
+ *    do campo — ninguém chega ao passo 4 para descobrir que o passo 1 tinha
+ *    um título vazio. **"Voltar" nunca valida**: quem volta está corrigindo.
+ * 3. **Rascunho em `localStorage`** (`useRascunho`), oferecido — nunca
+ *    restaurado em silêncio.
+ * 4. **Chips para o vocabulário**, o mesmo controle do filtro da Biblioteca.
  *    Quem administra também usa o acervo, e o gesto já é conhecido.
- * 3. **O que se repete permanece** ao concluir (ver `useCatalogarPlano`).
+ * 5. **O que se repete permanece** ao concluir (ver `useCatalogarPlano`).
  *
  * Os rótulos são os do documento de origem — "Objetos de conhecimento
  * abordados", "Expectativas de aprendizagem" —, não nomes inventados. Quem
@@ -82,10 +121,25 @@ export function FormularioCatalogar({
 }) {
   const { form, submeter, erroGeral, etapaEnvio, enviando, arquivo, escolherArquivo, erroArquivo } =
     catalogacao
-  const { register, formState, watch, setValue } = form
+  const { register, formState, watch, setValue, trigger } = form
   const erros = formState.errors
 
   const etapas = useFieldArray({ control: form.control, name: 'etapas' })
+  const { rascunhoDisponivel, retomar, descartar } = useRascunho(form)
+
+  const [passoAtual, setPassoAtual] = useState<NumeroPasso>(1)
+
+  /** Envolve `submeter`: ele mesmo decide se o passo 1 precisa reabrir — não
+   * um efeito observando o resultado depois. Dois casos, os dois só visíveis
+   * DEPOIS do envio (que só o passo 4 dispara):
+   *   - falta o arquivo → o erro mora no campo, que está no passo 1;
+   *   - o envio deu certo → o próximo plano da leva começa no passo 1.
+   * `submeter` devolve o desfecho: o valor já vem pronto quando o `await`
+   * resolve, sem depender de uma nova renderização. */
+  async function enviarPasso4(evento: React.FormEvent<HTMLFormElement>) {
+    const desfecho = await submeter(evento)
+    if (desfecho === 'sucesso' || desfecho === 'falta-arquivo') setPassoAtual(1)
+  }
 
   const principalId = watch('componentePrincipalId')
   const secundariosIds = watch('componentesSecundariosIds')
@@ -99,8 +153,26 @@ export function FormularioCatalogar({
     return lista.includes(id) ? lista.filter((x) => x !== id) : [...lista, id]
   }
 
+  /** "Continuar": valida só os campos do passo atual. Erro trava o avanço —
+   * o `trigger` do RHF já escreve em `formState.errors`, e cada campo lê o
+   * próprio erro dali. */
+  async function avancar() {
+    const valido = await trigger(CAMPOS_POR_PASSO[passoAtual])
+    if (valido) setPassoAtual((atual) => Math.min(atual + 1, PASSOS.length) as NumeroPasso)
+  }
+
+  /** "Voltar" nunca valida: quem volta está corrigindo, não avançando. */
+  function voltar() {
+    setPassoAtual((atual) => Math.max(atual - 1, 1) as NumeroPasso)
+  }
+
   return (
-    <form onSubmit={submeter} className="flex flex-col gap-8" noValidate>
+    <form onSubmit={enviarPasso4} className="flex flex-col gap-8" noValidate>
+      {rascunhoDisponivel && <AvisoRascunho aoRetomar={retomar} aoDescartar={descartar} />}
+
+      <BarraProgresso passoAtual={passoAtual} />
+
+      {passoAtual === 1 && (
       <Bloco titulo="Arquivo">
         <CampoArquivo
           rotulo="Escolher o PDF do plano"
@@ -109,7 +181,9 @@ export function FormularioCatalogar({
           erro={erroArquivo}
         />
       </Bloco>
+      )}
 
+      {passoAtual === 1 && (
       <Bloco titulo="Identificação">
         <div className="flex flex-col gap-1.5">
           <Label htmlFor="titulo">Título</Label>
@@ -144,7 +218,9 @@ export function FormularioCatalogar({
           <Erro mensagem={erros.objetosConhecimento?.message} />
         </div>
       </Bloco>
+      )}
 
+      {passoAtual === 2 && (
       <Bloco titulo="Componente curricular">
         <div className="flex flex-col gap-2">
           <span className="text-sm">Principal</span>
@@ -199,7 +275,9 @@ export function FormularioCatalogar({
           </div>
         </div>
       </Bloco>
+      )}
 
+      {passoAtual === 2 && (
       <Bloco titulo="Série">
         <div className="grid grid-cols-[repeat(auto-fill,minmax(96px,1fr))] gap-1.5">
           {vocabulario.series.map((serie) => (
@@ -231,7 +309,9 @@ export function FormularioCatalogar({
           </div>
         </div>
       </Bloco>
+      )}
 
+      {passoAtual === 2 && (
       <Bloco titulo="Metodologia">
         <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-3">
           {vocabulario.metodologias
@@ -252,7 +332,9 @@ export function FormularioCatalogar({
           Um plano pode combinar duas — "Storytelling e Escape Room".
         </p>
       </Bloco>
+      )}
 
+      {passoAtual === 3 && (
       <Bloco titulo="A prática">
         <div className="flex flex-col gap-1.5">
           <Label htmlFor="objetivo">Objetivo da prática</Label>
@@ -301,7 +383,9 @@ export function FormularioCatalogar({
           </p>
         </div>
       </Bloco>
+      )}
 
+      {passoAtual === 4 && (
       <Bloco titulo="Como conduzir">
         <ol className="flex list-none flex-col gap-3 p-0">
           {etapas.fields.map((campo, indice) => (
@@ -363,31 +447,57 @@ export function FormularioCatalogar({
           Etapa sem descrição é descartada no envio.
         </p>
       </Bloco>
+      )}
 
-      {erroGeral && (
+      {/* Erro de submissão: só existe depois do passo 4 enviar, e continua
+          visível ali — é o único passo que toca a rede. */}
+      {passoAtual === 4 && erroGeral && (
         <p role="alert" className="border-2 border-traco bg-err-bg px-4 py-3 text-err">
           {erroGeral}
         </p>
       )}
 
       <div className="flex flex-wrap items-center gap-4 border-t-2 border-traco pt-5">
-        <Button
-          type="submit"
-          disabled={enviando}
-          className="min-h-12 rounded-none border-2 border-traco bg-acao px-6 text-[15px] font-bold text-acao-texto hover:bg-acao-hover"
-        >
-          {ROTULO_ETAPA[etapaEnvio]}
-        </Button>
+        {passoAtual > 1 && (
+          <Button
+            type="button"
+            variant="outline"
+            className="min-h-12 rounded-none border-2"
+            onClick={voltar}
+          >
+            Voltar
+          </Button>
+        )}
 
-        {/* Catalogar e publicar são coisas diferentes: dá para subir uma leva
-            inteira em rascunho e publicar depois de conferir. */}
-        <Chip
-          ativo={publicar}
-          onClick={() => setValue('publicar', !publicar)}
-          aria-label="Publicar assim que catalogar"
-        >
-          {publicar ? 'Publicar ao salvar' : 'Salvar como rascunho'}
-        </Chip>
+        {passoAtual < PASSOS.length ? (
+          <Button
+            type="button"
+            className="min-h-12 rounded-none border-2 border-traco bg-acao px-6 text-[15px] font-bold text-acao-texto hover:bg-acao-hover"
+            onClick={avancar}
+          >
+            Continuar
+          </Button>
+        ) : (
+          <>
+            <Button
+              type="submit"
+              disabled={enviando}
+              className="min-h-12 rounded-none border-2 border-traco bg-acao px-6 text-[15px] font-bold text-acao-texto hover:bg-acao-hover"
+            >
+              {ROTULO_ETAPA[etapaEnvio]}
+            </Button>
+
+            {/* Catalogar e publicar são coisas diferentes: dá para subir uma
+                leva inteira em rascunho e publicar depois de conferir. */}
+            <Chip
+              ativo={publicar}
+              onClick={() => setValue('publicar', !publicar)}
+              aria-label="Publicar assim que catalogar"
+            >
+              {publicar ? 'Publicar ao salvar' : 'Salvar como rascunho'}
+            </Chip>
+          </>
+        )}
       </div>
     </form>
   )

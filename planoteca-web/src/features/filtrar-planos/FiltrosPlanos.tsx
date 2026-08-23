@@ -20,11 +20,12 @@ interface FiltrosPlanosProps {
   /** As listas vêm da API (`GET /api/v1/vocabulary`), não de uma constante:
    * cadastrar um componente novo passa a funcionar sem deploy. */
   vocabulario: Vocabulario
-  componenteId: string | null
+  /** Multisseleção: um chip fica ativo quando o id consta na lista. */
+  componentesIds: string[]
   aoAlternarComponente: (id: string) => void
-  serieId: string | null
+  seriesIds: string[]
   aoAlternarSerie: (id: string) => void
-  metodologiaId: string | null
+  metodologiasIds: string[]
   aoAlternarMetodologia: (id: string) => void
   /** Quantos planos a seleção atual devolve. */
   total: number
@@ -58,11 +59,11 @@ export function FiltrosPlanos({
   pesquisa,
   aoMudarPesquisa,
   vocabulario,
-  componenteId,
+  componentesIds,
   aoAlternarComponente,
-  serieId,
+  seriesIds,
   aoAlternarSerie,
-  metodologiaId,
+  metodologiasIds,
   aoAlternarMetodologia,
   total,
   temFiltro,
@@ -102,7 +103,7 @@ export function FiltrosPlanos({
             {vocabulario.series.map((serie) => (
               <Chip
                 key={serie.id}
-                ativo={serieId === serie.id}
+                ativo={seriesIds.includes(serie.id)}
                 onClick={() => aoAlternarSerie(serie.id)}
                 // O chip mostra a sigla, que é curta; o nome completo vai no
                 // rótulo acessível, porque "2ªEM" não se lê sozinho.
@@ -124,7 +125,7 @@ export function FiltrosPlanos({
             {vocabulario.componentes.map((componente) => (
               <Chip
                 key={componente.id}
-                ativo={componenteId === componente.id}
+                ativo={componentesIds.includes(componente.id)}
                 onClick={() => aoAlternarComponente(componente.id)}
               >
                 {componente.nome}
@@ -143,7 +144,7 @@ export function FiltrosPlanos({
             {metodologiasFiltro.map((metodologia) => (
               <Chip
                 key={metodologia.id}
-                ativo={metodologiaId === metodologia.id}
+                ativo={metodologiasIds.includes(metodologia.id)}
                 onClick={() => aoAlternarMetodologia(metodologia.id)}
               >
                 {metodologia.nome}

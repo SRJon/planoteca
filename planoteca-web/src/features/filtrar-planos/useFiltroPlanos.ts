@@ -24,14 +24,21 @@ export const TAMANHO_PAGINA = 12
  * a funcionar sem deploy. Um link antigo com slug simplesmente não casa com
  * nenhum GUID e devolve a lista sem recorte, que é degradação aceitável para
  * uma base ainda não publicada.
+ *
+ * ── Multisseleção ─────────────────────────────────────────────────────────
+ *
+ * Cada grupo (série, componente, metodologia) aceita mais de um id: a chave
+ * repete na URL (`?serie=a&serie=b`), lida de volta com `getAll`. Dentro de
+ * um grupo, a semântica é OU — o mesmo contrato do back-end
+ * (`FiltroPlano.SeriesIds` em `IPlanoRepository.cs`).
  */
 export function useFiltroPlanos() {
   const [parametros, definirParametros] = useSearchParams()
 
   const busca = parametros.get('q') ?? ''
-  const componenteId = parametros.get('componente')
-  const serieId = parametros.get('serie')
-  const metodologiaId = parametros.get('metodologia')
+  const componentesIds = parametros.getAll('componente')
+  const seriesIds = parametros.getAll('serie')
+  const metodologiasIds = parametros.getAll('metodologia')
   const paginaCrua = Number(parametros.get('pagina') ?? '1')
   const pagina = Number.isFinite(paginaCrua) && paginaCrua > 0 ? Math.trunc(paginaCrua) : 1
 
@@ -64,21 +71,45 @@ export function useFiltroPlanos() {
 
   const definirBusca = useCallback((valor: string) => definir({ q: valor || null }), [definir])
 
-  /** Clicar no chip já ativo o DESLIGA. É o gesto que a tela ensina: o chip
-   * é um interruptor, não um item de lista de seleção única. */
+  /**
+   * Alterna a presença de um id na lista de um grupo, preservando os demais
+   * — é o mecanismo comum aos três grupos. Clicar num chip já ativo o
+   * REMOVE da lista sem derrubar os outros ids selecionados; clicar num
+   * chip inativo ACRESCENTA (`append`), não substitui (`set`).
+   */
+  const alternarNaChave = useCallback(
+    (chave: string, id: string) => {
+      definirParametros(
+        (atual) => {
+          const proximo = new URLSearchParams(atual)
+          const selecionados = proximo.getAll(chave)
+          proximo.delete(chave)
+          const restantes = selecionados.includes(id)
+            ? selecionados.filter((v) => v !== id)
+            : [...selecionados, id]
+          for (const valor of restantes) proximo.append(chave, valor)
+          proximo.delete('pagina')
+          return proximo
+        },
+        { replace: true },
+      )
+    },
+    [definirParametros],
+  )
+
   const alternarComponente = useCallback(
-    (id: string) => definir({ componente: componenteId === id ? null : id }),
-    [definir, componenteId],
+    (id: string) => alternarNaChave('componente', id),
+    [alternarNaChave],
   )
 
   const alternarSerie = useCallback(
-    (id: string) => definir({ serie: serieId === id ? null : id }),
-    [definir, serieId],
+    (id: string) => alternarNaChave('serie', id),
+    [alternarNaChave],
   )
 
   const alternarMetodologia = useCallback(
-    (id: string) => definir({ metodologia: metodologiaId === id ? null : id }),
-    [definir, metodologiaId],
+    (id: string) => alternarNaChave('metodologia', id),
+    [alternarNaChave],
   )
 
   const irParaPagina = useCallback(
@@ -91,30 +122,40 @@ export function useFiltroPlanos() {
     [definirParametros],
   )
 
-  const temFiltro = Boolean(busca || componenteId || serieId || metodologiaId)
+  const temFiltro = Boolean(
+    busca || componentesIds.length || seriesIds.length || metodologiasIds.length,
+  )
 
-  /** O que vai para a API. Memoizado porque é chave de cache do TanStack
-   * Query: um objeto novo a cada render refaria a busca sem parar. */
+  // Chave estável dos três grupos: `getAll` devolve um array NOVO a cada
+  // render, então comparar por identidade recriaria `filtro` sempre — e
+  // `filtro` é chave de cache do TanStack Query, então isso refaria a busca
+  // sem parar. `.join()` reduz a uma string, que o `useMemo` compara por
+  // valor.
+  const chaveComponentes = componentesIds.join(',')
+  const chaveSeries = seriesIds.join(',')
+  const chaveMetodologias = metodologiasIds.join(',')
+
+  /** O que vai para a API. Memoizado pelo mesmo motivo acima. */
   const filtro: FiltroPlano = useMemo(
     () => ({
       // `busca` entra só quando tem valor, e não como `undefined`: o
       // `exactOptionalPropertyTypes` do projeto distingue "chave ausente" de
       // "chave com undefined", e a segunda não satisfaz um campo opcional.
       ...(busca ? { busca } : {}),
-      componenteId,
-      serieId,
-      metodologiaId,
+      componentesIds,
+      seriesIds,
+      metodologiasIds,
       pagina,
       tamanhoPagina: TAMANHO_PAGINA,
     }),
-    [busca, componenteId, serieId, metodologiaId, pagina],
+    [busca, chaveComponentes, chaveSeries, chaveMetodologias, pagina], // eslint-disable-line react-hooks/exhaustive-deps -- as chaves acima são o valor estável dos arrays na linha de cima
   )
 
   return {
     busca,
-    componenteId,
-    serieId,
-    metodologiaId,
+    componentesIds,
+    seriesIds,
+    metodologiasIds,
     pagina,
     filtro,
     temFiltro,

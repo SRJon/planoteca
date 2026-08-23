@@ -29,7 +29,10 @@ function pdfFalso(nome = 'termoscopio.pdf') {
   return new File(['%PDF-1.4 conteúdo'], nome, { type: 'application/pdf' })
 }
 
-/** Preenche o mínimo que a validação exige, e devolve o botão de enviar. */
+/** Preenche o mínimo que a validação exige em cada um dos 4 passos,
+ * avançando com "Continuar", e para no passo 4 — pronto para "Catalogar
+ * plano". O formulário virou um assistente de 4 passos: um campo do passo 3
+ * só existe na tela depois que os passos 1 e 2 avançam. */
 async function preencherMinimo(usuario: ReturnType<typeof userEvent.setup>) {
   await usuario.type(screen.getByLabelText('Título'), 'Escape Room: Missão Termoscópio')
   await usuario.type(screen.getByLabelText('Autoria'), 'Anna Ruth de Souza e Souza')
@@ -37,11 +40,8 @@ async function preencherMinimo(usuario: ReturnType<typeof userEvent.setup>) {
     screen.getByLabelText('Objetos de conhecimento abordados'),
     'Escalas Termométricas',
   )
-  await usuario.type(screen.getByLabelText('Objetivo da prática'), 'Promover aprendizagem ativa.')
-  await usuario.type(
-    screen.getByLabelText('Expectativas de aprendizagem'),
-    'Converter entre escalas.',
-  )
+  await usuario.click(screen.getByRole('button', { name: 'Continuar' }))
+  await screen.findByText('Passo 2 de 4 — Onde se aplica')
 
   const componentes = screen.getByRole('group', { name: /Componente curricular/ })
   await usuario.click(within(componentes).getByRole('button', { name: 'Química' }))
@@ -50,6 +50,16 @@ async function preencherMinimo(usuario: ReturnType<typeof userEvent.setup>) {
   await usuario.click(
     within(series).getByRole('button', { name: '8º ano do Ensino Fundamental' }),
   )
+  await usuario.click(screen.getByRole('button', { name: 'Continuar' }))
+  await screen.findByText('Passo 3 de 4 — A prática')
+
+  await usuario.type(screen.getByLabelText('Objetivo da prática'), 'Promover aprendizagem ativa.')
+  await usuario.type(
+    screen.getByLabelText('Expectativas de aprendizagem'),
+    'Converter entre escalas.',
+  )
+  await usuario.click(screen.getByRole('button', { name: 'Continuar' }))
+  await screen.findByText('Passo 4 de 4 — Como conduzir')
 }
 
 describe('PaginaCatalogar', () => {
@@ -80,13 +90,27 @@ describe('PaginaCatalogar', () => {
 
     await screen.findByText('1 plano catalogado nesta sessão')
 
+    // O envio bem-sucedido volta o assistente ao passo 1, pronto para o
+    // próximo plano da leva.
+    expect(screen.getByText('Passo 1 de 4 — Arquivo e identificação')).toBeInTheDocument()
+
     // O que se LIMPA: o que é único de cada plano.
     expect(screen.getByLabelText('Título')).toHaveValue('')
     expect(screen.getByLabelText('Autoria')).toHaveValue('')
 
     // O que PERMANECE: série e componente costumam se repetir entre planos
     // da mesma leva. Reescolher os dois a cada plano é o atrito que faz
-    // alguém desistir na décima vez.
+    // alguém desistir na décima vez — avança de novo para conferir, sem
+    // reescolher nada.
+    await usuario.type(screen.getByLabelText('Título'), 'Segundo plano da leva')
+    await usuario.type(screen.getByLabelText('Autoria'), 'Anna Ruth de Souza e Souza')
+    await usuario.type(
+      screen.getByLabelText('Objetos de conhecimento abordados'),
+      'Outro objeto',
+    )
+    await usuario.click(screen.getByRole('button', { name: 'Continuar' }))
+    await screen.findByText('Passo 2 de 4 — Onde se aplica')
+
     const componentes = screen.getByRole('group', { name: /Componente curricular/ })
     expect(within(componentes).getByRole('button', { name: 'Química' })).toHaveAttribute(
       'aria-pressed',
@@ -139,10 +163,22 @@ describe('PaginaCatalogar', () => {
 
     await screen.findByRole('heading', { name: 'Catalogar plano', level: 1 })
     await usuario.upload(screen.getByLabelText('Escolher o PDF do plano'), pdfFalso())
-    await usuario.click(screen.getByRole('button', { name: 'Catalogar plano' }))
+    await usuario.type(screen.getByLabelText('Título'), 'Escape Room: Missão Termoscópio')
+    await usuario.type(screen.getByLabelText('Autoria'), 'Anna Ruth de Souza e Souza')
+    await usuario.type(
+      screen.getByLabelText('Objetos de conhecimento abordados'),
+      'Escalas Termométricas',
+    )
+    await usuario.click(screen.getByRole('button', { name: 'Continuar' }))
+    await screen.findByText('Passo 2 de 4 — Onde se aplica')
+
+    // "Continuar" do passo 2 é quem valida componente e série agora — o
+    // envio (passo 4) nunca chega a rodar sem os dois.
+    await usuario.click(screen.getByRole('button', { name: 'Continuar' }))
 
     expect(await screen.findByText('Escolha o componente principal.')).toBeInTheDocument()
     expect(screen.getByText('Escolha ao menos uma série.')).toBeInTheDocument()
+    expect(screen.getByText('Passo 2 de 4 — Onde se aplica')).toBeInTheDocument()
   })
 
   it('mostra o erro da API sem perder o que foi digitado', async () => {
@@ -162,9 +198,15 @@ describe('PaginaCatalogar', () => {
     await preencherMinimo(usuario)
     await usuario.click(screen.getByRole('button', { name: 'Catalogar plano' }))
 
+    // O erro de submissão aparece no passo 4, que é quem envia.
     expect(await screen.findByText('Já existe um plano com este arquivo.')).toBeInTheDocument()
+
     // Perder vinte campos digitados por causa de um erro do servidor seria
-    // hostil — e a pessoa está na décima catalogação do dia.
+    // hostil — e a pessoa está na décima catalogação do dia. "Voltar" nunca
+    // valida, então dá para conferir o passo 1 sem perder nada.
+    await usuario.click(screen.getByRole('button', { name: 'Voltar' }))
+    await usuario.click(screen.getByRole('button', { name: 'Voltar' }))
+    await usuario.click(screen.getByRole('button', { name: 'Voltar' }))
     expect(screen.getByLabelText('Título')).toHaveValue('Escape Room: Missão Termoscópio')
   })
 
@@ -198,15 +240,16 @@ describe('PaginaCatalogar', () => {
     renderizar()
 
     await screen.findByRole('heading', { name: 'Catalogar plano', level: 1 })
+    await usuario.upload(screen.getByLabelText('Escolher o PDF do plano'), pdfFalso())
+    await preencherMinimo(usuario)
 
+    // "Como conduzir" só existe na tela no passo 4.
     await usuario.click(screen.getByRole('button', { name: 'Acrescentar etapa' }))
     await usuario.type(screen.getByLabelText('Descrição da etapa 1'), 'Contextualize a missão.')
     // A etapa 2 fica vazia de propósito: quem cataloga acrescenta uma linha
     // a mais e não preenche.
     expect(screen.getByLabelText('Descrição da etapa 2')).toHaveValue('')
 
-    await usuario.upload(screen.getByLabelText('Escolher o PDF do plano'), pdfFalso())
-    await preencherMinimo(usuario)
     await usuario.click(screen.getByRole('button', { name: 'Catalogar plano' }))
 
     // O envio não falha por causa da etapa vazia — ela é descartada.

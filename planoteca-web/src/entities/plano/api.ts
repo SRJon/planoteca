@@ -14,9 +14,12 @@ import type { Plano, PlanoDetalhe } from './modelo'
 export type FiltroPlano = {
   /** Busca livre. Varre título, autoria e objetos de conhecimento. */
   busca?: string
-  componenteId?: string | null
-  serieId?: string | null
-  metodologiaId?: string | null
+  /** Cada grupo é multisseleção: dentro dele a semântica é OU (série 6º OU
+   * 7º). Lista vazia é "sem recorte", não "nenhum resultado" — igual ao
+   * back-end (`FiltroPlano.ComponentesIds` em `IPlanoRepository.cs`). */
+  componentesIds?: string[]
+  seriesIds?: string[]
+  metodologiasIds?: string[]
   duracaoMinima?: number | null
   duracaoMaxima?: number | null
   pagina?: number
@@ -27,12 +30,14 @@ function paraParametros(filtro: FiltroPlano | undefined): Parametros | undefined
   if (!filtro) return undefined
   return {
     q: filtro.busca || undefined,
-    // `null` significa "sem recorte" e vira parâmetro AUSENTE, não
-    // `componente=null` na querystring — o model binder do ASP.NET leria a
-    // string "null" como valor, e nenhum plano casaria.
-    componente: filtro.componenteId ?? undefined,
-    serie: filtro.serieId ?? undefined,
-    metodologia: filtro.metodologiaId ?? undefined,
+    // Array vira a MESMA chave repetida (`?serie=a&serie=b`) —
+    // `montarBusca` em `shared/api/cliente.ts` já trata array com `append`,
+    // e é assim que o model binder do ASP.NET liga a `Guid[]` sem
+    // ambiguidade. Lista vazia ou ausente não emite nada: "sem filtro", não
+    // "filtro que não casa nada".
+    componente: filtro.componentesIds,
+    serie: filtro.seriesIds,
+    metodologia: filtro.metodologiasIds,
     duracaoMin: filtro.duracaoMinima ?? undefined,
     duracaoMax: filtro.duracaoMaxima ?? undefined,
     page: filtro.pagina,

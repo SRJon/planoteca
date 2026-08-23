@@ -65,8 +65,8 @@ namespace SaraivaTech.Planoteca.Test.Integracao
 
             var repo = new Infra.Data.Repositories.PlanoRepository(new UoWFalso(Contexto));
 
-            var (porNono, totalNono) = await repo.BuscarAsync(new FiltroPlano { SerieId = nono.Id });
-            var (porOitavo, totalOitavo) = await repo.BuscarAsync(new FiltroPlano { SerieId = oitavo.Id });
+            var (porNono, totalNono) = await repo.BuscarAsync(new FiltroPlano { SeriesIds = [nono.Id] });
+            var (porOitavo, totalOitavo) = await repo.BuscarAsync(new FiltroPlano { SeriesIds = [oitavo.Id] });
 
             totalNono.Should().Be(1, "RF-08: filtrar por 9º ano acha o plano catalogado em 8º E 9º");
             totalOitavo.Should().Be(1, "e o mesmo plano responde pelo 8º ano");
@@ -89,10 +89,66 @@ namespace SaraivaTech.Planoteca.Test.Integracao
             await Contexto.SaveChangesAsync();
 
             var repo = new Infra.Data.Repositories.PlanoRepository(new UoWFalso(Contexto));
-            var (achados, total) = await repo.BuscarAsync(new FiltroPlano { ComponenteId = arte.Id });
+            var (achados, total) = await repo.BuscarAsync(new FiltroPlano { ComponentesIds = [arte.Id] });
 
             total.Should().Be(1, "RF-08: buscar por Arte acha a prática em que Arte é SECUNDÁRIA");
             achados.Single().Id.Should().Be(plano.Id);
+
+            await LimparAsync();
+        }
+
+        [SkippableFact]
+        public async Task Duas_series_no_filtro_casam_por_OU()
+        {
+            await LimparAsync();
+            var (_, _, oitavo, nono, _, _) = await VocabularioAsync();
+
+            var planoOitavo = NovoPlano("só 8º ano");
+            planoOitavo.Series.Add(new PlanoSerie { SerieId = oitavo.Id });
+            var planoNono = NovoPlano("só 9º ano");
+            planoNono.Series.Add(new PlanoSerie { SerieId = nono.Id });
+            Contexto.AddRange(planoOitavo, planoNono);
+            await Contexto.SaveChangesAsync();
+
+            var repo = new Infra.Data.Repositories.PlanoRepository(new UoWFalso(Contexto));
+            var (achados, total) = await repo.BuscarAsync(new FiltroPlano { SeriesIds = [oitavo.Id, nono.Id] });
+
+            total.Should().Be(2, "dentro do grupo série a semântica é OU: 8º ou 9º traz os dois planos");
+            achados.Select(p => p.Id).Should().BeEquivalentTo([planoOitavo.Id, planoNono.Id]);
+
+            await LimparAsync();
+        }
+
+        [SkippableFact]
+        public async Task Serie_e_componente_juntos_restringem_por_E()
+        {
+            await LimparAsync();
+            var (quimica, arte, oitavo, nono, _, _) = await VocabularioAsync();
+
+            // Casa só série (nono): não deve entrar no recorte "nono E arte".
+            var soSerie = NovoPlano("nono ano de química");
+            soSerie.Series.Add(new PlanoSerie { SerieId = nono.Id });
+            soSerie.Componentes.Add(new PlanoComponente { ComponenteId = quimica.Id, EPrincipal = true });
+
+            // Casa os dois grupos: nono ano E arte.
+            var casaAmbos = NovoPlano("nono ano de arte");
+            casaAmbos.Series.Add(new PlanoSerie { SerieId = nono.Id });
+            casaAmbos.Componentes.Add(new PlanoComponente { ComponenteId = arte.Id, EPrincipal = true });
+
+            // Casa só componente (arte), série errada: também fora.
+            var soComponente = NovoPlano("oitavo ano de arte");
+            soComponente.Series.Add(new PlanoSerie { SerieId = oitavo.Id });
+            soComponente.Componentes.Add(new PlanoComponente { ComponenteId = arte.Id, EPrincipal = true });
+
+            Contexto.AddRange(soSerie, casaAmbos, soComponente);
+            await Contexto.SaveChangesAsync();
+
+            var repo = new Infra.Data.Repositories.PlanoRepository(new UoWFalso(Contexto));
+            var (achados, total) = await repo.BuscarAsync(
+                new FiltroPlano { SeriesIds = [nono.Id], ComponentesIds = [arte.Id] });
+
+            total.Should().Be(1, "entre grupos a semântica é E: precisa casar série E componente");
+            achados.Single().Id.Should().Be(casaAmbos.Id);
 
             await LimparAsync();
         }

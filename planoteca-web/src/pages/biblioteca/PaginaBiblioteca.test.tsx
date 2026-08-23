@@ -112,6 +112,81 @@ describe('PaginaBiblioteca', () => {
     expect(await screen.findByText('4 planos')).toBeInTheDocument()
   })
 
+  it('filtrar por DUAS séries traz o plano de qualquer uma das duas (OU dentro do grupo)', async () => {
+    const usuario = userEvent.setup()
+    renderizar()
+
+    await screen.findByText('14 planos')
+    await usuario.click(screen.getByRole('button', { name: '6º ano do Ensino Fundamental' }))
+    await usuario.click(screen.getByRole('button', { name: '7º ano do Ensino Fundamental' }))
+
+    // A fixture cicla 5 séries por índice sobre 14 planos: 6º pega os planos
+    // 1, 6, 11 e 7º pega 2, 7, 12 — seis ao todo, sem repetição.
+    expect(await screen.findByText('6 planos')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: '6º ano do Ensino Fundamental' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    )
+    expect(screen.getByRole('button', { name: '7º ano do Ensino Fundamental' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    )
+  })
+
+  it('série + componente juntos restringem o resultado (E entre grupos)', async () => {
+    const usuario = userEvent.setup()
+    renderizar()
+
+    await screen.findByText('14 planos')
+    // Plano003 (índice 2) é o interdisciplinar: 8º e 9º ano, Química
+    // principal + Arte secundária. Só ele casa 9º ano E Arte ao mesmo tempo.
+    await usuario.click(screen.getByRole('button', { name: '9º ano do Ensino Fundamental' }))
+    await usuario.click(screen.getByRole('button', { name: 'Arte' }))
+
+    expect(await screen.findByText('1 plano')).toBeInTheDocument()
+    const ficha = (await screen.findAllByRole('listitem'))[0]!
+    expect(within(ficha).getByRole('heading', { name: /Plano003/ })).toBeInTheDocument()
+  })
+
+  it('clicar num chip já ativo o remove sem derrubar os outros selecionados', async () => {
+    const usuario = userEvent.setup()
+    renderizar()
+
+    await screen.findByText('14 planos')
+    await usuario.click(screen.getByRole('button', { name: '6º ano do Ensino Fundamental' }))
+    await usuario.click(screen.getByRole('button', { name: '7º ano do Ensino Fundamental' }))
+    await screen.findByText('6 planos')
+
+    // Desliga só o 6º: o 7º continua marcado e no resultado.
+    await usuario.click(screen.getByRole('button', { name: '6º ano do Ensino Fundamental' }))
+
+    expect(await screen.findByText('3 planos')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: '6º ano do Ensino Fundamental' })).toHaveAttribute(
+      'aria-pressed',
+      'false',
+    )
+    expect(screen.getByRole('button', { name: '7º ano do Ensino Fundamental' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    )
+  })
+
+  it('a URL com a chave repetida é lida de volta e os dois chips nascem ativos', async () => {
+    const matematica = COMPONENTES_FIXTURE[0]!
+    const portugues = COMPONENTES_FIXTURE[1]!
+    renderizar(`/biblioteca?componente=${matematica.id}&componente=${portugues.id}`)
+
+    await screen.findByText('6 planos')
+    expect(screen.getByRole('button', { name: 'Matemática' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    )
+    expect(screen.getByRole('button', { name: 'Língua Portuguesa' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    )
+  })
+
   it('tocar no chip já ativo desliga o recorte', async () => {
     const usuario = userEvent.setup()
     const matematica = COMPONENTES_FIXTURE[0]!
