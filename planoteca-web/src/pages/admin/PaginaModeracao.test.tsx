@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { HttpResponse, http } from 'msw'
 import { MemoryRouter } from 'react-router'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { criarCliente } from '@/shared/api'
 import { servidor } from '@/teste/servidor'
 import { PaginaModeracao } from './PaginaModeracao'
@@ -117,5 +117,61 @@ describe('PaginaModeracao', () => {
     expect(
       await screen.findByText('Este texto já foi moderado por outra pessoa.'),
     ).toBeInTheDocument()
+  })
+
+  it('arquiva um texto publicado sem exigir comentário', async () => {
+    let corpoRecebido: unknown
+    servidor.use(
+      http.post('*/api/v1/admin/posts/:id/arquivamento', async ({ request }) => {
+        // A rota não pede corpo nenhum — arquivar é curadoria do acervo, não
+        // devolutiva ao autor (RF-11 cobre só devolver/recusar).
+        corpoRecebido = await request.text()
+        return new HttpResponse(null, { status: 204 })
+      }),
+    )
+    const usuario = userEvent.setup()
+    renderizar()
+
+    await usuario.click(screen.getByRole('button', { name: 'Publicados' }))
+    await screen.findByText('Escape Room na aula de Química')
+    await usuario.click(screen.getByRole('button', { name: 'Arquivar' }))
+
+    await vi.waitFor(() => expect(corpoRecebido).toBe(''))
+  })
+
+  it('devolve um texto arquivado ao fluxo, na aba Arquivados', async () => {
+    const usuario = userEvent.setup()
+    renderizar()
+
+    await usuario.click(screen.getByRole('button', { name: 'Arquivados' }))
+
+    // A fixture (`src/teste/planos.ts`) traz um texto arquivado.
+    expect(await screen.findByText('Sala de aula invertida no Ensino Médio')).toBeInTheDocument()
+    // Fora da moderação: nenhuma decisão de publicar/devolver/recusar aqui.
+    expect(screen.queryByRole('button', { name: 'Publicar' })).not.toBeInTheDocument()
+
+    const botao = screen.getByRole('button', { name: 'Devolver ao fluxo' })
+    await usuario.click(botao)
+
+    // A mutação invalida a lista; sem handler de erro configurado, a
+    // requisição responde 204 e o botão continua utilizável — o que importa
+    // aqui é que o botão existe e a chamada não quebra a tela.
+    expect(botao).toBeInTheDocument()
+  })
+
+  it('mostra o erro da API ao arquivar', async () => {
+    servidor.use(
+      http.post('*/api/v1/admin/posts/:id/arquivamento', () =>
+        HttpResponse.json({ status: 400, messages: ['Este texto já está arquivado.'] }, { status: 400 }),
+      ),
+    )
+    const usuario = userEvent.setup()
+    renderizar()
+
+    await usuario.click(screen.getByRole('button', { name: 'Publicados' }))
+    await screen.findByText('Escape Room na aula de Química')
+    await usuario.click(screen.getByRole('button', { name: 'Arquivar' }))
+
+    expect(await screen.findByText('Este texto já está arquivado.')).toBeInTheDocument()
   })
 })

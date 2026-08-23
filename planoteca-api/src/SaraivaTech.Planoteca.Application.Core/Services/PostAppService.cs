@@ -34,6 +34,7 @@ namespace SaraivaTech.Planoteca.Application.Core.Services
             PublicadoEm = p.PublicadoEm,
             CriadoEm = p.CriadoEm,
             ComentarioModeracao = p.ComentarioModeracao,
+            Visualizacoes = p.Visualizacoes,
         };
 
         public async Task<(IEnumerable<PostResumoDto> Itens, int Total)> ListarAsync(FiltroPost filtro)
@@ -153,6 +154,67 @@ namespace SaraivaTech.Planoteca.Application.Core.Services
             }
         }
 
+        public async Task<Result> ArquivarAsync(Guid id, Guid administradorId)
+        {
+            var post = await _repositorio.ObterParaEscritaAsync(id);
+            if (post is null) return Result.Failure("Texto não encontrado.");
+
+            if (post.Situacao == SituacaoPost.Arquivado)
+                return Result.Failure("Este texto já está arquivado.");
+
+            // Nenhum comentário aqui, de propósito: arquivar não é devolutiva
+            // ao autor (RF-11 cobre publicar/devolver/recusar) — é curadoria
+            // do acervo, uma decisão do administrador sobre o que fica no ar,
+            // sem prestação de contas ao autor.
+            post.SituacaoAnterior = post.Situacao;
+            post.Situacao = SituacaoPost.Arquivado;
+            post.ModeradoPorId = administradorId;
+            post.ModeradoEm = DateTime.UtcNow;
+
+            try
+            {
+                _uow.BeginTransaction();
+                _uow.Commit();
+                return Result.Success();
+            }
+            catch
+            {
+                _uow.Rollback();
+                throw;
+            }
+        }
+
+        public async Task<Result> DesarquivarAsync(Guid id, Guid administradorId)
+        {
+            var post = await _repositorio.ObterParaEscritaAsync(id);
+            if (post is null) return Result.Failure("Texto não encontrado.");
+
+            if (post.Situacao != SituacaoPost.Arquivado)
+                return Result.Failure("Este texto não está arquivado.");
+
+            // Reversível: um clique errado não destrói o trabalho de outra
+            // pessoa. Volta exatamente para onde estava — publicado continua
+            // publicado, devolvido continua devolvido.
+            post.Situacao = post.SituacaoAnterior ?? SituacaoPost.Pendente;
+            post.SituacaoAnterior = null;
+            post.ModeradoPorId = administradorId;
+            post.ModeradoEm = DateTime.UtcNow;
+
+            try
+            {
+                _uow.BeginTransaction();
+                _uow.Commit();
+                return Result.Success();
+            }
+            catch
+            {
+                _uow.Rollback();
+                throw;
+            }
+        }
+
         public Task<int> ContarPendentesAsync() => _repositorio.ContarPendentesAsync();
+
+        public Task IncrementarVisualizacaoAsync(Guid id) => _repositorio.IncrementarVisualizacaoAsync(id);
     }
 }

@@ -223,13 +223,15 @@ export interface PostFixture {
   publicadoEm: string | null
   criadoEm: string
   comentarioModeracao: string | null
+  visualizacoes: number
 }
 
 /**
  * Textos do blog, um por situação.
  *
- * Cobrir as quatro é o ponto: a listagem pública precisa mostrar SÓ o
- * publicado, e a fila de moderação precisa de alvo em cada aba.
+ * Cobrir as cinco é o ponto: a listagem pública precisa mostrar SÓ o
+ * publicado, e a fila de moderação precisa de alvo em cada aba — inclusive
+ * "Arquivados".
  */
 export const POSTS_FIXTURE: PostFixture[] = [
   {
@@ -242,6 +244,7 @@ export const POSTS_FIXTURE: PostFixture[] = [
     publicadoEm: '2026-08-10T12:00:00Z',
     criadoEm: '2026-08-08T12:00:00Z',
     comentarioModeracao: null,
+    visualizacoes: 42,
   },
   {
     id: '70000000-0000-0000-0000-000000000002',
@@ -253,6 +256,7 @@ export const POSTS_FIXTURE: PostFixture[] = [
     publicadoEm: null,
     criadoEm: '2026-08-20T12:00:00Z',
     comentarioModeracao: null,
+    visualizacoes: 0,
   },
   {
     id: '70000000-0000-0000-0000-000000000003',
@@ -264,6 +268,19 @@ export const POSTS_FIXTURE: PostFixture[] = [
     publicadoEm: null,
     criadoEm: '2026-08-18T12:00:00Z',
     comentarioModeracao: 'Acrescente as fotos da atividade.',
+    visualizacoes: 0,
+  },
+  {
+    id: '70000000-0000-0000-0000-000000000004',
+    titulo: 'Sala de aula invertida no Ensino Médio',
+    resumo: null,
+    corpo: 'Texto tirado do ar pela curadoria.',
+    autorNome: 'Professor Bruno',
+    situacao: 'arquivado',
+    publicadoEm: '2026-08-05T12:00:00Z',
+    criadoEm: '2026-08-01T12:00:00Z',
+    comentarioModeracao: null,
+    visualizacoes: 17,
   },
 ]
 
@@ -283,6 +300,74 @@ export function filtrarPosts(
       (p) => p.titulo.toLowerCase().includes(busca) || p.corpo.toLowerCase().includes(busca),
     )
   }
+
+  return { itens: filtrados, total: filtrados.length }
+}
+
+export interface ContaFixture {
+  id: string
+  nome: string
+  email: string
+  papel: string
+  ativo: boolean
+  criadoEm: string
+  postsPublicados: number
+  postsPendentes: number
+}
+
+/**
+ * Pessoas cadastradas, para o painel administrativo.
+ *
+ * O primeiro item usa o MESMO id de `sessaoDeTeste()`
+ * (`11111111-1111-1111-1111-111111111111`) de propósito: é o que permite um
+ * teste provar que a própria conta aparece na lista sem os botões de papel e
+ * de acesso — o mesmo id que o handler de `.../papel` e `.../ativo` em
+ * `servidor.ts` recusa alterar.
+ */
+export const CONTAS_FIXTURE: ContaFixture[] = [
+  {
+    id: '11111111-1111-1111-1111-111111111111',
+    nome: 'Pessoa de Teste',
+    email: 'pessoa@escola.test',
+    papel: 'administrador',
+    ativo: true,
+    criadoEm: '2026-01-10T12:00:00Z',
+    postsPublicados: 2,
+    postsPendentes: 0,
+  },
+  {
+    id: '80000000-0000-0000-0000-000000000002',
+    nome: 'Professor Bruno',
+    email: 'bruno@escola.test',
+    papel: 'professor',
+    ativo: true,
+    criadoEm: '2026-03-02T12:00:00Z',
+    postsPublicados: 0,
+    postsPendentes: 1,
+  },
+  {
+    id: '80000000-0000-0000-0000-000000000003',
+    nome: 'Professora Carla',
+    email: 'carla@escola.test',
+    papel: 'professor',
+    ativo: false,
+    criadoEm: '2026-05-14T12:00:00Z',
+    postsPublicados: 1,
+    postsPendentes: 0,
+  },
+]
+
+/** Busca por nome ou e-mail, do jeito que o back-end aplicaria. */
+export function filtrarContas(
+  parametros: URLSearchParams,
+  todos: ContaFixture[],
+): { itens: ContaFixture[]; total: number } {
+  const busca = (parametros.get('q') ?? '').toLowerCase()
+  const filtrados = busca
+    ? todos.filter(
+        (c) => c.nome.toLowerCase().includes(busca) || c.email.toLowerCase().includes(busca),
+      )
+    : todos
 
   return { itens: filtrados, total: filtrados.length }
 }

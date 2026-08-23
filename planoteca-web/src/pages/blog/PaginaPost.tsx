@@ -1,6 +1,14 @@
+import { useEffect } from 'react'
 import { ArrowLeft } from '@phosphor-icons/react/dist/csr/ArrowLeft'
+import { Eye } from '@phosphor-icons/react/dist/csr/Eye'
 import { Link, useParams } from 'react-router'
-import { usePost, dataDoPost } from '@/entities/post'
+import {
+  dataDoPost,
+  jaVisualizadoNesteNavegador,
+  marcarVisualizadoNesteNavegador,
+  registrarVisualizacao,
+  usePost,
+} from '@/entities/post'
 import type { Cliente } from '@/shared/api'
 import { mensagemDe } from '@/shared/api'
 
@@ -16,6 +24,20 @@ import { mensagemDe } from '@/shared/api'
 export function PaginaPost({ cliente }: { cliente: Cliente }) {
   const { id } = useParams<{ id: string }>()
   const consulta = usePost(cliente, id)
+
+  // Uma vez por navegador a cada 24h: a marca fica só no `localStorage`
+  // desta máquina, e a chamada é sempre depois de o texto já estar na tela
+  // — se falhar, quem lê nem percebe.
+  useEffect(() => {
+    if (!id || !consulta.data) return
+    if (jaVisualizadoNesteNavegador(id)) return
+
+    marcarVisualizadoNesteNavegador(id)
+    void registrarVisualizacao(cliente, id)
+    // `consulta.data` na dependência dispararia de novo a cada refetch —
+    // só o `id` importa aqui, é o que identifica QUAL texto foi lido.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id, Boolean(consulta.data)])
 
   if (consulta.isPending) {
     return <p className="px-2 py-8 text-muted-foreground">Carregando o texto…</p>
@@ -61,8 +83,14 @@ export function PaginaPost({ cliente }: { cliente: Cliente }) {
       </Link>
 
       <header className="flex flex-col gap-3 border-b-2 border-traco pb-5">
-        <p className="font-mono text-[11px] tracking-[0.08em] text-muted-foreground uppercase">
-          {post.autorNome} · {dataDoPost(post)}
+        <p className="flex flex-wrap items-center gap-x-2 font-mono text-[11px] tracking-[0.08em] text-muted-foreground uppercase">
+          <span>
+            {post.autorNome} · {dataDoPost(post)}
+          </span>
+          <span className="inline-flex items-center gap-1 normal-case tracking-normal">
+            <Eye size={13} weight="bold" aria-hidden />
+            {post.visualizacoes} {post.visualizacoes === 1 ? 'leitura' : 'leituras'}
+          </span>
         </p>
         <h1 className="max-w-[26ch] text-4xl leading-[1.1] max-sm:text-3xl">{post.titulo}</h1>
         {post.resumo && <p className="max-w-[60ch] text-lg text-muted-foreground">{post.resumo}</p>}

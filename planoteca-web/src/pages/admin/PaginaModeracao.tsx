@@ -1,9 +1,14 @@
 import { useState } from 'react'
+import { Archive } from '@phosphor-icons/react/dist/csr/Archive'
+import { ArrowCounterClockwise } from '@phosphor-icons/react/dist/csr/ArrowCounterClockwise'
 import { CheckCircle } from '@phosphor-icons/react/dist/csr/CheckCircle'
+import { Eye } from '@phosphor-icons/react/dist/csr/Eye'
 import {
   CLASSE_SITUACAO,
   ROTULO_SITUACAO,
   dataDoPost,
+  useArquivarPost,
+  useDesarquivarPost,
   useModerarPost,
   usePostAdmin,
   usePostsAdmin,
@@ -27,12 +32,15 @@ import { mensagemDe } from '@/shared/api'
 const MODERADOR_PROVISORIO = '66666666-6666-6666-6666-666666666666'
 
 /** As abas da fila. "Pendente" abre primeiro porque é o que precisa de
- * atenção — o briefing diz que o painel mostra isso antes de tudo. */
+ * atenção — o briefing diz que o painel mostra isso antes de tudo.
+ * "Arquivados" fecha a lista: é curadoria, não moderação, e é onde o
+ * administrador devolve um texto ao fluxo. */
 const ABAS: { situacao: SituacaoPost; rotulo: string }[] = [
   { situacao: 'pendente', rotulo: 'Aguardando' },
   { situacao: 'publicado', rotulo: 'Publicados' },
   { situacao: 'devolvido', rotulo: 'Devolvidos' },
   { situacao: 'recusado', rotulo: 'Recusados' },
+  { situacao: 'arquivado', rotulo: 'Arquivados' },
 ]
 
 function Etiqueta({ situacao }: { situacao: SituacaoPost }) {
@@ -65,6 +73,8 @@ function ItemModeracao({
 }) {
   const detalhe = usePostAdmin(cliente, aberto ? post.id : undefined)
   const moderar = useModerarPost(cliente, MODERADOR_PROVISORIO)
+  const arquivar = useArquivarPost(cliente)
+  const desarquivar = useDesarquivarPost(cliente)
   const [comentario, setComentario] = useState('')
   const [erroComentario, setErroComentario] = useState<string | null>(null)
 
@@ -91,8 +101,16 @@ function ItemModeracao({
     <article className="flex flex-col gap-3 border-2 border-traco bg-card px-4 py-3">
       <div className="flex flex-wrap items-start justify-between gap-2">
         <div className="flex min-w-0 flex-col gap-1">
-          <p className="font-mono text-[11px] tracking-[0.08em] text-muted-foreground uppercase">
-            {post.autorNome} · {dataDoPost(post)}
+          <p className="flex flex-wrap items-center gap-x-2 font-mono text-[11px] tracking-[0.08em] text-muted-foreground uppercase">
+            <span>
+              {post.autorNome} · {dataDoPost(post)}
+            </span>
+            {post.situacao === 'publicado' && (
+              <span className="inline-flex items-center gap-1 normal-case tracking-normal">
+                <Eye size={13} weight="bold" aria-hidden />
+                {post.visualizacoes} {post.visualizacoes === 1 ? 'leitura' : 'leituras'}
+              </span>
+            )}
           </p>
           <h3 className="text-lg leading-tight">{post.titulo}</h3>
           {post.resumo && <p className="text-sm text-muted-foreground">{post.resumo}</p>}
@@ -106,15 +124,47 @@ function ItemModeracao({
         </p>
       )}
 
-      <Button
-        type="button"
-        variant="ghost"
-        onClick={aoAlternar}
-        className="w-fit rounded-none px-0 text-[13px] underline underline-offset-4"
-        aria-expanded={aberto}
-      >
-        {aberto ? 'Fechar o texto' : 'Ler o texto'}
-      </Button>
+      <div className="flex flex-wrap items-center gap-4">
+        <Button
+          type="button"
+          variant="ghost"
+          onClick={aoAlternar}
+          className="w-fit rounded-none px-0 text-[13px] underline underline-offset-4"
+          aria-expanded={aberto}
+        >
+          {aberto ? 'Fechar o texto' : 'Ler o texto'}
+        </Button>
+
+        {post.situacao === 'arquivado' ? (
+          <Button
+            type="button"
+            variant="ghost"
+            disabled={desarquivar.isPending}
+            onClick={() => desarquivar.mutate(post.id)}
+            className="inline-flex w-fit items-center gap-1.5 rounded-none px-0 text-[13px] underline underline-offset-4"
+          >
+            <ArrowCounterClockwise size={14} weight="bold" aria-hidden />
+            Devolver ao fluxo
+          </Button>
+        ) : (
+          <Button
+            type="button"
+            variant="ghost"
+            disabled={arquivar.isPending}
+            onClick={() => arquivar.mutate(post.id)}
+            className="inline-flex w-fit items-center gap-1.5 rounded-none px-0 text-[13px] text-muted-foreground underline underline-offset-4"
+          >
+            <Archive size={14} weight="bold" aria-hidden />
+            Arquivar
+          </Button>
+        )}
+      </div>
+
+      {(arquivar.isError || desarquivar.isError) && (
+        <p role="alert" className="text-sm text-err">
+          {mensagemDe(arquivar.error ?? desarquivar.error)}
+        </p>
+      )}
 
       {aberto && (
         <div className="flex flex-col gap-4">
@@ -130,56 +180,64 @@ function ItemModeracao({
             </div>
           )}
 
-          <div className="flex flex-col gap-1.5">
-            <Label htmlFor={`comentario-${post.id}`}>Comentário para o autor</Label>
-            <Textarea
-              id={`comentario-${post.id}`}
-              rows={2}
-              value={comentario}
-              onChange={(evento) => setComentario(evento.target.value)}
-              placeholder="Obrigatório ao devolver ou recusar"
-            />
-            {erroComentario && (
-              <p role="alert" className="text-sm text-err">
-                {erroComentario}
-              </p>
-            )}
-          </div>
+          {/* Arquivado está fora da moderação: decidir publicar, devolver
+              ou recusar um texto que já saiu do fluxo não faz sentido —
+              devolver ao fluxo é o botão "Devolver ao fluxo" acima, sem
+              comentário nenhum envolvido. */}
+          {post.situacao !== 'arquivado' && (
+            <>
+              <div className="flex flex-col gap-1.5">
+                <Label htmlFor={`comentario-${post.id}`}>Comentário para o autor</Label>
+                <Textarea
+                  id={`comentario-${post.id}`}
+                  rows={2}
+                  value={comentario}
+                  onChange={(evento) => setComentario(evento.target.value)}
+                  placeholder="Obrigatório ao devolver ou recusar"
+                />
+                {erroComentario && (
+                  <p role="alert" className="text-sm text-err">
+                    {erroComentario}
+                  </p>
+                )}
+              </div>
 
-          {moderar.isError && (
-            <p role="alert" className="text-sm text-err">
-              {mensagemDe(moderar.error)}
-            </p>
+              {moderar.isError && (
+                <p role="alert" className="text-sm text-err">
+                  {mensagemDe(moderar.error)}
+                </p>
+              )}
+
+              <div className="flex flex-wrap gap-2">
+                <Button
+                  type="button"
+                  disabled={moderar.isPending}
+                  onClick={() => decidir('publicado')}
+                  className="min-h-11 rounded-none border-2 border-traco bg-acao px-5 font-bold text-acao-texto hover:bg-acao-hover"
+                >
+                  Publicar
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  disabled={moderar.isPending}
+                  onClick={() => decidir('devolvido')}
+                  className="min-h-11 rounded-none border-2 px-5 font-bold"
+                >
+                  Devolver para ajuste
+                </Button>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  disabled={moderar.isPending}
+                  onClick={() => decidir('recusado')}
+                  className="min-h-11 rounded-none px-5 text-err"
+                >
+                  Recusar
+                </Button>
+              </div>
+            </>
           )}
-
-          <div className="flex flex-wrap gap-2">
-            <Button
-              type="button"
-              disabled={moderar.isPending}
-              onClick={() => decidir('publicado')}
-              className="min-h-11 rounded-none border-2 border-traco bg-acao px-5 font-bold text-acao-texto hover:bg-acao-hover"
-            >
-              Publicar
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              disabled={moderar.isPending}
-              onClick={() => decidir('devolvido')}
-              className="min-h-11 rounded-none border-2 px-5 font-bold"
-            >
-              Devolver para ajuste
-            </Button>
-            <Button
-              type="button"
-              variant="ghost"
-              disabled={moderar.isPending}
-              onClick={() => decidir('recusado')}
-              className="min-h-11 rounded-none px-5 text-err"
-            >
-              Recusar
-            </Button>
-          </div>
         </div>
       )}
     </article>

@@ -1,9 +1,11 @@
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import type { Cliente } from '@/shared/api'
 import {
+  arquivarPost,
   buscarPost,
   buscarPostAdmin,
   contarPendentes,
+  desarquivarPost,
   escreverPost,
   listarPosts,
   listarPostsAdmin,
@@ -90,6 +92,24 @@ export function useModerarPost(cliente: Cliente, moderadorId: string) {
       moderarPost(cliente, id, decisao, moderadorId),
     // Moderar altera a fila, a contagem E a listagem pública — publicar faz
     // o texto aparecer no blog. Por isso a invalidação é na raiz.
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: CHAVE_POSTS }),
+  })
+}
+
+/** Tira um texto do ar. Some da aba de origem e aparece em "Arquivados". */
+export function useArquivarPost(cliente: Cliente) {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (id: string) => arquivarPost(cliente, id),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: CHAVE_POSTS }),
+  })
+}
+
+/** Devolve um texto arquivado ao fluxo. */
+export function useDesarquivarPost(cliente: Cliente) {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (id: string) => desarquivarPost(cliente, id),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: CHAVE_POSTS }),
   })
 }

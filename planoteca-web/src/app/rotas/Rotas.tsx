@@ -4,6 +4,7 @@ import {
   PaginaCatalogar,
   PaginaEscrever,
   PaginaModeracao,
+  PaginaPessoasAdmin,
   PaginaPlanos,
 } from '@/pages/admin'
 import { PaginaBlog, PaginaPost } from '@/pages/blog'
@@ -77,6 +78,11 @@ function PaginaEscreverConectada() {
   return <PaginaEscrever cliente={cliente} />
 }
 
+function PaginaPessoasAdminConectada() {
+  const { cliente, sessao } = useAutenticacao()
+  return <PaginaPessoasAdmin cliente={cliente} minhaContaId={sessao?.id ?? null} />
+}
+
 /** O Blog público: listagem e leitura. */
 function PaginaBlogConectada() {
   const { cliente } = useAutenticacao()
@@ -142,6 +148,7 @@ export function Rotas() {
           <Route path="/admin/planos" element={<PaginaPlanosConectada />} />
           <Route path="/admin/catalogar" element={<PaginaCatalogarConectada />} />
           <Route path="/admin/escrever" element={<PaginaEscreverConectada />} />
+          <Route path="/admin/pessoas" element={<PaginaPessoasAdminConectada />} />
           {/* Andaime do boilerplate. Não é domínio da Planoteca, e sai do
               menu — a rota fica de pé só para não quebrar link antigo de
               quem estava com a tela aberta. */}

@@ -117,6 +117,7 @@ namespace SaraivaTech.Planoteca.Infra.CrossCutting.IoC
             services.AddScoped<IVocabularioAppService, VocabularioAppService>();
             services.AddScoped<IPostAppService, PostAppService>();
             services.AddScoped<ISessaoAppService, SessaoAppService>();
+            services.AddScoped<IPessoaAdminAppService, PessoaAdminAppService>();
         }
 
 

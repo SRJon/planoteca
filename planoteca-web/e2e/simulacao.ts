@@ -3,11 +3,12 @@ import {
   POSTS_FIXTURE,
   VOCABULARIO_FIXTURE,
   detalharPlano,
+  filtrarContas,
   filtrarPosts,
   gerarPlanos,
   paginarPlanos,
 } from '../src/teste/planos'
-import type { PlanoFixture } from '../src/teste/planos'
+import type { ContaFixture, PlanoFixture } from '../src/teste/planos'
 
 /**
  * Simulação de rede para o caminho ponta a ponta (Task 10 do boilerplate).
@@ -58,6 +59,46 @@ export async function entrarComoAdministrador(page: Page): Promise<void> {
     ;(window as unknown as Record<string, unknown>).__PLANOTECA_SESSAO_TESTE__ = true
   })
 }
+
+/**
+ * Pessoas cadastradas, para o painel administrativo.
+ *
+ * O primeiro item usa o MESMO id de `SESSAO_ADMIN` de propósito: é o que
+ * permite um spec provar que a própria conta aparece na lista sem os botões
+ * de papel e de acesso.
+ */
+export const CONTAS_FIXTURE: ContaFixture[] = [
+  {
+    id: SESSAO_ADMIN.id,
+    nome: SESSAO_ADMIN.nome,
+    email: SESSAO_ADMIN.email,
+    papel: 'administrador',
+    ativo: true,
+    criadoEm: '2026-01-10T12:00:00Z',
+    postsPublicados: 2,
+    postsPendentes: 0,
+  },
+  {
+    id: '80000000-0000-0000-0000-000000000002',
+    nome: 'Professor Bruno',
+    email: 'bruno@escola.test',
+    papel: 'professor',
+    ativo: true,
+    criadoEm: '2026-03-02T12:00:00Z',
+    postsPublicados: 0,
+    postsPendentes: 1,
+  },
+  {
+    id: '80000000-0000-0000-0000-000000000003',
+    nome: 'Professora Carla',
+    email: 'carla@escola.test',
+    papel: 'professor',
+    ativo: false,
+    criadoEm: '2026-05-14T12:00:00Z',
+    postsPublicados: 1,
+    postsPendentes: 0,
+  },
+]
 
 const GRUPO_PADRAO = 'financeiro'
 
@@ -309,6 +350,20 @@ export async function instalarSimulacao(page: Page, opcoes: OpcoesSimulacao = {}
       return
     }
 
+    // Arquivar não exige comentário — curadoria do acervo, não devolutiva ao autor.
+    const arquivamento = caminho.match(/^\/admin\/posts\/([0-9a-f-]+)\/arquivamento$/i)
+    if ((metodo === 'POST' || metodo === 'DELETE') && arquivamento) {
+      await route.fulfill({ status: 204 })
+      return
+    }
+
+    // O incremento de visualização: público, anônimo, sempre 204.
+    const visualizacao = caminho.match(/^\/posts\/([0-9a-f-]+)\/visualizacao$/i)
+    if (metodo === 'POST' && visualizacao) {
+      await route.fulfill({ status: 204 })
+      return
+    }
+
     // ── Gestão de planos ─────────────────────────────────────────────────
     if (metodo === 'GET' && caminho === '/admin/lesson-plans') {
       const { itens, total } = paginarPlanos(url.searchParams, planos)
@@ -337,6 +392,37 @@ export async function instalarSimulacao(page: Page, opcoes: OpcoesSimulacao = {}
       // Os chips do filtro saem daqui. Sem este handler a Biblioteca desenha
       // sem nenhum chip, e o teste de filtro falha por não achar o botão.
       await json(route, 200, VOCABULARIO_FIXTURE)
+      return
+    }
+
+    // ── Painel de pessoas ───────────────────────────────────────────────
+    if (metodo === 'GET' && caminho === '/admin/people') {
+      const { itens, total } = filtrarContas(url.searchParams, CONTAS_FIXTURE)
+      if (total === 0) {
+        await route.fulfill({ status: 204, headers: { 'X-Total-Count': '0' } })
+      } else {
+        await json(route, 200, itens, { 'X-Total-Count': String(total) })
+      }
+      return
+    }
+
+    const alterarPapelPessoa = caminho.match(/^\/admin\/pessoas\/([0-9a-f-]+)\/papel$/i)
+    if (metodo === 'POST' && alterarPapelPessoa) {
+      if (alterarPapelPessoa[1] === SESSAO_ADMIN.id) {
+        await json(route, 400, { status: 400, messages: ['Você não pode alterar o próprio papel.'] })
+      } else {
+        await route.fulfill({ status: 204 })
+      }
+      return
+    }
+
+    const alterarAtivoPessoa = caminho.match(/^\/admin\/pessoas\/([0-9a-f-]+)\/ativo$/i)
+    if (metodo === 'POST' && alterarAtivoPessoa) {
+      if (alterarAtivoPessoa[1] === SESSAO_ADMIN.id) {
+        await json(route, 400, { status: 400, messages: ['Você não pode alterar o próprio acesso.'] })
+      } else {
+        await route.fulfill({ status: 204 })
+      }
       return
     }
 

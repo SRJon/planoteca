@@ -5,6 +5,8 @@ export {
   CLASSE_SITUACAO,
   EXIGEM_COMENTARIO,
   dataDoPost,
+  jaVisualizadoNesteNavegador,
+  marcarVisualizadoNesteNavegador,
 } from './modelo'
 export {
   listarPosts,
@@ -14,6 +16,9 @@ export {
   contarPendentes,
   escreverPost,
   moderarPost,
+  arquivarPost,
+  desarquivarPost,
+  registrarVisualizacao,
 } from './api'
 export type { FiltroPost } from './api'
 export {
@@ -24,5 +29,7 @@ export {
   usePendentes,
   useEscreverPost,
   useModerarPost,
+  useArquivarPost,
+  useDesarquivarPost,
   CHAVE_POSTS,
 } from './usePosts'

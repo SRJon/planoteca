@@ -24,6 +24,9 @@ namespace SaraivaTech.Planoteca.Application.Dto
         /// Só chega ao próprio autor e ao administrador — a listagem pública
         /// só devolve publicados, onde este campo é nulo.</summary>
         public string? ComentarioModeracao { get; set; }
+
+        /// <summary>Quantas vezes a ficha foi lida.</summary>
+        public int Visualizacoes { get; set; }
     }
 
     /// <summary>O texto completo.</summary>

@@ -40,6 +40,21 @@ export async function buscarPost(cliente: Cliente, id: string): Promise<PostDeta
   }
 }
 
+/**
+ * Soma uma leitura ao contador. Público e anônimo.
+ *
+ * Silenciosa de propósito: quem chama isto já mostrou o texto na tela, e uma
+ * falha aqui — rede, API hibernada, o que for — não pode virar erro visível.
+ * Falha de contador é irrelevante perto de não conseguir ler.
+ */
+export async function registrarVisualizacao(cliente: Cliente, id: string): Promise<void> {
+  try {
+    await cliente.enviar(`/posts/${id}/visualizacao`, undefined)
+  } catch {
+    // Intencional: ver o comentário da função.
+  }
+}
+
 // ── Área de quem escreve e de quem modera ────────────────────────────────
 
 /**
@@ -106,4 +121,17 @@ export async function moderarPost(
   moderadorId: string,
 ): Promise<void> {
   await cliente.enviar(`/admin/posts/${id}/moderacao`, { ...decisao, moderadorId })
+}
+
+/** Tira o texto do ar: some do blog público e da fila de moderação. Não
+ * exige comentário — arquivar é curadoria do acervo, não devolutiva ao
+ * autor. Reversível por `desarquivarPost`. */
+export async function arquivarPost(cliente: Cliente, id: string): Promise<void> {
+  await cliente.enviar(`/admin/posts/${id}/arquivamento`, undefined)
+}
+
+/** Devolve um texto arquivado ao fluxo, na situação em que estava antes de
+ * arquivar. */
+export async function desarquivarPost(cliente: Cliente, id: string): Promise<void> {
+  await cliente.remover(`/admin/posts/${id}/arquivamento`)
 }

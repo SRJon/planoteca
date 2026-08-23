@@ -1,9 +1,11 @@
 import { setupServer } from 'msw/node'
 import { HttpResponse, http } from 'msw'
 import {
+  CONTAS_FIXTURE,
   POSTS_FIXTURE,
   VOCABULARIO_FIXTURE,
   detalharPlano,
+  filtrarContas,
   filtrarPosts,
   gerarPlanos,
   paginarPlanos,
@@ -143,6 +145,11 @@ export const servidor = setupServer(
     }
     return new HttpResponse(null, { status: 204 })
   }),
+  // Arquivar não exige comentário — curadoria do acervo, não devolutiva ao autor.
+  http.post('*/api/v1/admin/posts/:id/arquivamento', () => new HttpResponse(null, { status: 204 })),
+  http.delete('*/api/v1/admin/posts/:id/arquivamento', () => new HttpResponse(null, { status: 204 })),
+  // O incremento de visualização: público, anônimo, sempre 204.
+  http.post('*/api/v1/posts/:id/visualizacao', () => new HttpResponse(null, { status: 204 })),
   // ── Gestão de planos ───────────────────────────────────────────────────
   http.get('*/api/v1/admin/lesson-plans', ({ request }) => {
     const { itens, total } = paginarPlanos(new URL(request.url).searchParams, PLANOS_PADRAO)
@@ -163,5 +170,32 @@ export const servidor = setupServer(
     const plano = PLANOS_PADRAO.find((p) => p.id === params['id'])
     if (!plano) return HttpResponse.json({ status: 404, messages: ['Plano não encontrado.'] }, { status: 404 })
     return HttpResponse.json(detalharPlano(plano))
+  }),
+  // ── Painel de pessoas ──────────────────────────────────────────────────
+  // O primeiro item tem o MESMO id de `sessaoDeTeste()` — é assim que um
+  // teste exercita "a própria conta aparece na lista, e a ação de papel e a
+  // de acesso ficam desabilitadas para ela".
+  http.get('*/api/v1/admin/people', ({ request }) => {
+    const { itens, total } = filtrarContas(new URL(request.url).searchParams, CONTAS_FIXTURE)
+    if (total === 0) return new HttpResponse(null, { status: 204 })
+    return HttpResponse.json(itens, { headers: { 'X-Total-Count': String(total) } })
+  }),
+  http.post('*/api/v1/admin/people/:id/papel', ({ params }) => {
+    if (params['id'] === '11111111-1111-1111-1111-111111111111') {
+      return HttpResponse.json(
+        { status: 400, messages: ['Você não pode alterar o próprio papel.'] },
+        { status: 400 },
+      )
+    }
+    return new HttpResponse(null, { status: 204 })
+  }),
+  http.post('*/api/v1/admin/people/:id/ativo', ({ params }) => {
+    if (params['id'] === '11111111-1111-1111-1111-111111111111') {
+      return HttpResponse.json(
+        { status: 400, messages: ['Você não pode alterar o próprio acesso.'] },
+        { status: 400 },
+      )
+    }
+    return new HttpResponse(null, { status: 204 })
   }),
 )

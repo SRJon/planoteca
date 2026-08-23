@@ -51,5 +51,13 @@ namespace SaraivaTech.Planoteca.Domain.Repositories.Interfaces
         /// painel administrativo mostra primeiro: o briefing diz que ele
         /// "mostra antes o que precisa de atenção".</summary>
         Task<int> ContarPendentesAsync();
+
+        /// <summary>Soma 1 a `Visualizacoes`, num UPDATE atômico
+        /// (`visualizacoes = visualizacoes + 1`) — e não um read-modify-write
+        /// via change tracker, que perderia incremento sob concorrência.
+        /// Só afeta texto PUBLICADO: contar leitura de rascunho ou de texto
+        /// arquivado não faz sentido, e evita inflar o número por chamada
+        /// direta à rota com um id de post não publicado.</summary>
+        Task IncrementarVisualizacaoAsync(Guid id);
     }
 }

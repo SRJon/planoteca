@@ -74,5 +74,10 @@ namespace SaraivaTech.Planoteca.Infra.Data.Repositories
 
         public async Task<int> ContarPendentesAsync() =>
             await Context.Set<Post>().CountAsync(p => p.Situacao == SituacaoPost.Pendente);
+
+        public async Task IncrementarVisualizacaoAsync(Guid id) =>
+            await Context.Set<Post>()
+                .Where(p => p.Id == id && p.Situacao == SituacaoPost.Publicado)
+                .ExecuteUpdateAsync(s => s.SetProperty(p => p.Visualizacoes, p => p.Visualizacoes + 1));
     }
 }

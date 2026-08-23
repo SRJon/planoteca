@@ -36,12 +36,14 @@ namespace SaraivaTech.Planoteca.Infra.Data.Mappings
             builder.Property(x => x.Resumo).HasColumnType("text");
             builder.Property(x => x.Corpo).IsRequired().HasColumnType("text");
             builder.Property(x => x.Situacao).IsRequired().HasColumnType("text");
+            builder.Property(x => x.SituacaoAnterior).HasColumnType("text");
             builder.Property(x => x.ComentarioModeracao).HasColumnType("text");
             builder.Property(x => x.ModeradoEm).HasColumnType("timestamp with time zone");
             builder.Property(x => x.PublicadoEm).HasColumnType("timestamp with time zone");
             builder.Property(x => x.CriadoEm)
                 .HasColumnType("timestamp with time zone")
                 .HasDefaultValueSql("now()");
+            builder.Property(x => x.Visualizacoes).IsRequired().HasDefaultValue(0);
 
             builder.HasOne(x => x.Autor)
                 .WithMany()

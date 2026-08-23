@@ -255,3 +255,34 @@ séries não consegue achá-lo filtrando pelas duas.
 
 **Ordem:** B primeiro. Ela toca contrato de API e URL — quanto antes o
 formato da querystring estabilizar, menos link quebrado depois.
+
+## 2026-08-23 — Blog: editor, arquivamento, contador; e o painel de pessoas
+
+Quatro frentes, do uso real depois do deploy.
+
+### C — editor visual no blog (Tiptap)
+Hoje o corpo é textarea puro. Professor não tem negrito, título nem lista.
+- [ ] C1. Editor com barra: negrito, itálico, H2/H3, lista, link
+- [ ] C2. Sanitização do HTML na API — **A03 Injection**, texto de terceiro
+- [ ] C3. Renderização no blog público, com o mesmo sanitizador
+- [ ] C4. Migração: o corpo em texto puro continua legível
+
+### D — arquivar texto
+`arquivado` entra em `SituacaoPost`, ao lado de devolvido e recusado.
+Some do blog e da moderação, reversível. Nada de DELETE.
+- [ ] D1. Situação nova + endpoint + aba "Arquivados"
+
+### E — contador de visualizações
+- [ ] E1. Coluna `visualizacoes`, endpoint de incremento
+- [ ] E2. Uma vez por navegador a cada 24h — sem dado pessoal guardado
+
+### F — painel de pessoas
+Administrador não consegue ver quem se cadastrou nem promover ninguém.
+Hoje o primeiro admin nasce por SQL, e o segundo também.
+- [ ] F1. `GET /admin/pessoas` com o que cada um escreveu
+- [ ] F2. Promover e despromover; ativar e desativar
+- [ ] F3. Guarda: ninguém remove o próprio acesso de administrador
+
+**Segurança:** C2 é a mais séria — HTML de professor renderizado para
+visitante é XSS se não for sanitizado. F2 é controle de acesso: toda rota
+exige a política Administrador, e a checagem é do servidor.
