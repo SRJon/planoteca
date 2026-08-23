@@ -1,0 +1,600 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Planoteca — landing com hero de imagem</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Work+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --caneta-900:#1B2739; --caneta-700:#2B4059; --caneta-500:#3A5578; --caneta-300:#8496AF; --caneta-100:#E4E9F0;
+  --mimeo-900:#5E2E19; --mimeo-700:#7F3F23; --mimeo-500:#A6522E; --mimeo-100:#F4E7E0;
+  --regua-700:#8A6E28; --regua-500:#C9A54A; --regua-100:#F7F0DC;
+  --tinta-900:#14161C; --tinta-700:#3A3F4D; --tinta-500:#55596A; --tinta-300:#A9AEC0;
+  --tinta-200:#D5D1C8; --tinta-100:#E7E4DD; --tinta-050:#F2F0EC; --branco:#fff;
+  --comp-portugues:#7A3B4E; --comp-matematica:#3A5578; --comp-ciencias:#2F6B5E;
+  --comp-historia:#8A5A2B; --comp-geografia:#4A6B33; --comp-arte:#6E4076;
+  --comp-edfisica:#2C5F6B; --comp-ingles:#5B4A7A;
+  --comp-filosofia:#5C4630; --comp-sociologia:#6B5340;
+  --comp-biologia:#3E7A54; --comp-quimica:#2F6B6B;
+  --display:"Space Grotesk","Trebuchet MS",system-ui,sans-serif;
+  --corpo:"Work Sans",-apple-system,"Segoe UI",system-ui,sans-serif;
+  --dados:"IBM Plex Mono",ui-monospace,"Courier New",monospace;
+  --traco:var(--tinta-900);
+}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--tinta-200);color:var(--tinta-900);
+  font-family:var(--corpo);font-size:14px;line-height:1.45;-webkit-font-smoothing:antialiased}
+
+/* ---------- casca do documento ---------- */
+.doc{max-width:1460px;margin:0 auto;padding:44px 24px 90px}
+.doc-cabeca{max-width:72ch;margin-bottom:34px}
+.doc-cabeca h1{font-family:var(--display);font-size:34px;line-height:1.12;
+  letter-spacing:-.025em;margin:0 0 14px}
+.doc-cabeca p{margin:0 0 10px;color:var(--tinta-700);font-size:15px;line-height:1.62}
+code{font-family:var(--dados);font-size:12.5px;background:var(--tinta-100);
+  padding:1px 5px;border:1px solid var(--tinta-300)}
+
+.aviso{border:2px solid var(--traco);background:var(--mimeo-100);
+  padding:18px 22px;margin-bottom:46px;max-width:82ch}
+.aviso h2{font-family:var(--display);font-size:14px;margin:0 0 9px;
+  text-transform:uppercase;letter-spacing:.09em}
+.aviso p{margin:0 0 9px;color:var(--tinta-700);line-height:1.62}
+.aviso p:last-child{margin-bottom:0}
+
+.rotulo{display:flex;align-items:baseline;gap:14px;margin:0 0 5px;flex-wrap:wrap}
+.rotulo .tag{font-family:var(--dados);font-size:11px;font-weight:600;
+  letter-spacing:.1em;text-transform:uppercase;background:var(--tinta-900);
+  color:var(--tinta-050);padding:4px 10px}
+.rotulo h2{font-family:var(--display);font-size:26px;letter-spacing:-.025em;margin:0}
+.nota{max-width:78ch;margin:0 0 20px;color:var(--tinta-700);font-size:14.5px;line-height:1.62}
+
+.moldura{border:3px solid var(--traco);background:var(--tinta-050);margin-bottom:70px;
+  overflow:hidden}
+.moldura-barra{background:var(--tinta-900);color:var(--tinta-300);
+  font-family:var(--dados);font-size:10.5px;letter-spacing:.08em;padding:6px 12px}
+
+/* ---------- peças reais da aplicação ---------- */
+.app{background:var(--tinta-050)}
+.topo{border-bottom:2px solid var(--traco);background:var(--branco)}
+.topo-in{max-width:1180px;margin:0 auto;height:60px;padding:0 24px;
+  display:flex;align-items:center;gap:24px}
+.marca{display:flex;align-items:center;gap:9px;font-weight:700;font-size:16px;
+  letter-spacing:-.02em}
+.topo nav{flex:1;display:flex;gap:4px}
+.topo nav a{padding:6px 12px;font-size:14px;color:var(--tinta-500);text-decoration:none}
+.topo nav a.atual{background:var(--caneta-100);color:var(--tinta-900);font-weight:700}
+.bt-conta{border:2px solid var(--traco);background:var(--branco);padding:6px 14px;
+  font-size:13.5px;font-weight:700}
+.rodape{border-top:2px solid var(--traco);background:var(--branco);
+  font-size:13px;color:var(--tinta-500)}
+.rodape-in{max-width:1180px;margin:0 auto;padding:26px 24px}
+.palco{max-width:1180px;margin:0 auto;padding:0 24px}
+
+.sigla{display:grid;place-items:center;color:#fff;font-family:var(--display);
+  font-weight:700;flex:none}
+.c-pt{background:var(--comp-portugues)} .c-ma{background:var(--comp-matematica)}
+.c-cn{background:var(--comp-ciencias)}  .c-hi{background:var(--comp-historia)}
+.c-ge{background:var(--comp-geografia)} .c-ar{background:var(--comp-arte)}
+.c-ef{background:var(--comp-edfisica)}  .c-in{background:var(--comp-ingles)}
+.c-fl{background:var(--comp-filosofia)} .c-so{background:var(--comp-sociologia)}
+.c-bi{background:var(--comp-biologia)}  .c-qu{background:var(--comp-quimica)}
+.c-fi{background:var(--comp-edfisica)}
+
+
+/* espaço reservado da imagem — não é arte, é o lugar dela */
+.a-img,.c-img,.b-hero{position:relative}
+.reserva{position:absolute;inset:0;display:grid;place-items:center;
+  background:var(--tinta-100);
+  background-image:repeating-linear-gradient(135deg,transparent 0 15px,rgba(20,22,28,.045) 15px 30px)}
+.reserva-in{text-align:center;color:var(--tinta-500);font-family:var(--dados)}
+.reserva-in b{display:block;font-size:14px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--tinta-700);margin-bottom:8px}
+.reserva-in span{font-size:12px;letter-spacing:.06em}
+.b-hero .reserva{background:var(--caneta-700);
+  background-image:repeating-linear-gradient(135deg,transparent 0 18px,rgba(242,240,236,.05) 18px 36px)}
+.b-hero .reserva-in b{color:var(--caneta-100)}
+.b-hero .reserva-in span{color:var(--caneta-300)}
+
+/* legenda do lugar da imagem */
+.selo-img{position:absolute;left:0;bottom:0;background:var(--tinta-900);
+  color:var(--tinta-050);font-family:var(--dados);font-size:9.5px;
+  letter-spacing:.09em;padding:5px 9px;z-index:3}
+
+/* botão de ação — terracota, a cor reservada */
+.bt-acao{display:inline-flex;align-items:center;gap:10px;border:2px solid var(--traco);
+  background:var(--mimeo-500);color:#fff;padding:17px 30px;font-size:16.5px;
+  font-weight:700;text-decoration:none}
+.bt-linha{display:inline-flex;align-items:center;gap:8px;border:2px solid var(--traco);
+  background:transparent;padding:16px 26px;font-size:15.5px;font-weight:700;
+  text-decoration:none;color:inherit}
+
+/* =====================================================================
+   VARIAÇÃO A — "Janela"
+   Imagem alta à direita, muito ar à esquerda. Hero de 720px.
+   ===================================================================== */
+.a-hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,540px);
+  gap:80px;align-items:center;padding:104px 0 96px}
+.a-hero h1{font-family:var(--display);font-size:70px;line-height:1.0;
+  letter-spacing:-.035em;margin:0 0 30px;max-width:13ch}
+.a-lead{font-size:20px;line-height:1.6;color:var(--tinta-700);
+  max-width:44ch;margin:0 0 44px}
+.a-acoes{display:flex;align-items:center;gap:22px;flex-wrap:wrap}
+.a-selo{font-family:var(--dados);font-size:11.5px;color:var(--tinta-500);
+  letter-spacing:.06em;margin-top:26px}
+.a-img{position:relative;aspect-ratio:4/5;border:2px solid var(--traco);
+  overflow:hidden;background:var(--caneta-100)}
+
+.a-tiras{display:flex;border-top:2px solid var(--traco);
+  border-bottom:2px solid var(--traco);background:var(--branco)}
+.a-tira{flex:1;padding:30px 28px;border-right:2px solid var(--traco)}
+.a-tira:last-child{border-right:0}
+.a-tira b{display:block;font-family:var(--display);font-size:17px;
+  letter-spacing:-.015em;margin-bottom:7px}
+.a-tira p{margin:0;color:var(--tinta-500);font-size:14px;line-height:1.55}
+.a-tira .num{font-family:var(--dados);font-size:10.5px;letter-spacing:.1em;
+  color:var(--tinta-300);display:block;margin-bottom:11px}
+
+.a-comp{padding:96px 0 26px}
+.a-cab{margin-bottom:34px;max-width:60ch}
+.a-cab h2{font-family:var(--display);font-size:34px;letter-spacing:-.028em;margin:0 0 10px}
+.a-cab p{margin:0;color:var(--tinta-500);font-size:16px;line-height:1.6}
+.a-grade{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.a-cel{display:flex;align-items:center;gap:14px;border:2px solid var(--traco);
+  background:var(--branco);text-decoration:none;color:inherit;min-height:70px}
+.a-cel .sigla{width:70px;align-self:stretch;font-size:20px}
+.a-cel span.nome{font-size:15.5px;font-weight:500}
+
+.a-serie{padding:56px 0 96px}
+.a-serie-lista{display:flex;gap:14px;flex-wrap:wrap}
+.a-serie-lista a{border:2px solid var(--traco);background:var(--branco);
+  padding:15px 26px;text-decoration:none;color:inherit;font-weight:600;font-size:15.5px}
+
+.a-blog{background:var(--caneta-900);color:var(--tinta-050);
+  border-top:3px solid var(--traco)}
+.a-blog-in{max-width:1180px;margin:0 auto;padding:88px 24px;
+  display:grid;grid-template-columns:minmax(0,1fr) auto;gap:64px;align-items:center}
+.a-blog h2{font-family:var(--display);font-size:38px;letter-spacing:-.03em;margin:0 0 16px}
+.a-blog p{margin:0;color:var(--caneta-300);max-width:52ch;line-height:1.65;font-size:16.5px}
+.a-blog-acoes{display:flex;gap:16px;align-items:center;flex:none}
+.bt-claro{border:2px solid var(--tinta-050);background:transparent;color:var(--tinta-050);
+  padding:15px 26px;font-weight:700;text-decoration:none;font-size:15.5px;white-space:nowrap}
+.lk-claro{color:var(--tinta-050);font-weight:700;text-decoration:underline;
+  text-underline-offset:5px;font-size:15.5px;white-space:nowrap}
+
+/* =====================================================================
+   VARIAÇÃO B — "Cartaz"
+   Imagem sangrando a largura inteira, texto por cima. Máximo impacto.
+   ===================================================================== */
+.b-hero{position:relative;border-bottom:3px solid var(--traco);
+  min-height:600px;display:flex;align-items:flex-end;overflow:hidden;
+  background:var(--caneta-900)}
+.b-veu{position:absolute;inset:0;
+  background:linear-gradient(100deg,var(--caneta-900) 34%,rgba(27,39,57,.86) 52%,rgba(27,39,57,.2) 80%)}
+.b-hero-in{position:relative;max-width:1180px;margin:0 auto;padding:96px 24px 76px;
+  width:100%;z-index:2}
+.b-hero h1{font-family:var(--display);font-size:76px;line-height:.99;
+  letter-spacing:-.038em;margin:0 0 28px;max-width:15ch;color:var(--tinta-050)}
+.b-hero h1 .destaque{color:var(--regua-500)}
+.b-lead{font-size:20.5px;line-height:1.6;color:var(--caneta-300);
+  max-width:48ch;margin:0 0 42px}
+.b-acoes{display:flex;align-items:center;gap:22px;flex-wrap:wrap}
+.b-acoes .bt-linha{border-color:var(--tinta-050);color:var(--tinta-050)}
+
+.b-barra{background:var(--branco);border-bottom:2px solid var(--traco)}
+.b-barra-in{max-width:1180px;margin:0 auto;padding:0 24px;display:flex}
+.b-barra-item{flex:1;padding:26px 0;display:flex;align-items:baseline;gap:12px}
+.b-barra-item b{font-family:var(--display);font-size:26px;line-height:1}
+.b-barra-item span{font-size:14.5px;color:var(--tinta-500)}
+
+.b-comp{padding:96px 0 30px}
+.b-comp-cab{display:flex;align-items:flex-end;justify-content:space-between;
+  gap:40px;margin-bottom:38px;flex-wrap:wrap}
+.b-comp-cab h2{font-family:var(--display);font-size:36px;letter-spacing:-.03em;margin:0;max-width:16ch}
+.b-comp-cab p{margin:0;color:var(--tinta-500);font-size:15.5px;max-width:38ch;line-height:1.6}
+.b-grade{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.b-cel{border:2px solid var(--traco);background:var(--branco);text-decoration:none;
+  color:inherit;display:flex;flex-direction:column;min-height:150px}
+.b-cel-topo{display:flex;align-items:stretch;border-bottom:2px solid var(--traco)}
+.b-cel .sigla{width:58px;height:58px;font-size:19px}
+.b-cel-nome{display:flex;align-items:center;padding:0 16px;font-size:16px;
+  font-weight:600;letter-spacing:-.012em}
+.b-cel-pe{padding:16px;display:flex;flex-direction:column;gap:8px;flex:1}
+.b-cel-ex{font-size:13.5px;color:var(--tinta-500);line-height:1.45;margin:0}
+.b-cel-ver{margin-top:auto;font-family:var(--dados);font-size:10.5px;
+  letter-spacing:.09em;text-transform:uppercase;color:var(--tinta-300)}
+
+.b-serie{padding:60px 0 100px}
+.b-serie h2{font-family:var(--display);font-size:26px;letter-spacing:-.025em;margin:0 0 24px}
+.b-serie-lista{display:flex;gap:14px;flex-wrap:wrap}
+.b-serie-lista a{border:2px solid var(--traco);background:var(--branco);
+  padding:16px 28px;text-decoration:none;color:inherit;font-weight:600;font-size:16px}
+
+/* =====================================================================
+   VARIAÇÃO C — "Papel"
+   Imagem menor e editorial, muito espaço em branco, ritmo de revista.
+   ===================================================================== */
+.c-hero{padding:120px 0 100px;text-align:center;max-width:900px;margin:0 auto}
+.c-eyebrow{font-family:var(--dados);font-size:11.5px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--mimeo-500);margin:0 0 26px;font-weight:600}
+.c-hero h1{font-family:var(--display);font-size:66px;line-height:1.04;
+  letter-spacing:-.034em;margin:0 0 30px}
+.c-lead{font-size:20px;line-height:1.62;color:var(--tinta-700);
+  max-width:56ch;margin:0 auto 42px}
+.c-acoes{display:flex;align-items:center;gap:20px;justify-content:center;flex-wrap:wrap}
+.c-img{position:relative;aspect-ratio:21/9;border:2px solid var(--traco);
+  overflow:hidden;background:var(--caneta-100);margin-top:76px}
+
+.c-sec{padding:100px 0}
+.c-sec-linha{border-top:2px solid var(--traco);padding-top:14px;margin-bottom:44px;
+  display:flex;align-items:baseline;justify-content:space-between;gap:30px;flex-wrap:wrap}
+.c-sec-linha h2{font-family:var(--display);font-size:32px;letter-spacing:-.028em;margin:0}
+.c-sec-linha span{font-family:var(--dados);font-size:11px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--tinta-300)}
+.c-lista{display:grid;grid-template-columns:repeat(3,1fr);gap:0 40px}
+.c-item{display:flex;align-items:center;gap:16px;padding:20px 0;
+  border-bottom:2px solid var(--tinta-200);text-decoration:none;color:inherit}
+.c-item .sigla{width:44px;height:44px;font-size:16px}
+.c-item .nome{font-size:16.5px;font-weight:500}
+.c-item .seta{margin-left:auto;color:var(--tinta-300);font-size:16px}
+
+.c-serie-faixa{background:var(--branco);border-top:2px solid var(--traco);
+  border-bottom:2px solid var(--traco)}
+.c-serie-in{max-width:1180px;margin:0 auto;padding:52px 24px;
+  display:flex;align-items:center;gap:34px;flex-wrap:wrap}
+.c-serie-in h2{font-family:var(--display);font-size:22px;letter-spacing:-.02em;
+  margin:0;flex:none}
+.c-serie-lista{display:flex;gap:12px;flex-wrap:wrap}
+.c-serie-lista a{border:2px solid var(--traco);padding:13px 22px;text-decoration:none;
+  color:inherit;font-weight:600;font-size:15px;background:var(--tinta-050)}
+
+.c-blog{padding:100px 0;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+  gap:80px;align-items:start}
+.c-blog h2{font-family:var(--display);font-size:34px;letter-spacing:-.03em;margin:0 0 16px}
+.c-blog p{margin:0 0 30px;color:var(--tinta-700);line-height:1.65;font-size:16.5px;max-width:46ch}
+.c-blog-acoes{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+.lk-sub{font-weight:700;text-decoration:underline;text-underline-offset:5px;
+  color:var(--caneta-500);font-size:15.5px}
+.c-passos{border:2px solid var(--traco);background:var(--branco)}
+.c-passo{display:flex;gap:20px;padding:24px 26px;border-bottom:2px solid var(--traco)}
+.c-passo:last-child{border-bottom:0}
+.c-passo b{font-family:var(--display);font-size:26px;color:var(--tinta-200);
+  flex:none;width:30px;line-height:1.1}
+.c-passo p{margin:0;font-size:15.5px;line-height:1.5}
+.c-passo p span{display:block;color:var(--tinta-500);font-size:14px;margin-top:4px}
+</style>
+</head>
+<body>
+<div class="doc">
+
+<div class="doc-cabeca">
+  <h1>Landing com hero de imagem — três variações</h1>
+  <p>Três formas de dar respiro e um momento visual à página. Mudam em quanta
+  imagem entra, quanto ar sobra e onde a página acelera.</p>
+  <p>Palco real de 1180px do <code>LayoutPublico</code>, em janela de 1866px.</p>
+</div>
+
+<div class="aviso">
+  <h2>O espaço da imagem</h2>
+  <p>As três variações mostram o layout com o espaço da imagem <b>reservado e
+  vazio</b>, com as medidas marcadas. A arte vem depois, gerada no Gemini com o
+  prompt de <code>design/prompt-gemini-hero.md</code>.</p>
+  <p>Julgue aqui o <b>layout</b>: onde a imagem entra, que proporção ela tem,
+  quanto ar sobra em volta e como as seções respiram. A imagem certa preenche o
+  espaço; o que não dá para consertar depois é o espaço estar no lugar errado.</p>
+  <p>Quando tiver a arte, me passe o arquivo e eu encaixo nas proporções que cada
+  variação exige.</p>
+</div>
+
+<!-- ============ VARIAÇÃO A ============ -->
+<div class="rotulo"><span class="tag">Variação A</span><h2>Janela</h2></div>
+<p class="nota">Hero de 720px de altura: título de 70px e muito branco à esquerda,
+  imagem vertical 4:5 à direita, como uma janela recortada na página. Abaixo, três
+  tiras explicam o funcionamento em uma linha cada. As seções ganham 96px de
+  respiro entre si — o triplo do que a landing tem hoje — e os componentes viram
+  cartões espaçados, sem grade colada.</p>
+
+<div class="moldura">
+  <div class="moldura-barra">planoteca.com.br — 1866 × 947</div>
+  <div class="app">
+    <div class="topo"><div class="topo-in">
+      <div class="marca">
+        <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden>
+          <rect x="2.5" y="3" width="8" height="18" fill="#3A5578"/>
+          <rect x="12.5" y="3" width="9" height="9" fill="#A6522E"/>
+          <circle cx="17" cy="17" r="4.5" fill="#14161C"/>
+        </svg>Planoteca</div>
+      <nav><a class="atual" href="#">Início</a><a href="#">Biblioteca</a><a href="#">Blog</a></nav>
+      <span class="bt-conta">Minha área</span>
+    </div></div>
+
+    <div class="palco"><div class="a-hero">
+      <div>
+        <h1>Plano de aula pronto para amanhã.</h1>
+        <p class="a-lead">Um acervo aberto, catalogado por série, componente e
+          metodologia. Você filtra, abre e baixa o PDF.</p>
+        <div class="a-acoes">
+          <a class="bt-acao" href="#">Ver os planos →</a>
+          <a class="bt-linha" href="#">Como funciona</a>
+        </div>
+        <p class="a-selo">Sem cadastro · Sem e-mail · Sem espera</p>
+      </div>
+
+      <div class="a-img">
+        <div class="reserva"><div class="reserva-in"><b>Imagem do hero</b><span>4:5 vertical · 1200 × 1500</span></div></div><span class="selo-img">Espaço reservado</span>
+      </div>
+    </div></div>
+
+    <div class="a-tiras">
+      <div class="a-tira"><span class="num">01</span>
+        <b>Filtre</b><p>Componente, série e metodologia combinam. O link guarda a busca.</p></div>
+      <div class="a-tira"><span class="num">02</span>
+        <b>Leia a ficha</b><p>Objetos de conhecimento, duração e referências, antes de baixar.</p></div>
+      <div class="a-tira"><span class="num">03</span>
+        <b>Baixe o PDF</b><p>Direto, sem conta e sem tela de e-mail no caminho.</p></div>
+    </div>
+
+    <div class="palco">
+      <div class="a-comp">
+        <div class="a-cab">
+          <h2>Comece pelo componente</h2>
+          <p>Cada atalho entra na Biblioteca com o filtro já aplicado.</p>
+        </div>
+        <div class="a-grade">
+          <a class="a-cel" href="#"><span class="sigla c-hi">HI</span><span class="nome">História</span></a>
+          <a class="a-cel" href="#"><span class="sigla c-ge">GE</span><span class="nome">Geografia</span></a>
+          <a class="a-cel" href="#"><span class="sigla c-fl">FL</span><span class="nome">Filosofia</span></a>
+          <a class="a-cel" href="#"><span class="sigla c-so">SO</span><span class="nome">Sociologia</span></a>
+          <a class="a-cel" href="#"><span class="sigla c-cn">CN</span><span class="nome">Ciências</span></a>
+          <a class="a-cel" href="#"><span class="sigla c-bi">BI</span><span class="nome">Biologia</span></a>
+          <a class="a-cel" href="#"><span class="sigla c-fi">FI</span><span class="nome">Física</span></a>
+          <a class="a-cel" href="#"><span class="sigla c-qu">QU</span><span class="nome">Química</span></a>
+          <a class="a-cel" href="#"><span class="sigla c-pt">PT</span><span class="nome">Língua Portuguesa</span></a>
+          <a class="a-cel" href="#"><span class="sigla c-ar">AR</span><span class="nome">Arte</span></a>
+          <a class="a-cel" href="#"><span class="sigla c-ef">EF</span><span class="nome">Educação Física</span></a>
+          <a class="a-cel" href="#"><span class="sigla c-in">IN</span><span class="nome">Língua Inglesa</span></a>
+        </div>
+      </div>
+
+      <div class="a-serie">
+        <div class="a-cab"><h2>Ou pela série</h2>
+          <p>Do 6º ano à 3ª série do ensino médio.</p></div>
+        <div class="a-serie-lista">
+          <a href="#">6º ano</a><a href="#">7º ano</a><a href="#">8º ano</a><a href="#">9º ano</a>
+          <a href="#">1ª série</a><a href="#">2ª série</a><a href="#">3ª série</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="a-blog"><div class="a-blog-in">
+      <div>
+        <h2>Escreve também?</h2>
+        <p>O Blog é dos professores: relato de sala de aula, o que funcionou, o
+          que não. Quem tem conta escreve; um administrador lê e publica.</p>
+      </div>
+      <div class="a-blog-acoes">
+        <a class="bt-claro" href="#">Ler o Blog</a>
+        <a class="lk-claro" href="#">Entrar para escrever</a>
+      </div>
+    </div></div>
+
+    <div class="rodape"><div class="rodape-in">
+      Planoteca — acervo de planos de aula com metodologias ativas. De professor para professor.
+    </div></div>
+  </div>
+</div>
+
+<!-- ============ VARIAÇÃO B ============ -->
+<div class="rotulo"><span class="tag">Variação B</span><h2>Cartaz</h2></div>
+<p class="nota">A imagem sangra a largura inteira e o texto vive por cima dela, em
+  índigo profundo. É a variação de maior impacto: 600px de altura, título de 76px,
+  e um véu diagonal que mantém o texto legível sem apagar a arte. Logo abaixo, uma
+  barra branca de três fatos corta o escuro e devolve a página ao papel. É também
+  a que mais depende da qualidade da imagem — com arte fraca, ela desmonta.</p>
+
+<div class="moldura">
+  <div class="moldura-barra">planoteca.com.br — 1866 × 947</div>
+  <div class="app">
+    <div class="topo"><div class="topo-in">
+      <div class="marca">
+        <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden>
+          <rect x="2.5" y="3" width="8" height="18" fill="#3A5578"/>
+          <rect x="12.5" y="3" width="9" height="9" fill="#A6522E"/>
+          <circle cx="17" cy="17" r="4.5" fill="#14161C"/>
+        </svg>Planoteca</div>
+      <nav><a class="atual" href="#">Início</a><a href="#">Biblioteca</a><a href="#">Blog</a></nav>
+      <span class="bt-conta">Minha área</span>
+    </div></div>
+
+    <div class="b-hero">
+      
+      <div class="reserva"><div class="reserva-in"><b>Imagem do hero</b><span>sangra a largura · 1866 × 600</span></div></div><span class="selo-img">Espaço reservado</span>
+      <div class="b-hero-in">
+        <h1>Plano de aula pronto, com <span class="destaque">metodologia ativa</span>.</h1>
+        <p class="b-lead">Um acervo aberto, catalogado por série, componente e
+          metodologia. Você filtra, abre e baixa o PDF.</p>
+        <div class="b-acoes">
+          <a class="bt-acao" href="#">Ver os planos →</a>
+          <a class="bt-linha" href="#">Ler o Blog</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="b-barra"><div class="b-barra-in">
+      <div class="b-barra-item"><b>12</b><span>componentes curriculares</span></div>
+      <div class="b-barra-item"><b>7</b><span>séries, do 6º ano ao 3º</span></div>
+      <div class="b-barra-item"><b>PDF</b><span>baixa sem cadastro</span></div>
+    </div></div>
+
+    <div class="palco">
+      <div class="b-comp">
+        <div class="b-comp-cab">
+          <h2>O acervo, por componente</h2>
+          <p>Cada atalho entra na Biblioteca com o filtro já aplicado — que é como
+            um professor começa a busca.</p>
+        </div>
+        <div class="b-grade">
+          <a class="b-cel" href="#"><div class="b-cel-topo"><span class="sigla c-hi">HI</span><span class="b-cel-nome">História</span></div>
+            <div class="b-cel-pe"><p class="b-cel-ex">Revolução Industrial em três estações</p><span class="b-cel-ver">Ver planos →</span></div></a>
+          <a class="b-cel" href="#"><div class="b-cel-topo"><span class="sigla c-ge">GE</span><span class="b-cel-nome">Geografia</span></div>
+            <div class="b-cel-pe"><p class="b-cel-ex">Ler o bairro pelo mapa</p><span class="b-cel-ver">Ver planos →</span></div></a>
+          <a class="b-cel" href="#"><div class="b-cel-topo"><span class="sigla c-fl">FL</span><span class="b-cel-nome">Filosofia</span></div>
+            <div class="b-cel-pe"><p class="b-cel-ex">Ética em júri simulado</p><span class="b-cel-ver">Ver planos →</span></div></a>
+          <a class="b-cel" href="#"><div class="b-cel-topo"><span class="sigla c-so">SO</span><span class="b-cel-nome">Sociologia</span></div>
+            <div class="b-cel-pe"><p class="b-cel-ex">Trabalho e renda na própria rua</p><span class="b-cel-ver">Ver planos →</span></div></a>
+          <a class="b-cel" href="#"><div class="b-cel-topo"><span class="sigla c-cn">CN</span><span class="b-cel-nome">Ciências</span></div>
+            <div class="b-cel-pe"><p class="b-cel-ex">Ecossistemas locais: sair e registrar</p><span class="b-cel-ver">Ver planos →</span></div></a>
+          <a class="b-cel" href="#"><div class="b-cel-topo"><span class="sigla c-bi">BI</span><span class="b-cel-nome">Biologia</span></div>
+            <div class="b-cel-pe"><p class="b-cel-ex">Genética com estudo de casos</p><span class="b-cel-ver">Ver planos →</span></div></a>
+          <a class="b-cel" href="#"><div class="b-cel-topo"><span class="sigla c-fi">FI</span><span class="b-cel-nome">Física</span></div>
+            <div class="b-cel-pe"><p class="b-cel-ex">Movimento medido no pátio</p><span class="b-cel-ver">Ver planos →</span></div></a>
+          <a class="b-cel" href="#"><div class="b-cel-topo"><span class="sigla c-qu">QU</span><span class="b-cel-nome">Química</span></div>
+            <div class="b-cel-pe"><p class="b-cel-ex">Reações na cozinha da escola</p><span class="b-cel-ver">Ver planos →</span></div></a>
+        </div>
+      </div>
+
+      <div class="b-serie">
+        <h2>Ou pela série</h2>
+        <div class="b-serie-lista">
+          <a href="#">6º ano</a><a href="#">7º ano</a><a href="#">8º ano</a><a href="#">9º ano</a>
+          <a href="#">1ª série</a><a href="#">2ª série</a><a href="#">3ª série</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="a-blog"><div class="a-blog-in">
+      <div>
+        <h2>Escreve também?</h2>
+        <p>O Blog é dos professores: relato de sala de aula, o que funcionou, o
+          que não. Quem tem conta escreve; um administrador lê e publica.</p>
+      </div>
+      <div class="a-blog-acoes">
+        <a class="bt-claro" href="#">Ler o Blog</a>
+        <a class="lk-claro" href="#">Entrar para escrever</a>
+      </div>
+    </div></div>
+
+    <div class="rodape"><div class="rodape-in">
+      Planoteca — acervo de planos de aula com metodologias ativas. De professor para professor.
+    </div></div>
+  </div>
+</div>
+
+<!-- ============ VARIAÇÃO C ============ -->
+<div class="rotulo"><span class="tag">Variação C</span><h2>Papel</h2></div>
+<p class="nota">A mais generosa em ar. Hero centrado com 120px acima e abaixo, e a
+  imagem em faixa larga 21:9 logo depois — ela entra como ilustração de abertura de
+  revista, não como fundo. As seções são separadas por régua fina em vez de caixa,
+  e os componentes viram lista editorial em três colunas: sem moldura, só o bloco de
+  cor, o nome e um filete embaixo. É a que menos depende da imagem e a que mais
+  parece um objeto impresso.</p>
+
+<div class="moldura">
+  <div class="moldura-barra">planoteca.com.br — 1866 × 947</div>
+  <div class="app">
+    <div class="topo"><div class="topo-in">
+      <div class="marca">
+        <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden>
+          <rect x="2.5" y="3" width="8" height="18" fill="#3A5578"/>
+          <rect x="12.5" y="3" width="9" height="9" fill="#A6522E"/>
+          <circle cx="17" cy="17" r="4.5" fill="#14161C"/>
+        </svg>Planoteca</div>
+      <nav><a class="atual" href="#">Início</a><a href="#">Biblioteca</a><a href="#">Blog</a></nav>
+      <span class="bt-conta">Minha área</span>
+    </div></div>
+
+    <div class="palco">
+      <div class="c-hero">
+        <p class="c-eyebrow">Acervo aberto · De professor para professor</p>
+        <h1>Plano de aula pronto, com metodologia ativa.</h1>
+        <p class="c-lead">Catalogado por série, componente e metodologia. Você
+          filtra, abre e baixa o PDF. Sem cadastro, sem espera.</p>
+        <div class="c-acoes">
+          <a class="bt-acao" href="#">Ver os planos →</a>
+          <a class="bt-linha" href="#">Como funciona</a>
+        </div>
+      </div>
+
+      <div class="c-img">
+        <div class="reserva"><div class="reserva-in"><b>Imagem do hero</b><span>21:9 · 1600 × 686</span></div></div><span class="selo-img">Espaço reservado</span>
+      </div>
+
+      <div class="c-sec">
+        <div class="c-sec-linha">
+          <h2>Comece pelo componente</h2>
+          <span>Doze no acervo</span>
+        </div>
+        <div class="c-lista">
+          <a class="c-item" href="#"><span class="sigla c-hi">HI</span><span class="nome">História</span><span class="seta">→</span></a>
+          <a class="c-item" href="#"><span class="sigla c-ge">GE</span><span class="nome">Geografia</span><span class="seta">→</span></a>
+          <a class="c-item" href="#"><span class="sigla c-fl">FL</span><span class="nome">Filosofia</span><span class="seta">→</span></a>
+          <a class="c-item" href="#"><span class="sigla c-so">SO</span><span class="nome">Sociologia</span><span class="seta">→</span></a>
+          <a class="c-item" href="#"><span class="sigla c-cn">CN</span><span class="nome">Ciências</span><span class="seta">→</span></a>
+          <a class="c-item" href="#"><span class="sigla c-bi">BI</span><span class="nome">Biologia</span><span class="seta">→</span></a>
+          <a class="c-item" href="#"><span class="sigla c-fi">FI</span><span class="nome">Física</span><span class="seta">→</span></a>
+          <a class="c-item" href="#"><span class="sigla c-qu">QU</span><span class="nome">Química</span><span class="seta">→</span></a>
+          <a class="c-item" href="#"><span class="sigla c-pt">PT</span><span class="nome">Língua Portuguesa</span><span class="seta">→</span></a>
+          <a class="c-item" href="#"><span class="sigla c-ar">AR</span><span class="nome">Arte</span><span class="seta">→</span></a>
+          <a class="c-item" href="#"><span class="sigla c-ef">EF</span><span class="nome">Educação Física</span><span class="seta">→</span></a>
+          <a class="c-item" href="#"><span class="sigla c-in">IN</span><span class="nome">Língua Inglesa</span><span class="seta">→</span></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="c-serie-faixa"><div class="c-serie-in">
+      <h2>Ou pela série</h2>
+      <div class="c-serie-lista">
+        <a href="#">6º ano</a><a href="#">7º ano</a><a href="#">8º ano</a><a href="#">9º ano</a>
+        <a href="#">1ª série</a><a href="#">2ª série</a><a href="#">3ª série</a>
+      </div>
+    </div></div>
+
+    <div class="palco"><div class="c-blog">
+      <div>
+        <h2>Escreve também?</h2>
+        <p>O Blog é dos professores: relato de sala de aula, o que funcionou, o
+          que não. Quem tem conta escreve; um administrador lê e publica.</p>
+        <div class="c-blog-acoes">
+          <a class="bt-linha" href="#">Ler o Blog</a>
+          <a class="lk-sub" href="#">Entrar para escrever</a>
+        </div>
+      </div>
+      <div class="c-passos">
+        <div class="c-passo"><b>1</b><p>Filtre por componente, série ou metodologia
+          <span>Os filtros combinam, e o link guarda a busca.</span></p></div>
+        <div class="c-passo"><b>2</b><p>Abra a ficha e leia o plano por inteiro
+          <span>Objetos de conhecimento, duração, referências.</span></p></div>
+        <div class="c-passo"><b>3</b><p>Baixe o PDF
+          <span>Sem conta, sem e-mail, sem espera.</span></p></div>
+      </div>
+    </div></div>
+
+    <div class="rodape"><div class="rodape-in">
+      Planoteca — acervo de planos de aula com metodologias ativas. De professor para professor.
+    </div></div>
+  </div>
+</div>
+
+<div class="aviso">
+  <h2>Prompt para gerar a imagem no Gemini</h2>
+  <p>Calibrado na direção B. Ajuste a proporção conforme a variação: <b>4:5</b> na A,
+  <b>16:5 largo</b> na B, <b>21:9</b> na C.</p>
+  <p style="font-family:var(--dados);font-size:12.5px;line-height:1.7;background:var(--tinta-050);border:1px solid var(--tinta-300);padding:14px">
+  Ilustração vetorial chapada, estilo livro didático brasileiro dos anos 1960–70 e
+  modernismo gráfico. Assunto: planos de aula impressos empilhados e abertos sobre
+  uma mesa de professor, vistos de frente, com lombadas coloridas identificando
+  matérias. Paleta EXATA e fechada, sem nenhuma outra cor: #F2F0EC papel, #14161C
+  traço, #3A5578 índigo, #A6522E terracota, #C9A54A dourado, #2F6B5E verde,
+  #7A3B4E vinho, #8A5A2B ocre. Contorno preto uniforme de 2px em todas as formas.
+  Geometria primária: retângulos e círculos, cantos retos, sem cantos arredondados.
+  Proibido: gradiente, sombra, brilho, textura, ruído, perspectiva 3D, degradê,
+  reflexo, aquarela, rosto humano, texto legível, logotipo. Composição centrada,
+  fundo liso. Proporção 4:5.
+  </p>
+  <p>Depois de gerar: me passe o arquivo e eu troco o SVG pela imagem, ajustando
+  recorte e o véu de legibilidade da variação B.</p>
+</div>
+
+</div>
+</body>
+</html>

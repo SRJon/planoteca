@@ -4,6 +4,7 @@ import { Sun } from '@phosphor-icons/react/dist/csr/Sun'
 import { UserCircle } from '@phosphor-icons/react/dist/csr/UserCircle'
 import { NavLink, Link, Outlet } from 'react-router'
 import type { Papel } from '@/entities/autenticacao'
+import { MenuAcessibilidade } from '@/features/acessibilidade'
 import { Marca } from '@/components/marca'
 import { Button } from '@/components/ui/button'
 import {
@@ -78,18 +79,30 @@ export function LayoutPublico() {
   return (
     <div className="flex min-h-dvh flex-col bg-background">
       <header className="border-b-2 border-traco bg-card">
-        <div className="mx-auto flex h-[60px] w-full max-w-[1180px] items-center gap-6 px-6 max-md:px-4">
+        {/* Altura MÍNIMA em `rem`, não fixa em pixel.
+            `h-[60px]` prendia a barra a 60px enquanto o conteúdo dentro dela
+            crescia com a escala de acessibilidade — a 150% em 390px os itens
+            se sobrepunham e a página ganhava rolagem horizontal. `min-h` em
+            `rem` preserva os mesmos 60px no tamanho padrão (3.75rem × 16px) e
+            deixa a barra acompanhar o texto quando a raiz cresce. O
+            `flex-wrap` é o que impede o transbordo quando nem assim couber. */}
+        <div className="mx-auto flex min-h-[3.75rem] w-full max-w-[1180px] flex-wrap items-center gap-x-6 gap-y-2 px-6 py-2 max-md:gap-x-3 max-md:px-4">
           <Link
             to="/"
-            className="flex flex-none items-center gap-2 text-foreground"
+            className="flex flex-none items-center gap-2 text-foreground max-sm:mr-auto"
             aria-label="Planoteca, ir para o início"
           >
             <Marca tamanho={24} tom="cor" />
             <span className="text-base font-bold tracking-tight max-sm:sr-only">Planoteca</span>
           </Link>
 
-          <nav aria-label="Áreas do acervo" className="min-w-0 flex-1">
-            <ul className="flex items-center gap-1">
+          <nav
+            aria-label="Áreas do acervo"
+            /* `basis-full order-last` no estreito: quando a barra embrulha, a
+               navegação desce inteira para a segunda linha em vez de brigar
+               por espaço com os botões e acabar sobreposta a eles. */
+            className="min-w-0 flex-1 max-sm:order-last max-sm:basis-full">
+            <ul className="flex flex-wrap items-center gap-1">
               {AREAS.map((area) => (
                 <li key={area.rota}>
                   <NavLink
@@ -112,6 +125,10 @@ export function LayoutPublico() {
               ))}
             </ul>
           </nav>
+
+          {/* Acessibilidade ao lado do tema: as duas são preferência de
+              leitura guardada no navegador, e valem com ou sem conta. */}
+          <MenuAcessibilidade />
 
           <Button
             variant="ghost"

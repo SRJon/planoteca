@@ -1,0 +1,1 @@
+export { MenuAcessibilidade } from './MenuAcessibilidade'

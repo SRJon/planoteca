@@ -3,6 +3,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import type { Sessao } from '@/entities/autenticacao'
+import { AcessibilidadeProvider } from '@/shared/acessibilidade'
 import { ComAutenticacao } from '@/teste/autenticacao'
 import { TemaProvider } from '../providers/TemaProvider'
 import { Rotas } from './Rotas'
@@ -19,9 +20,11 @@ function renderizar(
     <ComAutenticacao sessao={opcoes.sessao ?? null} carregando={opcoes.carregando ?? false}>
       <QueryClientProvider client={queryClient}>
         <TemaProvider>
-          <MemoryRouter initialEntries={[caminho]}>
-            <Rotas />
-          </MemoryRouter>
+          <AcessibilidadeProvider>
+            <MemoryRouter initialEntries={[caminho]}>
+              <Rotas />
+            </MemoryRouter>
+          </AcessibilidadeProvider>
         </TemaProvider>
       </QueryClientProvider>
     </ComAutenticacao>,
