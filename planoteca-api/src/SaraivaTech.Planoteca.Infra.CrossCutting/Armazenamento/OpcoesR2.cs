@@ -1,3 +1,7 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
+
 namespace SaraivaTech.Planoteca.Infra.CrossCutting.Armazenamento
 {
     /// <summary>
@@ -54,5 +58,64 @@ namespace SaraivaTech.Planoteca.Infra.CrossCutting.Armazenamento
             !string.IsNullOrWhiteSpace(SecretKey) &&
             !string.IsNullOrWhiteSpace(Bucket) &&
             !string.IsNullOrWhiteSpace(UrlPublicaBase);
+
+        /// <summary>
+        /// O que está preenchido mas ERRADO, em português de gente.
+        ///
+        /// `EstaConfigurado` só vê se o campo tem algo dentro. Isso deixou
+        /// passar um `AccountId` preenchido com a URL inteira do campo "S3
+        /// API" do painel da Cloudflare, em vez dos 32 caracteres do
+        /// identificador — e o defeito só apareceu no navegador de quem
+        /// tentou catalogar, como `https://https//conta.r2...com/bucket.r2...`
+        /// e um `ERR_NAME_NOT_RESOLVED` ilegível.
+        ///
+        /// Configuração errada precisa falhar no ARRANQUE, dizendo o que
+        /// corrigir. Descobrir pelo console do navegador de outra pessoa é
+        /// tarde demais.
+        /// </summary>
+        public IReadOnlyList<string> Problemas()
+        {
+            var problemas = new List<string>();
+
+            // O Account ID é hexadecimal de 32 caracteres. Quem copia o campo
+            // "S3 API" inteiro traz `https://`, o domínio e o bucket junto.
+            if (!string.IsNullOrWhiteSpace(AccountId) &&
+                !Regex.IsMatch(AccountId, "^[0-9a-fA-F]{32}$"))
+            {
+                problemas.Add(
+                    "Armazenamento:R2:AccountId precisa ser só o identificador de 32 caracteres " +
+                    "da conta, sem `https://`, sem `.r2.cloudflarestorage.com` e sem o bucket. " +
+                    $"Recebido: `{AccountId}`.");
+            }
+
+            // A URL pública é o oposto: precisa ser URL absoluta, e a barra
+            // final duplicaria a barra ao concatenar a chave do arquivo.
+            if (!string.IsNullOrWhiteSpace(UrlPublicaBase))
+            {
+                if (!Uri.TryCreate(UrlPublicaBase, UriKind.Absolute, out var url) ||
+                    (url.Scheme != Uri.UriSchemeHttp && url.Scheme != Uri.UriSchemeHttps))
+                {
+                    problemas.Add(
+                        "Armazenamento:R2:UrlPublicaBase precisa ser uma URL absoluta começando " +
+                        $"em http:// ou https://. Recebido: `{UrlPublicaBase}`.");
+                }
+                else if (UrlPublicaBase.EndsWith('/'))
+                {
+                    problemas.Add(
+                        "Armazenamento:R2:UrlPublicaBase não pode terminar em barra — a chave do " +
+                        "arquivo já começa com uma.");
+                }
+            }
+
+            // O bucket é nome, não caminho nem URL.
+            if (!string.IsNullOrWhiteSpace(Bucket) &&
+                (Bucket.Contains('/') || Bucket.Contains(':')))
+            {
+                problemas.Add(
+                    $"Armazenamento:R2:Bucket precisa ser só o nome do bucket. Recebido: `{Bucket}`.");
+            }
+
+            return problemas;
+        }
     }
 }

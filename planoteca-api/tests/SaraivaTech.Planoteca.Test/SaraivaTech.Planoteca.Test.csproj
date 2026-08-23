@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <IsPackable>false</IsPackable>
@@ -36,6 +36,7 @@
     <!-- O seed do vocabulario (DadosIniciais) mora em Infra.Data, e os testes
          de RF-02 e RF-03 conferem a contagem e a grafia literal do guia. -->
     <ProjectReference Include="..\..\src\SaraivaTech.Planoteca.Infra.Data\SaraivaTech.Planoteca.Infra.Data.csproj" />
+    <ProjectReference Include="..\..\src\SaraivaTech.Planoteca.Infra.CrossCutting\SaraivaTech.Planoteca.Infra.CrossCutting.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="TestResults\" />

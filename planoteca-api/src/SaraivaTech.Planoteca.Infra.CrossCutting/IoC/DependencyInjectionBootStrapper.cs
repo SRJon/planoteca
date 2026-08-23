@@ -1,4 +1,4 @@
-using System.Data;
+﻿using System.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
@@ -22,6 +22,7 @@ using Npgsql;
 using Serilog;
 using SaraivaTech.Planoteca.Infra.CrossCutting.Middleware;
 using System;
+using System.Linq;
 
 namespace SaraivaTech.Planoteca.Infra.CrossCutting.IoC
 {
@@ -86,6 +87,18 @@ namespace SaraivaTech.Planoteca.Infra.CrossCutting.IoC
             var opcoes = new OpcoesR2();
             configuration.GetSection(OpcoesR2.Secao).Bind(opcoes);
             services.Configure<OpcoesR2>(configuration.GetSection(OpcoesR2.Secao));
+
+            // Preenchido mas ERRADO é pior que vazio: vazio degrada com
+            // mensagem clara, errado produz uma URL quebrada que só aparece
+            // no console do navegador de quem tentou catalogar. Aqui a API
+            // recusa subir, dizendo qual variável corrigir.
+            var problemas = opcoes.Problemas();
+            if (problemas.Count > 0)
+            {
+                throw new InvalidOperationException(
+                    "Configuração do Cloudflare R2 inválida:" + Environment.NewLine +
+                    string.Join(Environment.NewLine, problemas.Select(p => "  - " + p)));
+            }
 
             if (opcoes.EstaConfigurado())
                 services.AddSingleton<IArmazenamentoArquivo, ArmazenamentoR2>();
