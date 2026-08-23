@@ -114,9 +114,20 @@ export type Plano = {
    * Na listagem pública é sempre `publicado` — a API não devolve outra coisa.
    * O campo existe para a tela de GESTÃO, onde o administrador vê os dois e
    * precisa distinguir o que já está no ar.
+   *
+   * OBRIGATÓRIO, e não opcional como era. O `?` calava o TypeScript sobre um
+   * campo que a API simplesmente não enviava: a tela de gestão recebia
+   * `undefined`, `undefined !== 'publicado'` dava rascunho, e um plano
+   * publicado aparecia com a etiqueta errada, oferecia "Publicar" em vez de
+   * "Despublicar", e recusava a remoção com uma mensagem que contradizia a
+   * própria tela. Um campo ausente, três sintomas.
    */
-  situacao?: string
+  situacao: SituacaoPlano
 }
+
+/** As duas situações de um plano. União fechada: uma terceira exige decidir
+ * o que a Biblioteca faz com ela. */
+export type SituacaoPlano = 'rascunho' | 'publicado'
 
 /** A ficha completa: tudo do card, mais o roteiro. */
 export type PlanoDetalhe = Plano & {
@@ -138,13 +149,17 @@ export type PlanoDetalhe = Plano & {
  * diferentes: "2 aulas" é quantidade, "Sequência didática" é formato.
  */
 export function rotuloDuracao(plano: {
-  duracaoAulas: number | null
-  duracaoDescricao: string | null
+  duracaoAulas?: number | null
+  duracaoDescricao?: string | null
 }): string | null {
   const aulas = plano.duracaoAulas
   const descricao = plano.duracaoDescricao?.trim()
 
-  if (aulas === null) return descricao ?? null
+  // `== null` casa com `null` E `undefined`, de propósito. A API OMITE o
+  // campo quando não há duração, em vez de mandar `null` — e um `=== null`
+  // deixava `undefined` passar direto para a interpolação, que rendia
+  // "undefined aulas" na tela.
+  if (aulas == null) return descricao ?? null
 
   const emAulas = aulas === 1 ? '1 aula' : `${aulas} aulas`
   return descricao ? `${emAulas} · ${descricao}` : emAulas

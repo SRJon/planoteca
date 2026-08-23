@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
+using SaraivaTech.Planoteca.Application.Mappers;
 using SaraivaTech.Planoteca.Domain.Entities;
 using SaraivaTech.Planoteca.Domain.Enumerable;
 using SaraivaTech.Planoteca.Domain.Repositories.Interfaces;
@@ -270,5 +271,27 @@ namespace SaraivaTech.Planoteca.Test.Integracao
             Contexto.ChangeTracker.Clear();
             await LimparAsync();
         }
+
+        [SkippableFact]
+        public async Task Resumo_leva_a_situacao_do_plano()
+        {
+            // O campo faltava no `PlanoResumoDto`, e a tela de gestão recebia
+            // `undefined`. Como `undefined !== 'publicado'`, todo plano
+            // aparecia como rascunho: etiqueta errada, botão "Publicar" onde
+            // devia estar "Despublicar", e remoção recusada com uma mensagem
+            // que contradizia a própria tela.
+            //
+            // O teste do front passava, porque a fixture do MSW sempre
+            // trazia o campo. Testava um contrato que o servidor não cumpria
+            // — daí este viver aqui, contra o mapeador real.
+            var mapeador = new PlanoMapper(new VocabularioMapper());
+
+            var publicado = NovoPlano("resumo publicado", SituacaoPlano.Publicado);
+            var rascunho = NovoPlano("resumo rascunho", SituacaoPlano.Rascunho);
+
+            mapeador.ParaResumo(publicado).Situacao.Should().Be(SituacaoPlano.Publicado);
+            mapeador.ParaResumo(rascunho).Situacao.Should().Be(SituacaoPlano.Rascunho);
+        }
+
     }
 }

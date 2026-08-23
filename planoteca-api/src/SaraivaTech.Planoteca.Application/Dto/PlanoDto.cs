@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace SaraivaTech.Planoteca.Application.Dto
@@ -27,6 +27,18 @@ namespace SaraivaTech.Planoteca.Application.Dto
         public string? DuracaoDescricao { get; set; }
         public string ArquivoUrl { get; set; } = string.Empty;
         public DateTime? PublicadoEm { get; set; }
+
+        /// <summary>
+        /// `publicado` ou `rascunho`.
+        ///
+        /// Redundante na Biblioteca pública, onde tudo é publicado — e por
+        /// isso o campo não existia. Mas a tela de administração usa o MESMO
+        /// resumo e mostra os dois juntos: sem este campo ela recebia
+        /// `undefined`, e como `undefined !== 'publicado'` marcava todo plano
+        /// como rascunho. Um plano publicado aparecia como rascunho, e a
+        /// remoção era recusada com uma mensagem que contradizia a etiqueta.
+        /// </summary>
+        public string Situacao { get; set; } = string.Empty;
     }
 
     /// <summary>A ficha completa: tudo do resumo, mais o roteiro e a BNCC.</summary>

@@ -1,4 +1,4 @@
-using System.Linq;
+﻿using System.Linq;
 using SaraivaTech.Planoteca.Application.Dto;
 using SaraivaTech.Planoteca.Domain.Entities;
 
@@ -35,6 +35,7 @@ namespace SaraivaTech.Planoteca.Application.Mappers
                 DuracaoDescricao = p.DuracaoDescricao,
                 ArquivoUrl = p.ArquivoUrl,
                 PublicadoEm = p.PublicadoEm,
+                Situacao = p.Situacao,
             };
 
             PreencherVocabulario(p, dto);
