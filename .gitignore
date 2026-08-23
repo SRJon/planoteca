@@ -46,3 +46,16 @@ obj/
 Thumbs.db
 Desktop.ini
 .DS_Store
+
+# ── Material de referência ───────────────────────────────────────────────
+#
+# Os PDFs de `Docs/Refbibliografica` são obra de terceiros — guia de
+# metodologias ativas, e-books do programa Escola do Futuro, diretrizes da
+# escola. São 155 MB, e um deles passa do limite de arquivo do GitHub.
+#
+# Eles ficam no disco e no backup. A spec continua citando cada um como
+# fonte de decisão: referência bibliográfica não precisa do arquivo junto.
+#
+# As duas logos (.jpg) da mesma pasta continuam versionadas — são ativo do
+# projeto, usado pela landing page.
+Docs/Refbibliografica/*.pdf
