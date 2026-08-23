@@ -79,6 +79,57 @@ describe('PaginaCatalogar', () => {
     expect(screen.getByText('Escape Room: Missão Termoscópio')).toBeInTheDocument()
   })
 
+  it('diz que o plano foi para rascunho, e leva a onde publicá-lo', async () => {
+    const usuario = userEvent.setup()
+    renderizar()
+
+    await screen.findByRole('heading', { name: 'Catalogar plano', level: 1 })
+    await usuario.upload(screen.getByLabelText('Escolher o PDF do plano'), pdfFalso())
+    await preencherMinimo(usuario)
+
+    // O padrão é publicar. Quem quer rascunho precisa DIZER — e ver, antes
+    // de salvar, que foi isso que escolheu.
+    expect(screen.getByText(/Vai aparecer na Biblioteca/)).toBeInTheDocument()
+    await usuario.click(screen.getByRole('button', { name: 'Deixar em rascunho' }))
+    expect(screen.getByText(/Vai ficar em rascunho/)).toBeInTheDocument()
+
+    await usuario.click(screen.getByRole('button', { name: 'Catalogar plano' }))
+
+    await screen.findByText('1 plano catalogado nesta sessão')
+
+    // O defeito que isto trava: a confirmação oferecia "Ver na Biblioteca"
+    // para um plano em rascunho — que é justamente onde ele NÃO está. Quem
+    // catalogava clicava, via a Biblioteca vazia e concluía que a
+    // catalogação tinha falhado.
+    expect(screen.getByText('em rascunho')).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Publicar em Planos' })).toHaveAttribute(
+      'href',
+      '/admin/planos',
+    )
+    expect(screen.queryByRole('link', { name: 'Ver na Biblioteca' })).not.toBeInTheDocument()
+  })
+
+  it('leva à Biblioteca quando o plano nasce publicado', async () => {
+    const usuario = userEvent.setup()
+    renderizar()
+
+    await screen.findByRole('heading', { name: 'Catalogar plano', level: 1 })
+    await usuario.upload(screen.getByLabelText('Escolher o PDF do plano'), pdfFalso())
+    await preencherMinimo(usuario)
+
+    // Sem tocar em nada: o padrão já é publicar.
+    expect(screen.getByText(/Vai aparecer na Biblioteca/)).toBeInTheDocument()
+
+    await usuario.click(screen.getByRole('button', { name: 'Catalogar plano' }))
+
+    await screen.findByText('1 plano catalogado nesta sessão')
+    expect(screen.queryByText('em rascunho')).not.toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Ver na Biblioteca' })).toHaveAttribute(
+      'href',
+      '/biblioteca',
+    )
+  })
+
   it('preserva as escolhas de vocabulário para o próximo plano da leva', async () => {
     const usuario = userEvent.setup()
     renderizar()

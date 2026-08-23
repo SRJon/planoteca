@@ -6,4 +6,4 @@ export {
   NOME_PASSO,
   CAMPOS_POR_PASSO,
 } from './useCatalogarPlano'
-export type { CamposCatalogar, EtapaEnvio, NumeroPasso } from './useCatalogarPlano'
+export type { PlanoCatalogado, CamposCatalogar, EtapaEnvio, NumeroPasso } from './useCatalogarPlano'

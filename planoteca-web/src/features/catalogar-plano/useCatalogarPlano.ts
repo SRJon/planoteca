@@ -75,6 +75,18 @@ export const CAMPOS_VAZIOS: CamposCatalogar = {
  * PDF grande demora, e um botão parado sem explicação parece travado. */
 export type EtapaEnvio = 'parado' | 'assinando' | 'subindo' | 'catalogando'
 
+/**
+ * Um plano catalogado nesta sessão, e para ONDE ele foi.
+ *
+ * O destino importa tanto quanto o título: um plano em rascunho não está na
+ * Biblioteca, e a confirmação que oferecia "Ver na Biblioteca" para todos
+ * mandava a pessoa procurar onde ele não estava.
+ */
+export type PlanoCatalogado = {
+  titulo: string
+  publicado: boolean
+}
+
 /** O formulário em 4 passos, cada um com o nome que a barra de progresso
  * mostra e os campos que "Continuar" valida antes de avançar. O arquivo
  * (`File`) não entra aqui: é estado à parte, e o passo 1 o valida sozinho. */
@@ -154,7 +166,7 @@ export function useCatalogarPlano(cliente: Cliente) {
   const [erroArquivo, setErroArquivo] = useState<string | null>(null)
   /** Quantos planos foram catalogados nesta sessão. É o retorno que diz
    * "funcionou" sem tirar a pessoa da tela. */
-  const [catalogados, setCatalogados] = useState<string[]>([])
+  const [catalogados, setCatalogados] = useState<PlanoCatalogado[]>([])
 
   const form = useForm<CamposCatalogar>({
     resolver: zodResolver(esquema),
@@ -240,7 +252,13 @@ export function useCatalogarPlano(cliente: Cliente) {
         }
 
         await catalogarPlano(cliente, entrada)
-        setCatalogados((anteriores) => [campos.titulo.trim(), ...anteriores])
+        // O DESTINO viaja junto com o título: sem ele, a confirmação
+        // oferecia "Ver na Biblioteca" para um plano em rascunho — que é
+        // justamente onde ele não aparece.
+        setCatalogados((anteriores) => [
+          { titulo: campos.titulo.trim(), publicado: campos.publicar },
+          ...anteriores,
+        ])
         limparRascunho()
 
         // O que se PRESERVA entre um plano e o seguinte: as escolhas de

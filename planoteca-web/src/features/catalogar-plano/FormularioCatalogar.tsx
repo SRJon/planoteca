@@ -489,13 +489,27 @@ export function FormularioCatalogar({
 
             {/* Catalogar e publicar são coisas diferentes: dá para subir uma
                 leva inteira em rascunho e publicar depois de conferir. */}
-            <Chip
-              ativo={publicar}
-              onClick={() => setValue('publicar', !publicar)}
-              aria-label="Publicar assim que catalogar"
-            >
-              {publicar ? 'Publicar ao salvar' : 'Salvar como rascunho'}
-            </Chip>
+            {/* O DESTINO do plano, dito antes de catalogar.
+                Isto era um `Chip` alternador ao lado do botão de ação, e
+                parecia um segundo botão: quem catalogava não percebia que o
+                plano nascia em rascunho, procurava na Biblioteca e não o
+                encontrava. A frase abaixo diz o que VAI acontecer, e o botão
+                oferece o contrário. */}
+            <div className="flex flex-wrap items-center gap-2 text-sm">
+              <span className="text-muted-foreground">
+                {publicar
+                  ? 'Vai aparecer na Biblioteca assim que salvar.'
+                  : 'Vai ficar em rascunho — só aparece na Biblioteca depois de publicar.'}
+              </span>
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => setValue('publicar', !publicar)}
+                className="h-auto rounded-none px-0 py-0 text-sm underline underline-offset-4"
+              >
+                {publicar ? 'Deixar em rascunho' : 'Publicar ao salvar'}
+              </Button>
+            </div>
           </>
         )}
       </div>
