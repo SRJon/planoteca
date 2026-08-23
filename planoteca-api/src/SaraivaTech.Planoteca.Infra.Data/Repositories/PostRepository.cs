@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -63,6 +63,14 @@ namespace SaraivaTech.Planoteca.Infra.Data.Repositories
 
             return await consulta.FirstOrDefaultAsync();
         }
+
+        /// <summary>
+        /// Rastreado e SEM `Include(Autor)` — ver o contrato em
+        /// `IPostRepository`. O post rastreado dispensa `Update`: alterar a
+        /// propriedade e dar `Commit` basta, e nada mais é anexado.
+        /// </summary>
+        public async Task<Post?> ObterParaEscritaAsync(Guid id) =>
+            await Context.Set<Post>().FirstOrDefaultAsync(p => p.Id == id);
 
         public async Task<int> ContarPendentesAsync() =>
             await Context.Set<Post>().CountAsync(p => p.Situacao == SituacaoPost.Pendente);

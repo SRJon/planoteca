@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using SaraivaTech.Planoteca.Domain.Base.Interfaces;
@@ -31,6 +31,21 @@ namespace SaraivaTech.Planoteca.Domain.Repositories.Interfaces
         /// libera rascunho e devolvido — só para o próprio autor ou para um
         /// administrador.</summary>
         Task<Post?> ObterAsync(Guid id, bool incluirNaoPublicado = false);
+
+        /// <summary>
+        /// O post para ESCRITA: rastreado, e sem o autor junto.
+        ///
+        /// `ObterAsync` serve à leitura e traz `Autor` incluído, porque a
+        /// tela mostra quem escreveu. Salvar esse mesmo objeto anexaria a
+        /// árvore inteira ao contexto — e o `PapelClaimsMiddleware` já
+        /// rastreia a Pessoa de quem fez a requisição. Quando o moderador é
+        /// o próprio autor, são duas instâncias de Pessoa com o mesmo Id, e
+        /// o EF Core recusa com "cannot be tracked".
+        ///
+        /// Aqui a entidade vem rastreada pelo contexto, então alterar uma
+        /// propriedade basta: não há `Update` que anexe grafo nenhum.
+        /// </summary>
+        Task<Post?> ObterParaEscritaAsync(Guid id);
 
         /// <summary>Quantos textos aguardam moderação. É o número que o
         /// painel administrativo mostra primeiro: o briefing diz que ele

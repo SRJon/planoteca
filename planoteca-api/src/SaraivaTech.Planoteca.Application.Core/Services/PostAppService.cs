@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -117,7 +117,14 @@ namespace SaraivaTech.Planoteca.Application.Core.Services
                 return Result.Failure("Diga ao autor por que o texto foi devolvido ou recusado.");
             }
 
-            var post = await _repositorio.ObterAsync(id, incluirNaoPublicado: true);
+            // `ObterParaEscritaAsync`, e não `ObterAsync`: aquele traz o
+            // `Autor` junto para a tela, e salvar o objeto com o autor
+            // pendurado anexava uma segunda instância de Pessoa ao contexto.
+            // O `PapelClaimsMiddleware` já rastreia a Pessoa de quem faz a
+            // requisição — quando o moderador modera o PRÓPRIO texto, o EF
+            // recusava com "cannot be tracked because another instance with
+            // the same key value is already being tracked".
+            var post = await _repositorio.ObterParaEscritaAsync(id);
             if (post is null) return Result.Failure("Texto não encontrado.");
 
             post.Situacao = decisao.Situacao;
@@ -133,7 +140,9 @@ namespace SaraivaTech.Planoteca.Application.Core.Services
             try
             {
                 _uow.BeginTransaction();
-                _repositorio.Update(post);
+                // Sem `Update`: a entidade já está rastreada, e o
+                // change tracker viu as alterações acima. Chamar `Update`
+                // aqui anexaria o grafo de novo, que é justamente o defeito.
                 _uow.Commit();
                 return Result.Success();
             }
