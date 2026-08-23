@@ -1,8 +1,18 @@
 import { Moon } from '@phosphor-icons/react/dist/csr/Moon'
+import { SignOut } from '@phosphor-icons/react/dist/csr/SignOut'
 import { Sun } from '@phosphor-icons/react/dist/csr/Sun'
+import { UserCircle } from '@phosphor-icons/react/dist/csr/UserCircle'
 import { NavLink, Link, Outlet } from 'react-router'
+import type { Papel } from '@/entities/autenticacao'
 import { Marca } from '@/components/marca'
 import { Button } from '@/components/ui/button'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 import { cn } from '@/shared/lib/cn'
 import { useAutenticacao } from '../providers/AutenticacaoProvider'
 import { useTema } from '../providers/TemaProvider'
@@ -38,8 +48,24 @@ const AREAS = [
  * São duas cascas porque são dois produtos: o acervo aberto e a mesa de
  * trabalho de quem o mantém.
  */
+/**
+ * Para onde "Minha área" leva.
+ *
+ * Depende do PAPEL porque as telas de administração respondem 403 a um
+ * professor: mandá-lo para a moderação seria oferecer uma porta que bate na
+ * cara dele. Escrever para o blog é o que toda conta pode fazer, e é a mesa
+ * de trabalho de quem não administra.
+ *
+ * O botão apontava para `/biblioteca` — a página de onde ele costuma ser
+ * clicado. O clique navegava para o lugar onde a pessoa já estava, e nada
+ * acontecia.
+ */
+function destinoDaMesa(papel: Papel): string {
+  return papel === 'administrador' ? '/admin/moderacao' : '/admin/escrever'
+}
+
 export function LayoutPublico() {
-  const { sessao } = useAutenticacao()
+  const { sessao, sair } = useAutenticacao()
   // O tema precisa ser trocável AQUI, e não só no painel.
   //
   // O botão existia apenas dentro do menu de conta da `BarraSuperior` — que
@@ -108,12 +134,40 @@ export function LayoutPublico() {
               Entrar
             </Link>
           ) : (
-            <Link
-              to="/biblioteca"
-              className="flex-none border-2 border-traco px-4 py-1.5 text-sm font-bold text-foreground hover:bg-secondary"
-            >
-              Minha área
-            </Link>
+            /* Menu, e não link direto: o botão de sair vivia SÓ dentro do
+               painel. Quem entrasse e ficasse no acervo não tinha como
+               encerrar a sessão sem limpar o navegador. A saída pertence a
+               toda tela onde a pessoa aparece identificada. */
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="flex-none gap-2 rounded-none border-2 border-traco px-4 py-1.5 text-sm font-bold"
+                >
+                  <UserCircle size={16} aria-hidden />
+                  Minha área
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <div className="flex flex-col px-2 py-1.5">
+                  <span className="truncate text-sm font-bold">{sessao.nome}</span>
+                  <span className="text-xs text-muted-foreground">
+                    {sessao.papel === 'administrador' ? 'Administradora ou administrador' : 'Professora ou professor'}
+                  </span>
+                </div>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <Link to={destinoDaMesa(sessao.papel)}>
+                    {sessao.papel === 'administrador' ? 'Moderação' : 'Escrever para o blog'}
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => void sair()}>
+                  <SignOut size={15} />
+                  Sair
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           )}
         </div>
       </header>

@@ -40,11 +40,14 @@ export function ComAutenticacao({
   sessao = sessaoDeTeste(),
   carregando = false,
   disponivel = true,
+  sair = async () => {},
 }: {
   children: React.ReactNode
   sessao?: Sessao | null
   carregando?: boolean
   disponivel?: boolean
+  /** Sobrescrevível para o teste provar que a saída foi chamada. */
+  sair?: () => Promise<void>
 }) {
   const valor: Autenticacao = {
     sessao,
@@ -54,7 +57,7 @@ export function ComAutenticacao({
     entrarComGoogle: async () => {},
     entrarComSenha: async () => {},
     cadastrarComSenha: async () => {},
-    sair: async () => {},
+    sair,
   }
 
   return <ContextoAutenticacao.Provider value={valor}>{children}</ContextoAutenticacao.Provider>
