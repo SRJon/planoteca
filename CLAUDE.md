@@ -140,6 +140,15 @@ aparece no console. Lista vazia significa nenhuma origem permitida, de
 propósito — um front que não carrega denuncia a variável esquecida, enquanto
 um curinga a esconderia.
 
+**O deploy passa pelo GitHub Actions, não pelo webhook do Render.**
+`.github/workflows/ci.yml` roda o portão dos dois lados e só então chama o
+Deploy Hook. O webhook nativo do Render nunca disparou neste repositório —
+os Events do serviço não mostram nenhuma tentativa. A troca vale por si:
+com o hook, nada sobe sem o portão passar.
+
+O hook é segredo do repositório (`RENDER_DEPLOY_HOOK`). Quem o tiver
+dispara deploy; regenerá-lo no Render exige atualizar o segredo.
+
 **O deploy da API não é automático até você provar que é.** Duas vezes uma
 correção pareceu não funcionar, e a causa era a mesma: o Render continuava
 servindo a versão anterior. Funcionalidade nova respondendo 404 enquanto a
@@ -155,7 +164,6 @@ Esquecê-la produz um build que falha sem mencionar o Vercel.
 
 ### Ainda em aberto
 
-- CI/CD: fica para depois de a API estar de pé
 - Domínio próprio
 
 ## Tom da escrita — código e interface

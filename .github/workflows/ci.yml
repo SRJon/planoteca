@@ -1,0 +1,144 @@
+# O portão antes do ar.
+#
+# O deploy automático nativo do Render não dispara neste repositório — os
+# Events do serviço não mostram nenhuma tentativa, só os deploys manuais.
+# Em vez de insistir no webhook dele, o disparo passa a ser NOSSO: o
+# workflow chama o Deploy Hook, uma URL que o Render aceita de quem a
+# tiver.
+#
+# A troca vale por si: com o hook, nada sobe sem o portão passar. O webhook
+# nativo subiria commit quebrado igual.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# Um push novo cancela a execução anterior da mesma branch. Sem isto, dois
+# pushes seguidos disparam dois deploys, e o segundo pode chegar antes do
+# primeiro.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  api:
+    name: API — build e testes
+    runs-on: ubuntu-latest
+
+    # O PostgreSQL de verdade, e não `InMemory`: metade do que os testes de
+    # integração provam não existe no provider em memória — ILIKE, o índice
+    # único parcial do componente principal, o `on delete cascade`. Sem este
+    # serviço eles seriam PULADOS (`Skip.If` em `BaseBancoReal`), e o portão
+    # ficaria verde sem testar o que mais importa.
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: planoteca
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U postgres -d planoteca"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Restaurar
+        working-directory: planoteca-api
+        run: dotnet restore SaraivaTech.Planoteca.sln
+
+      - name: Compilar
+        working-directory: planoteca-api
+        run: dotnet build SaraivaTech.Planoteca.sln --no-restore
+
+      - name: Instalar o dotnet-ef
+        run: dotnet tool install --global dotnet-ef
+
+      - name: Aplicar o schema
+        working-directory: planoteca-api
+        env:
+          ConnectionStrings__DefaultConnection: Host=localhost;Port=5432;Database=planoteca;Username=postgres;Password=postgres
+        # O vocabulário vem JUNTO: o seed mora dentro da migration `Inicial`,
+        # não num passo de arranque. Os testes de integração dependem dele —
+        # eles buscam "Química" e "8º ano" pelo nome, e sem o seed falhariam
+        # com "sequence contains no elements", que não diz o que faltou.
+        run: dotnet ef database update --project src/SaraivaTech.Planoteca.Infra.Data --startup-project src/SaraivaTech.Planoteca.Api
+
+      - name: Testar
+        working-directory: planoteca-api
+        env:
+          ConnectionStrings__DefaultConnection: Host=localhost;Port=5432;Database=planoteca;Username=postgres;Password=postgres
+        run: dotnet test SaraivaTech.Planoteca.sln --no-build
+
+  web:
+    name: Front — lint, testes e build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: planoteca-web/package-lock.json
+
+      - name: Instalar
+        working-directory: planoteca-web
+        run: npm ci
+
+      - name: Lint
+        working-directory: planoteca-web
+        run: npm run lint
+
+      - name: Testes
+        working-directory: planoteca-web
+        run: npm run test
+
+      - name: Build
+        working-directory: planoteca-web
+        # `VITE_URL_API` é lida em tempo de BUILD e `ambiente.ts` lança sem
+        # ela. O valor aqui não importa — nada é publicado deste build; o do
+        # ar é o do Vercel. O que importa é o typecheck dos três tsconfig.
+        env:
+          VITE_URL_API: https://exemplo.invalid
+        run: npm run build
+
+      - name: Navegadores do Playwright
+        working-directory: planoteca-web
+        run: npx playwright install --with-deps chromium
+
+      - name: E2E
+        working-directory: planoteca-web
+        env:
+          VITE_URL_API: https://exemplo.invalid
+        run: npm run e2e
+
+  deploy:
+    name: Deploy da API no Render
+    runs-on: ubuntu-latest
+    needs: [api, web]
+    # Só em `main`, e nunca em PR: `needs` garante o portão verde, e esta
+    # condição garante que só o que foi mesclado sobe.
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    steps:
+      - name: Disparar o Deploy Hook
+        # O hook é um segredo: quem o tiver dispara deploy no serviço. Ele
+        # mora em Settings → Secrets → Actions, nunca no repositório.
+        #
+        # `--fail` para o passo falhar quando o Render recusa: sem ele, um
+        # 401 por hook regenerado passaria como sucesso, e a gente voltaria a
+        # achar que o deploy automático funciona quando não funciona.
+        run: curl --fail --silent --show-error --request POST "${{ secrets.RENDER_DEPLOY_HOOK }}"
