@@ -140,6 +140,12 @@ aparece no console. Lista vazia significa nenhuma origem permitida, de
 propósito — um front que não carrega denuncia a variável esquecida, enquanto
 um curinga a esconderia.
 
+**O deploy da API não é automático até você provar que é.** Duas vezes uma
+correção pareceu não funcionar, e a causa era a mesma: o Render continuava
+servindo a versão anterior. Funcionalidade nova respondendo 404 enquanto a
+antiga responde 401 é a assinatura disso — a rota não existe no binário no
+ar. Confirme com `curl` numa rota nova antes de procurar defeito no código.
+
 **O schema é aplicado no arranque da API.** `Program.cs` chama
 `MigrateAsync()` antes de aceitar tráfego, porque o Render não oferece passo
 de release onde rodar `dotnet ef database update`. É idempotente.

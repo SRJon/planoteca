@@ -15,6 +15,15 @@ services:
     rootDir: planoteca-api
     dockerfilePath: ./Dockerfile
 
+    # A branch observada, e o deploy a cada commit nela.
+    #
+    # As duas eram implícitas, e o deploy automático não disparava — o
+    # serviço ficava na versão anterior enquanto a interface mostrava o
+    # commit novo, o que aparece como funcionalidade nova respondendo 404.
+    # Declarar aqui tira a dúvida sobre o que o Render observa.
+    branch: main
+    autoDeploy: true
+
     # O plano gratuito HIBERNA após 15 minutos sem tráfego, e a primeira
     # requisição depois disso leva ~50 segundos. O health check confirma que
     # a aplicação subiu; ele não impede a hibernação.
