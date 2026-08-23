@@ -1,7 +1,11 @@
+import { Moon } from '@phosphor-icons/react/dist/csr/Moon'
+import { Sun } from '@phosphor-icons/react/dist/csr/Sun'
 import { NavLink, Link, Outlet } from 'react-router'
 import { Marca } from '@/components/marca'
+import { Button } from '@/components/ui/button'
 import { cn } from '@/shared/lib/cn'
 import { useAutenticacao } from '../providers/AutenticacaoProvider'
+import { useTema } from '../providers/TemaProvider'
 
 /**
  * As três áreas do acervo, na ordem em que o produto as descreve.
@@ -36,6 +40,14 @@ const AREAS = [
  */
 export function LayoutPublico() {
   const { sessao } = useAutenticacao()
+  // O tema precisa ser trocável AQUI, e não só no painel.
+  //
+  // O botão existia apenas dentro do menu de conta da `BarraSuperior` — que
+  // nem aparece para quem não entrou. Como o tema inicial segue o sistema
+  // operacional, quem usa o Windows no escuro abria a Biblioteca no escuro
+  // sem nenhuma forma de mudar. O acervo é a parte pública: é justamente
+  // onde a saída não pode faltar.
+  const { tema, alternarTema } = useTema()
 
   return (
     <div className="flex min-h-dvh flex-col bg-background">
@@ -74,6 +86,16 @@ export function LayoutPublico() {
               ))}
             </ul>
           </nav>
+
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={alternarTema}
+            aria-label={tema === 'dark' ? 'Mudar para o tema claro' : 'Mudar para o tema escuro'}
+            className="size-9 flex-none rounded-none text-muted-foreground hover:text-foreground"
+          >
+            {tema === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+          </Button>
 
           {/* Quem já entrou vai para a mesa de trabalho; quem não entrou vê
               o convite. O botão nunca é barreira para o acervo — ele é a

@@ -39,6 +39,14 @@ function mensagemDoErro(erro: unknown): string {
       return 'Muitas tentativas. Espere alguns minutos antes de tentar de novo.'
     case 'auth/network-request-failed':
       return 'Sem conexão com o servidor de login. Verifique a internet.'
+    case 'auth/unauthorized-domain':
+    case 'auth/operation-not-allowed':
+    case 'auth/invalid-api-key':
+      // Estes três não são erro de quem está entrando: são configuração
+      // faltando no console do Firebase. Quem vê a tela não tem como agir
+      // sobre eles, então a mensagem aponta a saída que existe — o acervo,
+      // que não depende de login nenhum.
+      return 'O login está indisponível neste endereço. A Biblioteca continua aberta.'
     default:
       return erro instanceof Error && erro.message
         ? erro.message

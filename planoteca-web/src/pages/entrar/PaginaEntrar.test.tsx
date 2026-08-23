@@ -117,6 +117,24 @@ describe('PaginaEntrar', () => {
     expect(screen.queryByRole('alert')).not.toBeInTheDocument()
   })
 
+  it('não despeja código de configuração do Firebase na tela', async () => {
+    const usuario = userEvent.setup()
+    renderizar({
+      entrarComGoogle: vi.fn(async () => {
+        throw Object.assign(new Error('firebase'), { code: 'auth/unauthorized-domain' })
+      }),
+    })
+
+    await usuario.click(screen.getByRole('button', { name: /Continuar com o Google/ }))
+
+    // `auth/unauthorized-domain` é domínio faltando no console do Firebase.
+    // Quem vê a tela não tem como agir sobre isso, então a mensagem aponta
+    // a saída que existe.
+    const alerta = await screen.findByRole('alert')
+    expect(alerta).toHaveTextContent('A Biblioteca continua aberta.')
+    expect(alerta).not.toHaveTextContent('auth/')
+  })
+
   it('avisa quando o login não está configurado, sem oferecer botão morto', () => {
     renderizar({ disponivel: false })
 
