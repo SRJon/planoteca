@@ -171,4 +171,18 @@ describe('Shell', () => {
     const trilha = await screen.findByRole('navigation', { name: 'Trilha de navegação' })
     expect(within(trilha).getByText('Pessoas')).toBeInTheDocument()
   })
+
+  it('trava o scroll do documento, e o devolve ao sair do painel', () => {
+    // Duas barras de rolagem: a do `<main>` e a do navegador. `tema.css`
+    // fixa a altura com `height: 100%`, o que não impede o transbordo — e a
+    // diferença entre `100%` e `dvh` sobrava como segunda barra. O
+    // formulário de catalogar parava no meio da tela com área morta abaixo.
+    const { unmount } = renderizar('/pessoas')
+    expect(document.body.style.overflow).toBe('hidden')
+
+    // As telas públicas rolam pelo documento. Sair do painel sem devolver o
+    // scroll deixaria a Biblioteca presa.
+    unmount()
+    expect(document.body.style.overflow).not.toBe('hidden')
+  })
 })

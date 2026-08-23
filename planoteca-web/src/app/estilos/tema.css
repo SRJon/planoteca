@@ -457,6 +457,11 @@
     height: 100%;
   }
 
+  /* `height: 100%` fixa a altura mas NAO impede o transbordo — e nem deve.
+     As telas publicas (`LayoutPublico`) rolam pelo documento, como qualquer
+     pagina de leitura. Quem nao rola e a casca do painel, e ela declara
+     isso em si mesma (`h-dvh overflow-hidden` no `Shell`), nao aqui. */
+
   body {
     font-family: var(--font-sans);
     background: var(--bg);

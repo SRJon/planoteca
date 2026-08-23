@@ -59,6 +59,29 @@ export function Shell() {
     }
   }, [recolhida])
 
+  /**
+   * Trava o scroll do DOCUMENTO enquanto o painel estiver montado.
+   *
+   * `tema.css` define `html, body, #root { height: 100% }` — o que fixa a
+   * altura mas não impede o transbordo. Como esta casca usa `h-dvh` e rola
+   * por dentro do `<main>`, qualquer diferença entre `100%` e `dvh` sobrava
+   * como uma segunda barra, a do navegador, sobre a barra interna. O
+   * formulário de catalogar, que é longo, parava no meio da tela com área
+   * morta abaixo.
+   *
+   * A trava mora AQUI, e não em `tema.css`, porque vale só para o painel: as
+   * telas públicas rolam pelo documento, como qualquer página de leitura.
+   * Por isso a limpeza devolve o valor anterior em vez de assumir um padrão
+   * — sair do painel tem de restaurar a Biblioteca ao que ela era.
+   */
+  useEffect(() => {
+    const anterior = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.body.style.overflow = anterior
+    }
+  }, [])
+
   const alternarSidebar = useCallback(() => setRecolhida((atual) => !atual), [])
   // Navegar fecha a gaveta — sem isto ela ficaria por cima da tela recém
   // aberta, escondendo justamente o que a pessoa foi buscar. O fechamento é
