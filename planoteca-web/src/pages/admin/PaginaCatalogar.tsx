@@ -17,6 +17,10 @@ import { mensagemDe } from '@/shared/api'
 export function PaginaCatalogar({ cliente }: { cliente: Cliente }) {
   const { vocabulario, carregando, erro } = useVocabulario(cliente)
   const catalogacao = useCatalogarPlano(cliente)
+  // Um rascunho na leva muda para onde o link aponta: mandar para a
+  // Biblioteca quem acabou de salvar em rascunho é mandá-lo ao lugar onde o
+  // plano não está.
+  const temRascunho = catalogacao.catalogados.some((plano) => !plano.publicado)
 
   if (carregando) {
     return <p className="px-2 py-8 text-muted-foreground">Carregando o vocabulário…</p>
@@ -69,19 +73,39 @@ export function PaginaCatalogar({ cliente }: { cliente: Cliente }) {
             sessão
           </h2>
           <ul className="flex flex-col gap-1 pl-0">
-            {catalogacao.catalogados.map((titulo, indice) => (
+            {catalogacao.catalogados.map((plano, indice) => (
               // A chave usa o índice porque a lista só CRESCE pela frente e
               // nada é removido nem reordenado — não há identidade a
               // preservar, e dois planos podem legitimamente ter o mesmo
               // título.
-              <li key={`${titulo}-${indice}`} className="list-none text-sm text-muted-foreground">
-                {titulo}
+              <li
+                key={`${plano.titulo}-${indice}`}
+                className="flex flex-wrap items-baseline gap-2 list-none text-sm text-muted-foreground"
+              >
+                {plano.titulo}
+                {!plano.publicado && (
+                  <span className="font-mono text-[11px] tracking-wide text-warn uppercase">
+                    em rascunho
+                  </span>
+                )}
               </li>
             ))}
           </ul>
-          <Link to="/biblioteca" className="w-fit text-sm underline underline-offset-4">
-            Ver na Biblioteca
-          </Link>
+
+          {/* O link segue o DESTINO do que foi catalogado.
+              Ele apontava sempre para a Biblioteca, inclusive para plano em
+              rascunho — que é exatamente onde ele NÃO está. Quem catalogava
+              sem publicar clicava, via a Biblioteca vazia e concluía que a
+              catalogação tinha falhado. */}
+          {temRascunho ? (
+            <Link to="/admin/planos" className="w-fit text-sm underline underline-offset-4">
+              Publicar em Planos
+            </Link>
+          ) : (
+            <Link to="/biblioteca" className="w-fit text-sm underline underline-offset-4">
+              Ver na Biblioteca
+            </Link>
+          )}
         </section>
       )}
 
