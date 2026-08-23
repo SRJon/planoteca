@@ -286,3 +286,24 @@ Hoje o primeiro admin nasce por SQL, e o segundo também.
 **Segurança:** C2 é a mais séria — HTML de professor renderizado para
 visitante é XSS se não for sanitizado. F2 é controle de acesso: toda rota
 exige a política Administrador, e a checagem é do servidor.
+
+## 2026-08-23 — Remover plano apaga o PDF junto
+
+Antes, `RemoverAsync` apagava só a linha do banco. O arquivo ficava no R2
+para sempre. A operação existia na interface e o armazenamento já estava
+injetado no serviço — era um fio pronto, desconectado.
+
+- [x] Ligar a remoção do arquivo à remoção do plano
+- [x] `ChaveDaUrl` na interface: quem monta a URL sabe desmontá-la
+- [x] Testes: apaga, não apaga o de publicado, falha não derruba, URL de fora
+
+**Ordem deliberada:** banco primeiro, arquivo depois, fora da transação.
+Apagar o arquivo antes e falhar no banco deixaria um plano apontando para
+download inexistente — quebrado para todo professor. Nesta ordem o pior
+caso é um órfão, que é invisível.
+
+### Ainda em aberto: os órfãos que já existem
+
+Arquivo sem plano continua sem coleta. Hoje há pelo menos um, da
+catalogação que falhou com o `AccountId` errado. Não é urgente — o plano
+gratuito do R2 tem 10 GB — mas cresce com o uso.

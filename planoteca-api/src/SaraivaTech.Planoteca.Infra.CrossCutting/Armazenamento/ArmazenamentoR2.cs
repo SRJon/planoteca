@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -73,6 +73,20 @@ namespace SaraivaTech.Planoteca.Infra.CrossCutting.Armazenamento
 
         public string UrlPublica(string chave) =>
             $"{_opcoes.UrlPublicaBase.TrimEnd('/')}/{chave}";
+
+        /// <summary>O inverso exato de `UrlPublica`. Ver o contrato na
+        /// interface.</summary>
+        public string? ChaveDaUrl(string urlPublica)
+        {
+            if (string.IsNullOrWhiteSpace(urlPublica)) return null;
+
+            var prefixo = _opcoes.UrlPublicaBase.TrimEnd('/') + "/";
+            if (!urlPublica.StartsWith(prefixo, StringComparison.OrdinalIgnoreCase))
+                return null;
+
+            var chave = urlPublica[prefixo.Length..];
+            return string.IsNullOrWhiteSpace(chave) ? null : chave;
+        }
 
         /// <summary>
         /// A chave do objeto no bucket.

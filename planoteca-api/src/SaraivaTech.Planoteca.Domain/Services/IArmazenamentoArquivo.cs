@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Threading.Tasks;
 
 namespace SaraivaTech.Planoteca.Domain.Services
@@ -46,6 +46,22 @@ namespace SaraivaTech.Planoteca.Domain.Services
         /// <summary>Remove o objeto. Usado quando a catalogação é cancelada e
         /// o arquivo já subiu — senão o bucket acumula órfão.</summary>
         Task RemoverAsync(string chave);
+
+        /// <summary>
+        /// A chave de volta, a partir da URL pública guardada em
+        /// `plano.arquivo_url`.
+        ///
+        /// O banco guarda a URL, não a chave — é ela que a interface usa para
+        /// o download. Mas remover o objeto exige a chave, e reconstruí-la
+        /// com um `Split('/')` no serviço amarraria a camada de aplicação ao
+        /// formato da URL. Quem monta é quem sabe desmontar.
+        ///
+        /// `null` quando a URL não pertence a este armazenamento — um plano
+        /// antigo apontando para outro lugar, ou uma URL colada à mão. Nesse
+        /// caso não há o que remover, e inventar uma chave apagaria o objeto
+        /// errado.
+        /// </summary>
+        string? ChaveDaUrl(string urlPublica);
 
         /// <summary>A URL pública de leitura de uma chave. Anônima, sem token:
         /// baixar plano não exige conta.</summary>

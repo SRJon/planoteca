@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Threading.Tasks;
 using SaraivaTech.Planoteca.Domain.Services;
 
@@ -31,5 +31,13 @@ namespace SaraivaTech.Planoteca.Infra.CrossCutting.Armazenamento
 
         public string UrlPublica(string chave) =>
             throw new InvalidOperationException(Mensagem);
+
+        /// <summary>
+        /// `null`, e não exceção: quem chama trata o nulo como "não há o que
+        /// remover", e é exatamente isso que acontece sem armazenamento
+        /// configurado. Lançar aqui derrubaria a remoção de um plano por
+        /// causa de um arquivo que nunca existiu.
+        /// </summary>
+        public string? ChaveDaUrl(string urlPublica) => null;
     }
 }

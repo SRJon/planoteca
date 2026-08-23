@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -115,18 +115,46 @@ namespace SaraivaTech.Planoteca.Application.Core.Services
                     "Este plano está publicado e pode ter sido compartilhado. Despublique antes de remover.");
             }
 
+            var chave = _armazenamento.ChaveDaUrl(plano.ArquivoUrl);
+
             try
             {
                 _uow.BeginTransaction();
                 _repositorio.Delete(plano);
                 _uow.Commit();
-                return Result.Success();
             }
             catch
             {
                 _uow.Rollback();
                 throw;
             }
+
+            // O PDF sai DEPOIS do commit, e fora da transação.
+            //
+            // A ordem não é acidental. Apagar o arquivo antes e falhar no
+            // banco deixaria um plano no acervo apontando para um download
+            // que não existe — quebrado para todo professor que o abrisse.
+            // Nesta ordem, o pior caso é um arquivo órfão no R2: invisível,
+            // e que custa centavos.
+            //
+            // A falha da remoção também não derruba a operação. O plano já
+            // saiu do acervo, que é o que a pessoa pediu; devolver erro
+            // depois disso faria parecer que nada aconteceu, e o clique
+            // repetido não teria mais o que remover.
+            if (chave is not null)
+            {
+                try
+                {
+                    await _armazenamento.RemoverAsync(chave);
+                }
+                catch
+                {
+                    // Órfão. A dívida está registrada em `Docs/todo.md`: não
+                    // há coleta de arquivo sem plano.
+                }
+            }
+
+            return Result.Success();
         }
 
         public async Task<Result<Guid>> CatalogarAsync(PlanoEntradaDto entrada, Guid? catalogadoPorId)
