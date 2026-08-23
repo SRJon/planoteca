@@ -37,6 +37,17 @@ WORKDIR /app
 COPY --from=build /app/publish .
 
 ENV ASPNETCORE_ENVIRONMENT=Production
+
+# Sem esta linha a API morre no arranque, ANTES da primeira linha de código
+# nosso, com "The configured user limit (128) on the number of inotify
+# instances has been reached".
+#
+# O host do .NET monta um FileSystemWatcher por arquivo de configuração para
+# recarregar em tempo real quando o arquivo muda. Num contêiner isso é
+# vigilância inútil — o sistema de arquivos é imutável e nada muda em
+# execução — e o limite de inotify do Render é baixo demais para ela.
+ENV DOTNET_hostBuilder__reloadConfigOnChange=false
+
 EXPOSE 8080
 
 # `sh -c` porque a expansão de `$PORT` precisa de um shell — a forma exec
