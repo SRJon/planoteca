@@ -1,6 +1,7 @@
 import type { Page, Route } from '@playwright/test'
 import {
   POSTS_FIXTURE,
+  VOCABULARIO_ADMIN_FIXTURE,
   VOCABULARIO_FIXTURE,
   detalharPlano,
   filtrarContas,
@@ -9,6 +10,11 @@ import {
   paginarPlanos,
 } from '../src/teste/planos'
 import type { ContaFixture, PlanoFixture } from '../src/teste/planos'
+
+/** Os quatro tokens que a API aceita (RF-04) — espelha `CorComponente.cs`.
+ * Só para a simulação recusar cor inválida como o back-end recusaria, a
+ * mesma lista que `src/teste/servidor.ts` já usa para o teste de unidade. */
+const CORES_VALIDAS = ['comp-linguagens', 'comp-matematica', 'comp-natureza', 'comp-humanas']
 
 /**
  * Simulação de rede para o caminho ponta a ponta (Task 10 do boilerplate).
@@ -208,6 +214,10 @@ export async function instalarSimulacao(page: Page, opcoes: OpcoesSimulacao = {}
   const token = opcoes.token ?? 'token-opaco-de-teste'
   const pessoas = gerarPessoas(opcoes.quantidadePessoas ?? 26)
   const planos = gerarPlanos(opcoes.quantidadePlanos ?? 14)
+  // O que o teste cadastrar pela tela de gestão. Vive DENTRO da instalação,
+  // e não no módulo: um array compartilhado vazaria o cadastro de um teste
+  // para o seguinte, e a ordem de execução passaria a importar.
+  const componentesCadastrados: (typeof VOCABULARIO_ADMIN_FIXTURE.componentes)[number][] = []
 
   await page.route('**/api/v1/**', async (route) => {
     const request = route.request()
@@ -392,6 +402,78 @@ export async function instalarSimulacao(page: Page, opcoes: OpcoesSimulacao = {}
       // Os chips do filtro saem daqui. Sem este handler a Biblioteca desenha
       // sem nenhum chip, e o teste de filtro falha por não achar o botão.
       await json(route, 200, VOCABULARIO_FIXTURE)
+      return
+    }
+
+    // ── Gestão de vocabulário ────────────────────────────────────────────
+    // As mesmas rotas de `src/teste/servidor.ts` (RF-09): fixture
+    // compartilhada, senão o e2e passaria com dado que o teste de unidade
+    // não conhece.
+    //
+    // Aqui, ao contrário do MSW, a simulação GUARDA o que foi cadastrado. Um
+    // `GET` que devolvesse sempre a fixture fixa faria o teste de cadastro
+    // assertar sobre um item que já estava na tela antes do formulário abrir
+    // — passaria sem provar que o `POST` fez efeito.
+    if (metodo === 'GET' && caminho === '/admin/vocabulary') {
+      await json(route, 200, {
+        ...VOCABULARIO_ADMIN_FIXTURE,
+        componentes: [...VOCABULARIO_ADMIN_FIXTURE.componentes, ...componentesCadastrados],
+      })
+      return
+    }
+
+    if (metodo === 'POST' && caminho === '/admin/vocabulary/components') {
+      const entrada = route.request().postDataJSON() as { nome?: string; cor?: string }
+      if (!entrada.nome?.trim()) {
+        await json(route, 400, { status: 400, messages: ['O nome é obrigatório.'] })
+      } else if (!CORES_VALIDAS.includes(entrada.cor ?? '')) {
+        await json(route, 400, {
+          status: 400,
+          messages: ['A cor precisa ser um token que o tema conhece.'],
+        })
+      } else {
+        const criado = { id: '20000000-0000-0000-0000-000000000900', ...entrada }
+        componentesCadastrados.push(criado as (typeof VOCABULARIO_ADMIN_FIXTURE.componentes)[number])
+        await json(route, 201, criado)
+      }
+      return
+    }
+
+    const alterarComponente = caminho.match(/^\/admin\/vocabulary\/components\/([0-9a-f-]+)$/i)
+    if (metodo === 'PUT' && alterarComponente) {
+      await route.fulfill({ status: 204 })
+      return
+    }
+
+    if (metodo === 'POST' && caminho === '/admin/vocabulary/grades') {
+      const entrada = route.request().postDataJSON() as { nome?: string }
+      if (!entrada.nome?.trim()) {
+        await json(route, 400, { status: 400, messages: ['O nome é obrigatório.'] })
+      } else {
+        await json(route, 201, { id: '30000000-0000-0000-0000-000000000900', ...entrada })
+      }
+      return
+    }
+
+    const alterarSerie = caminho.match(/^\/admin\/vocabulary\/grades\/([0-9a-f-]+)$/i)
+    if (metodo === 'PUT' && alterarSerie) {
+      await route.fulfill({ status: 204 })
+      return
+    }
+
+    if (metodo === 'POST' && caminho === '/admin/vocabulary/methodologies') {
+      const entrada = route.request().postDataJSON() as { nome?: string }
+      if (!entrada.nome?.trim()) {
+        await json(route, 400, { status: 400, messages: ['O nome é obrigatório.'] })
+      } else {
+        await json(route, 201, { id: '40000000-0000-0000-0000-000000000900', ...entrada })
+      }
+      return
+    }
+
+    const alterarMetodologia = caminho.match(/^\/admin\/vocabulary\/methodologies\/([0-9a-f-]+)$/i)
+    if (metodo === 'PUT' && alterarMetodologia) {
+      await route.fulfill({ status: 204 })
       return
     }
 
