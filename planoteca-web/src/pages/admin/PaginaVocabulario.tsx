@@ -24,7 +24,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import type { Cliente } from '@/shared/api'
 import { mensagemDe } from '@/shared/api'
 
-/** As três etapas que a série aceita — espelha a validação de RF-10 no
+/** As duas etapas que a série aceita — espelha a validação de RF-10 no
  * back-end (`A etapa é fundamental ou médio.`). Lista fechada, igual à
  * de cor: um `select` livre deixaria a tela aceitar o que a API recusa. */
 const ETAPAS = [
@@ -346,6 +346,11 @@ export function PaginaVocabulario({ cliente }: { cliente: Cliente }) {
     | { tipo: 'metodologias'; item: Metodologia | null }
     | null
   >(null)
+  // Desativar passa por confirmação, como em `PaginaPessoasAdmin`: o item
+  // some do filtro da Biblioteca INTEIRA, e os planos que já o citam ficam
+  // sem a opção que os encontra. Reativar não pergunta — devolver o item ao
+  // filtro não tira nada de ninguém.
+  const [aDesativar, setADesativar] = useState<{ nome: string; desativar: () => void } | null>(null)
 
   const { vocabulario, carregando, erro } = useVocabularioAdmin(cliente)
   const salvarComponente = useSalvarComponente(cliente)
@@ -357,6 +362,15 @@ export function PaginaVocabulario({ cliente }: { cliente: Cliente }) {
 
   function fechar() {
     setItemEmEdicao(null)
+  }
+
+  /** Reativar age direto; desativar guarda a ação e abre a confirmação. */
+  function alternar(nome: string, ativoAgora: boolean, aplicar: () => void) {
+    if (!ativoAgora) {
+      aplicar()
+      return
+    }
+    setADesativar({ nome, desativar: aplicar })
   }
 
   /** Abre o formulário de cadastro para a aba corrente. Uma função por aba
@@ -417,19 +431,21 @@ export function PaginaVocabulario({ cliente }: { cliente: Cliente }) {
                 ativo={c.ativo}
                 aoAlterar={() => setItemEmEdicao({ tipo: 'componentes', item: c })}
                 aoAlternarAtivo={() =>
-                  // O `PUT` substitui o item inteiro, então todo campo vai
-                  // junto — inclusive `ordem`, que esta ação não altera. Um
-                  // valor fixo aqui reescreveria a posição do componente a
-                  // cada desativação, sem nada na tela dizendo isso.
-                  salvarComponente.mutate({
-                    id: c.id,
-                    nome: c.nome,
-                    area: c.area,
-                    sigla: c.sigla,
-                    cor: c.cor,
-                    ordem: c.ordem,
-                    ativo: !c.ativo,
-                  })
+                  alternar(c.nome, c.ativo, () =>
+                    // O `PUT` substitui o item inteiro, então todo campo vai
+                    // junto — inclusive `ordem`, que esta ação não altera. Um
+                    // valor fixo aqui reescreveria a posição do componente a
+                    // cada desativação, sem nada na tela dizendo isso.
+                    salvarComponente.mutate({
+                      id: c.id,
+                      nome: c.nome,
+                      area: c.area,
+                      sigla: c.sigla,
+                      cor: c.cor,
+                      ordem: c.ordem,
+                      ativo: !c.ativo,
+                    }),
+                  )
                 }
                 ocupado={salvando}
               />
@@ -452,15 +468,17 @@ export function PaginaVocabulario({ cliente }: { cliente: Cliente }) {
                 ativo={s.ativa}
                 aoAlterar={() => setItemEmEdicao({ tipo: 'series', item: s })}
                 aoAlternarAtivo={() =>
-                  salvarSerie.mutate({
-                    id: s.id,
-                    nome: s.nome,
-                    etapa: s.etapa,
-                    rotuloCompleto: s.rotuloCompleto,
-                    sigla: s.sigla,
-                    ordem: s.ordem,
-                    ativa: !s.ativa,
-                  })
+                  alternar(s.nome, s.ativa, () =>
+                    salvarSerie.mutate({
+                      id: s.id,
+                      nome: s.nome,
+                      etapa: s.etapa,
+                      rotuloCompleto: s.rotuloCompleto,
+                      sigla: s.sigla,
+                      ordem: s.ordem,
+                      ativa: !s.ativa,
+                    }),
+                  )
                 }
                 ocupado={salvando}
               />
@@ -482,7 +500,14 @@ export function PaginaVocabulario({ cliente }: { cliente: Cliente }) {
               ativo={m.ativa}
               aoAlterar={() => setItemEmEdicao({ tipo: 'metodologias', item: m })}
               aoAlternarAtivo={() =>
-                salvarMetodologia.mutate({ id: m.id, nome: m.nome, tipo: m.tipo, ativa: !m.ativa })
+                alternar(m.nome, m.ativa, () =>
+                  salvarMetodologia.mutate({
+                    id: m.id,
+                    nome: m.nome,
+                    tipo: m.tipo,
+                    ativa: !m.ativa,
+                  }),
+                )
               }
               ocupado={salvando}
             />
@@ -563,6 +588,43 @@ export function PaginaVocabulario({ cliente }: { cliente: Cliente }) {
                 </Button>
                 <Button type="submit" form="form-vocabulario" disabled={salvando}>
                   Salvar
+                </Button>
+              </DialogFooter>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={aDesativar !== null} onOpenChange={(aberto) => !aberto && setADesativar(null)}>
+        <DialogContent>
+          {aDesativar && (
+            <>
+              <DialogHeader>
+                <DialogTitle>Desativar {aDesativar.nome}?</DialogTitle>
+                <DialogDescription>
+                  O item sai dos filtros da Biblioteca e do formulário de catalogação. Os planos
+                  que já o citam continuam no acervo. Dá para reativar depois, por esta mesma tela.
+                </DialogDescription>
+              </DialogHeader>
+
+              <DialogFooter>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setADesativar(null)}
+                  disabled={salvando}
+                >
+                  Cancelar
+                </Button>
+                <Button
+                  type="button"
+                  disabled={salvando}
+                  onClick={() => {
+                    aDesativar.desativar()
+                    setADesativar(null)
+                  }}
+                >
+                  Desativar
                 </Button>
               </DialogFooter>
             </>

@@ -81,4 +81,36 @@ describe('PaginaVocabulario', () => {
     expect(enviado!.ordem).toBe(COMPONENTE_INATIVO_FIXTURE.ordem)
     expect(enviado!.ativo).toBe(true)
   })
+
+  /**
+   * Desativar pergunta antes; reativar não.
+   *
+   * Desativar tira o item do filtro da Biblioteca inteira, e os planos que já
+   * o citam ficam sem a opção que os encontra — o mesmo peso que
+   * `PaginaPessoasAdmin` dá a desativar uma conta. Reativar devolve a opção,
+   * e não tira nada de ninguém: perguntar ali seria só um clique a mais.
+   */
+  it('pergunta antes de desativar, e não desativa se cancelar', async () => {
+    const usuario = userEvent.setup()
+    let houvePut = false
+
+    servidor.use(
+      http.put('*/api/v1/admin/vocabulary/components/:id', () => {
+        houvePut = true
+        return new HttpResponse(null, { status: 204 })
+      }),
+    )
+
+    renderizar()
+
+    const linha = (await screen.findByText('Língua Portuguesa')).closest('article')!
+    await usuario.click(within(linha).getByRole('button', { name: /desativar/i }))
+
+    const confirmacao = await screen.findByRole('dialog')
+    expect(within(confirmacao).getByText(/Língua Portuguesa/)).toBeInTheDocument()
+
+    await usuario.click(within(confirmacao).getByRole('button', { name: 'Cancelar' }))
+
+    expect(houvePut).toBe(false)
+  })
 })
