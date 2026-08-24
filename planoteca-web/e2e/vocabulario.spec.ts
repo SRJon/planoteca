@@ -34,8 +34,8 @@ test('cadastra um componente e troca de aba', async ({ page }) => {
   await page.getByRole('button', { name: 'Cadastrar componente' }).click()
   await page.getByLabel('Nome').fill('Sociologia')
   await page.getByLabel('Área do conhecimento').fill('Ciências Humanas e Sociais Aplicadas')
+  // Não há campo de ordem: a API calcula a posição no fim da área.
   await page.getByLabel('Sigla (duas letras)').fill('SO')
-  await page.getByLabel('Ordem').fill('7')
   await page.getByRole('button', { name: 'Salvar' }).click()
 
   // A lista atualiza sem recarregar a página — a prova de RF-08.

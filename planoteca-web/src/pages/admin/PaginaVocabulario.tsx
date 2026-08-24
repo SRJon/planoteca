@@ -84,21 +84,20 @@ function FormularioComponente({
   ocupado,
 }: {
   componente: Componente | null
-  aoSalvar: (entrada: { nome: string; area: string; sigla: string; cor: string; ordem: number; ativo: boolean }) => void
+  aoSalvar: (entrada: { nome: string; area: string; sigla: string; cor: string; ativo: boolean }) => void
   ocupado: boolean
 }) {
   const [nome, setNome] = useState(componente?.nome ?? '')
   const [area, setArea] = useState(componente?.area ?? '')
   const [sigla, setSigla] = useState(componente?.sigla ?? '')
   const [cor, setCor] = useState(componente?.cor ?? CORES_COMPONENTE[0]!.token)
-  const [ordem, setOrdem] = useState(String(componente?.ordem ?? 1))
 
   return (
     <form
       id="form-vocabulario"
       onSubmit={(evento) => {
         evento.preventDefault()
-        aoSalvar({ nome, area, sigla, cor, ordem: Number(ordem), ativo: componente?.ativo ?? true })
+        aoSalvar({ nome, area, sigla, cor, ativo: componente?.ativo ?? true })
       }}
       className="flex flex-col gap-4"
     >
@@ -138,18 +137,6 @@ function FormularioComponente({
           </SelectContent>
         </Select>
       </Field>
-      <Field>
-        <FieldLabel htmlFor="ordem-componente">Ordem</FieldLabel>
-        <Input
-          id="ordem-componente"
-          type="number"
-          min={1}
-          value={ordem}
-          onChange={(e) => setOrdem(e.target.value)}
-          required
-          disabled={ocupado}
-        />
-      </Field>
     </form>
   )
 }
@@ -161,21 +148,20 @@ function FormularioSerie({
   ocupado,
 }: {
   serie: Serie | null
-  aoSalvar: (entrada: { nome: string; etapa: string; rotuloCompleto: string; sigla: string; ordem: number; ativa: boolean }) => void
+  aoSalvar: (entrada: { nome: string; etapa: string; rotuloCompleto: string; sigla: string; ativa: boolean }) => void
   ocupado: boolean
 }) {
   const [nome, setNome] = useState(serie?.nome ?? '')
   const [etapa, setEtapa] = useState(serie?.etapa ?? ETAPAS[0]!.valor)
   const [rotuloCompleto, setRotuloCompleto] = useState(serie?.rotuloCompleto ?? '')
   const [sigla, setSigla] = useState(serie?.sigla ?? '')
-  const [ordem, setOrdem] = useState(String(serie?.ordem ?? 1))
 
   return (
     <form
       id="form-vocabulario"
       onSubmit={(evento) => {
         evento.preventDefault()
-        aoSalvar({ nome, etapa, rotuloCompleto, sigla, ordem: Number(ordem), ativa: serie?.ativa ?? true })
+        aoSalvar({ nome, etapa, rotuloCompleto, sigla, ativa: serie?.ativa ?? true })
       }}
       className="flex flex-col gap-4"
     >
@@ -212,18 +198,6 @@ function FormularioSerie({
             ))}
           </SelectContent>
         </Select>
-      </Field>
-      <Field>
-        <FieldLabel htmlFor="ordem-serie">Ordem</FieldLabel>
-        <Input
-          id="ordem-serie"
-          type="number"
-          min={1}
-          value={ordem}
-          onChange={(e) => setOrdem(e.target.value)}
-          required
-          disabled={ocupado}
-        />
       </Field>
     </form>
   )
@@ -360,8 +334,29 @@ export function PaginaVocabulario({ cliente }: { cliente: Cliente }) {
   const salvando = salvarComponente.isPending || salvarSerie.isPending || salvarMetodologia.isPending
   const erroSalvar = salvarComponente.error ?? salvarSerie.error ?? salvarMetodologia.error
 
+  /**
+   * Limpa o erro das três mutações.
+   *
+   * Sem o `reset`, o `error` do TanStack Query sobrevive ao fechamento do
+   * diálogo: a falha de um cadastro de série reaparecia no formulário de
+   * metodologia aberto em seguida, apontando para um problema que não era
+   * daquela tela. Todo caminho que ABRE um diálogo passa por aqui.
+   */
+  function limparErro() {
+    salvarComponente.reset()
+    salvarSerie.reset()
+    salvarMetodologia.reset()
+  }
+
   function fechar() {
     setItemEmEdicao(null)
+    limparErro()
+  }
+
+  /** Abre o formulário de alteração, sempre com o erro anterior limpo. */
+  function abrirAlteracao(alvo: NonNullable<typeof itemEmEdicao>) {
+    limparErro()
+    setItemEmEdicao(alvo)
   }
 
   /** Reativar age direto; desativar guarda a ação e abre a confirmação. */
@@ -377,6 +372,7 @@ export function PaginaVocabulario({ cliente }: { cliente: Cliente }) {
    * mantém o `switch` exaustivo sem recorrer a `as` — o tipo de
    * `itemEmEdicao` é uma união discriminada por `tipo`. */
   function abrirCadastro() {
+    limparErro()
     if (aba === 'componentes') setItemEmEdicao({ tipo: 'componentes', item: null })
     else if (aba === 'series') setItemEmEdicao({ tipo: 'series', item: null })
     else setItemEmEdicao({ tipo: 'metodologias', item: null })
@@ -429,20 +425,19 @@ export function PaginaVocabulario({ cliente }: { cliente: Cliente }) {
                 nome={c.nome}
                 detalhe={`${c.sigla} · ${rotuloCor(c.cor)}`}
                 ativo={c.ativo}
-                aoAlterar={() => setItemEmEdicao({ tipo: 'componentes', item: c })}
+                aoAlterar={() => abrirAlteracao({ tipo: 'componentes', item: c })}
                 aoAlternarAtivo={() =>
                   alternar(c.nome, c.ativo, () =>
-                    // O `PUT` substitui o item inteiro, então todo campo vai
-                    // junto — inclusive `ordem`, que esta ação não altera. Um
-                    // valor fixo aqui reescreveria a posição do componente a
-                    // cada desativação, sem nada na tela dizendo isso.
+                    // O `PUT` substitui o item inteiro, então todo campo do
+                    // contrato vai junto. `ordem` ficou de FORA do contrato: a
+                    // API a calcula no cadastro e a preserva na alteração,
+                    // justamente para nenhuma tela precisar reenviá-la.
                     salvarComponente.mutate({
                       id: c.id,
                       nome: c.nome,
                       area: c.area,
                       sigla: c.sigla,
                       cor: c.cor,
-                      ordem: c.ordem,
                       ativo: !c.ativo,
                     }),
                   )
@@ -466,7 +461,7 @@ export function PaginaVocabulario({ cliente }: { cliente: Cliente }) {
                 nome={s.nome}
                 detalhe={`${s.sigla} · ${rotuloEtapa(s.etapa)}`}
                 ativo={s.ativa}
-                aoAlterar={() => setItemEmEdicao({ tipo: 'series', item: s })}
+                aoAlterar={() => abrirAlteracao({ tipo: 'series', item: s })}
                 aoAlternarAtivo={() =>
                   alternar(s.nome, s.ativa, () =>
                     salvarSerie.mutate({
@@ -475,7 +470,6 @@ export function PaginaVocabulario({ cliente }: { cliente: Cliente }) {
                       etapa: s.etapa,
                       rotuloCompleto: s.rotuloCompleto,
                       sigla: s.sigla,
-                      ordem: s.ordem,
                       ativa: !s.ativa,
                     }),
                   )
@@ -498,7 +492,7 @@ export function PaginaVocabulario({ cliente }: { cliente: Cliente }) {
               nome={m.nome}
               detalhe={rotuloTipo(m.tipo)}
               ativo={m.ativa}
-              aoAlterar={() => setItemEmEdicao({ tipo: 'metodologias', item: m })}
+              aoAlterar={() => abrirAlteracao({ tipo: 'metodologias', item: m })}
               aoAlternarAtivo={() =>
                 alternar(m.nome, m.ativa, () =>
                   salvarMetodologia.mutate({

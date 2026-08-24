@@ -49,23 +49,29 @@ export async function buscarVocabularioAdmin(cliente: Cliente): Promise<Vocabula
 }
 
 /** O que o formulário de gestão envia para cadastrar ou alterar um
- * componente. Espelha `ComponenteEntradaDto` — campo `ativo`, masculino. */
+ * componente. Espelha `ComponenteEntradaDto` — campo `ativo`, masculino.
+ *
+ * `ordem` NÃO entra: a API a calcula, e o componente novo nasce no fim da
+ * própria área. Um campo a menos num formulário de povoamento. */
 export type ComponenteEntrada = {
   nome: string
   area: string
   sigla: string
   cor: string
-  ordem: number
   ativo: boolean
 }
 
-/** Espelha `SerieEntradaDto` — campo `ativa`, feminino. */
+/** Espelha `SerieEntradaDto` — campo `ativa`, feminino.
+ *
+ * `ordem` NÃO entra, e aqui a razão é forte: `serie.ordem` é UNIQUE no banco.
+ * Enquanto o campo existiu no formulário, cadastrar com um número já ocupado
+ * estourava a exceção crua do EF Core na cara de quem cadastra. A API calcula
+ * a posição no fim da própria etapa. */
 export type SerieEntrada = {
   nome: string
   etapa: string
   rotuloCompleto: string
   sigla: string
-  ordem: number
   ativa: boolean
 }
 

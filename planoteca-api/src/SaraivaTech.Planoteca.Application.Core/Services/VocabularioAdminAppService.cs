@@ -41,13 +41,16 @@ namespace SaraivaTech.Planoteca.Application.Core.Services
             var erro = await ValidarComponenteAsync(entrada, exceto: null);
             if (erro is not null) return Result<ComponenteDto>.Failure(erro);
 
+            // Mesmo tratamento da série: o componente novo entra no fim da
+            // própria área. A ordem dele não é única no banco, então aqui o
+            // cálculo existe só para o campo sumir do formulário.
             var componente = new Componente
             {
                 Nome = entrada.Nome.Trim(),
                 Area = entrada.Area.Trim(),
                 Sigla = entrada.Sigla.Trim(),
                 Cor = entrada.Cor,
-                Ordem = entrada.Ordem,
+                Ordem = await _repositorio.UltimaOrdemDaAreaAsync(entrada.Area.Trim()) + 1,
                 Ativo = entrada.Ativo,
             };
 
@@ -77,7 +80,8 @@ namespace SaraivaTech.Planoteca.Application.Core.Services
             componente.Area = entrada.Area.Trim();
             componente.Sigla = entrada.Sigla.Trim();
             componente.Cor = entrada.Cor;
-            componente.Ordem = entrada.Ordem;
+            // `Ordem` fica de fora, como na série: ela é calculada no
+            // cadastro, e alterar o nome não muda a posição.
             componente.Ativo = entrada.Ativo;
 
             try
@@ -99,19 +103,30 @@ namespace SaraivaTech.Planoteca.Application.Core.Services
             var erro = await ValidarSerieAsync(entrada, exceto: null);
             if (erro is not null) return Result<SerieDto>.Failure(erro);
 
+            // A série entra no fim da PRÓPRIA etapa, e não no fim de tudo: um
+            // 5º ano cadastrado depois do Médio pertence ao Fundamental, e
+            // precisa aparecer antes dele na lista.
+            var ordem = await _repositorio.UltimaOrdemDaEtapaAsync(entrada.Etapa) + 1;
+
+            // As que já ocupam essa posição em diante abrem espaço. Do MAIOR
+            // para o menor: deslocar em ordem crescente faria cada uma colidir
+            // com a seguinte, e `serie.ordem` é UNIQUE.
+            var posteriores = await _repositorio.SeriesComOrdemAPartirDeAsync(ordem);
+
             var serie = new Serie
             {
                 Nome = entrada.Nome.Trim(),
                 Etapa = entrada.Etapa,
                 RotuloCompleto = entrada.RotuloCompleto.Trim(),
                 Sigla = entrada.Sigla.Trim(),
-                Ordem = entrada.Ordem,
+                Ordem = ordem,
                 Ativa = entrada.Ativa,
             };
 
             try
             {
                 _uow.BeginTransaction();
+                foreach (var posterior in posteriores) posterior.Ordem += 1;
                 _repositorio.Insert(serie);
                 _uow.Commit();
                 return Result<SerieDto>.Success(_mapper.ParaDto(serie));
@@ -135,7 +150,8 @@ namespace SaraivaTech.Planoteca.Application.Core.Services
             serie.Etapa = entrada.Etapa;
             serie.RotuloCompleto = entrada.RotuloCompleto.Trim();
             serie.Sigla = entrada.Sigla.Trim();
-            serie.Ordem = entrada.Ordem;
+            // `Ordem` fica de fora: ela é calculada no cadastro, e alterar o
+            // rótulo de uma série não muda a posição dela na sequência.
             serie.Ativa = entrada.Ativa;
 
             try
@@ -220,9 +236,6 @@ namespace SaraivaTech.Planoteca.Application.Core.Services
             if (!CorComponente.Todas.Contains(entrada.Cor))
                 return "A cor precisa ser um token que o tema conhece.";
 
-            if (entrada.Ordem < 1)
-                return "A ordem começa em 1.";
-
             if (await _repositorio.ExisteComponenteComNomeAsync(entrada.Nome.Trim(), exceto))
                 return "Já existe um item com este nome.";
 
@@ -236,9 +249,6 @@ namespace SaraivaTech.Planoteca.Application.Core.Services
 
             if (!EtapaEnsino.Todas.Contains(entrada.Etapa))
                 return "A etapa é fundamental ou médio.";
-
-            if (entrada.Ordem < 1)
-                return "A ordem começa em 1.";
 
             if (await _repositorio.ExisteSerieComNomeAsync(entrada.Nome.Trim(), entrada.Etapa, exceto))
                 return "Já existe um item com este nome.";

@@ -30,7 +30,6 @@ describe('useSalvarComponente', () => {
         area: 'Ciências Humanas',
         sigla: 'FI',
         cor: 'comp-humanas',
-        ordem: 1,
         ativo: true,
       })
     })

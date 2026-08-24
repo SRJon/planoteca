@@ -9,6 +9,7 @@ using SaraivaTech.Planoteca.Application.Dto;
 using SaraivaTech.Planoteca.Application.Mappers;
 using SaraivaTech.Planoteca.Domain.Base.Interfaces;
 using SaraivaTech.Planoteca.Domain.Entities;
+using SaraivaTech.Planoteca.Domain.Enumerable;
 using SaraivaTech.Planoteca.Domain.Repositories.Interfaces;
 using Xunit;
 
@@ -34,7 +35,7 @@ namespace SaraivaTech.Planoteca.Test.Application
             var entrada = new ComponenteEntradaDto
             {
                 Nome = "Filosofia", Area = "Ciências Humanas",
-                Sigla = "FI", Cor = "comp-roxo", Ordem = 1,
+                Sigla = "FI", Cor = "comp-roxo",
             };
 
             var resultado = await sut.CriarComponenteAsync(entrada);
@@ -51,7 +52,7 @@ namespace SaraivaTech.Planoteca.Test.Application
             var entrada = new ComponenteEntradaDto
             {
                 Nome = "Filosofia", Area = "Ciências Humanas",
-                Sigla = "FI", Cor = "comp-humanas", Ordem = 1,
+                Sigla = "FI", Cor = "comp-humanas",
             };
 
             var resultado = await sut.CriarComponenteAsync(entrada);
@@ -68,7 +69,7 @@ namespace SaraivaTech.Planoteca.Test.Application
             var entrada = new ComponenteEntradaDto
             {
                 Nome = "Filosofia", Area = "Ciências Humanas",
-                Sigla = "FI", Cor = "comp-humanas", Ordem = 1,
+                Sigla = "FI", Cor = "comp-humanas",
             };
 
             var resultado = await sut.CriarComponenteAsync(entrada);
@@ -85,14 +86,14 @@ namespace SaraivaTech.Planoteca.Test.Application
             _repositorio.ComponentePorIdAsync(id).Returns(new Componente
             {
                 Nome = "Filosofia", Area = "Ciências Humanas",
-                Sigla = "FI", Cor = "comp-humanas", Ordem = 1,
+                Sigla = "FI", Cor = "comp-humanas",
             });
             _repositorio.ExisteComponenteComNomeAsync("Filosofia", id).Returns(false);
             var sut = CriarSut();
             var entrada = new ComponenteEntradaDto
             {
                 Nome = "Filosofia", Area = "Ciências Humanas",
-                Sigla = "FI", Cor = "comp-humanas", Ordem = 2,
+                Sigla = "FI", Cor = "comp-humanas",
             };
 
             var resultado = await sut.AlterarComponenteAsync(id, entrada);
@@ -109,7 +110,7 @@ namespace SaraivaTech.Planoteca.Test.Application
             var entrada = new ComponenteEntradaDto
             {
                 Nome = "Filosofia", Area = "Ciências Humanas",
-                Sigla = "FI", Cor = "comp-humanas", Ordem = 1,
+                Sigla = "FI", Cor = "comp-humanas",
             };
 
             var resultado = await sut.AlterarComponenteAsync(id, entrada);
@@ -125,7 +126,7 @@ namespace SaraivaTech.Planoteca.Test.Application
             var entrada = new SerieEntradaDto
             {
                 Nome = "4ª série", Etapa = "superior",
-                RotuloCompleto = "4ª série do superior", Sigla = "4S", Ordem = 8,
+                RotuloCompleto = "4ª série do superior", Sigla = "4S",
             };
 
             var resultado = await sut.CriarSerieAsync(entrada);
@@ -169,7 +170,7 @@ namespace SaraivaTech.Planoteca.Test.Application
             var entrada = new ComponenteEntradaDto
             {
                 Nome = new string('a', 81), Area = "Ciências Humanas",
-                Sigla = "FI", Cor = "comp-humanas", Ordem = 1,
+                Sigla = "FI", Cor = "comp-humanas",
             };
 
             var resultado = await sut.CriarComponenteAsync(entrada);
@@ -190,12 +191,122 @@ namespace SaraivaTech.Planoteca.Test.Application
             var entrada = new ComponenteEntradaDto
             {
                 Nome = "Filosofia", Area = "Ciências Humanas",
-                Sigla = "FI", Cor = "comp-humanas", Ordem = 1,
+                Sigla = "FI", Cor = "comp-humanas",
             };
 
             await sut.CriarComponenteAsync(entrada);
 
             await _repositorio.Received(1).ExisteComponenteComNomeAsync("Filosofia", null);
+        }
+
+        // A ordem da serie e CALCULADA, e nao digitada. `serie.ordem` e UNIQUE
+        // no banco: pedir o numero a quem cadastra e pedir que ele adivinhe
+        // qual esta livre, e punir o palpite errado com a excecao crua do EF
+        // Core — que foi exatamente o defeito relatado.
+        [Fact]
+        public async Task CriarSerieAsync_calcula_a_ordem_no_fim_da_etapa()
+        {
+            _repositorio.UltimaOrdemDaEtapaAsync(EtapaEnsino.FundamentalAnosFinais).Returns(4);
+            _repositorio.SeriesComOrdemAPartirDeAsync(5).Returns([]);
+            var sut = CriarSut();
+            var entrada = new SerieEntradaDto
+            {
+                Nome = "5º ano",
+                Etapa = EtapaEnsino.FundamentalAnosFinais,
+                RotuloCompleto = "5º ano do Ensino Fundamental",
+                Sigla = "5º",
+            };
+
+            var resultado = await sut.CriarSerieAsync(entrada);
+
+            resultado.IsSuccess.Should().BeTrue();
+            _repositorio.Received(1).Insert(Arg.Is<Serie>(x => x.Ordem == 5));
+        }
+
+        // As posteriores abrem espaco, do MAIOR para o menor. Em ordem
+        // crescente cada uma colidiria com a seguinte, e o indice e unico.
+        [Fact]
+        public async Task CriarSerieAsync_desloca_as_series_posteriores()
+        {
+            var medio = new Serie { Nome = "1ª série", Etapa = EtapaEnsino.Medio, Ordem = 5 };
+            _repositorio.UltimaOrdemDaEtapaAsync(EtapaEnsino.FundamentalAnosFinais).Returns(4);
+            _repositorio.SeriesComOrdemAPartirDeAsync(5).Returns([medio]);
+            var sut = CriarSut();
+            var entrada = new SerieEntradaDto
+            {
+                Nome = "5º ano",
+                Etapa = EtapaEnsino.FundamentalAnosFinais,
+                RotuloCompleto = "5º ano do Ensino Fundamental",
+                Sigla = "5º",
+            };
+
+            await sut.CriarSerieAsync(entrada);
+
+            medio.Ordem.Should().Be(6);
+        }
+
+        // Etapa vazia comeca em 1. `MaxAsync` sobre colecao vazia estoura, e o
+        // repositorio devolve zero por `DefaultIfEmpty`.
+        [Fact]
+        public async Task CriarSerieAsync_comeca_em_1_quando_a_etapa_esta_vazia()
+        {
+            _repositorio.UltimaOrdemDaEtapaAsync(EtapaEnsino.Medio).Returns(0);
+            _repositorio.SeriesComOrdemAPartirDeAsync(1).Returns([]);
+            var sut = CriarSut();
+            var entrada = new SerieEntradaDto
+            {
+                Nome = "1ª série",
+                Etapa = EtapaEnsino.Medio,
+                RotuloCompleto = "1ª série do Ensino Médio",
+                Sigla = "1ªEM",
+            };
+
+            await sut.CriarSerieAsync(entrada);
+
+            _repositorio.Received(1).Insert(Arg.Is<Serie>(x => x.Ordem == 1));
+        }
+
+        [Fact]
+        public async Task CriarComponenteAsync_calcula_a_ordem_no_fim_da_area()
+        {
+            _repositorio.UltimaOrdemDaAreaAsync("Ciências Humanas").Returns(2);
+            var sut = CriarSut();
+            var entrada = new ComponenteEntradaDto
+            {
+                Nome = "Filosofia", Area = "Ciências Humanas",
+                Sigla = "FI", Cor = "comp-humanas",
+            };
+
+            await sut.CriarComponenteAsync(entrada);
+
+            _repositorio.Received(1).Insert(Arg.Is<Componente>(c => c.Ordem == 3));
+        }
+
+        // Alterar o rotulo nao mexe na posicao. Antes o `PUT` reenviava a
+        // ordem do formulario, e cada alteracao podia reescrever a sequencia.
+        [Fact]
+        public async Task AlterarSerieAsync_preserva_a_ordem()
+        {
+            var id = Guid.NewGuid();
+            var serie = new Serie
+            {
+                Nome = "6º ano", Etapa = EtapaEnsino.FundamentalAnosFinais,
+                RotuloCompleto = "6º ano do Ensino Fundamental", Sigla = "6º", Ordem = 3,
+            };
+            _repositorio.SeriePorIdAsync(id).Returns(serie);
+            var sut = CriarSut();
+            var entrada = new SerieEntradaDto
+            {
+                Nome = "6º ano do Fundamental",
+                Etapa = EtapaEnsino.FundamentalAnosFinais,
+                RotuloCompleto = "6º ano do Ensino Fundamental",
+                Sigla = "6º",
+            };
+
+            var resultado = await sut.AlterarSerieAsync(id, entrada);
+
+            resultado.IsSuccess.Should().BeTrue();
+            serie.Ordem.Should().Be(3);
         }
 
         // Na ALTERACAO o proprio id vai como excecao, senao o item colidiria
@@ -207,13 +318,13 @@ namespace SaraivaTech.Planoteca.Test.Application
             _repositorio.ComponentePorIdAsync(id).Returns(new Componente
             {
                 Nome = "Filosofia", Area = "Ciências Humanas",
-                Sigla = "FI", Cor = "comp-humanas", Ordem = 1,
+                Sigla = "FI", Cor = "comp-humanas",
             });
             var sut = CriarSut();
             var entrada = new ComponenteEntradaDto
             {
                 Nome = "Filosofia", Area = "Ciências Humanas",
-                Sigla = "FI", Cor = "comp-humanas", Ordem = 2,
+                Sigla = "FI", Cor = "comp-humanas",
             };
 
             await sut.AlterarComponenteAsync(id, entrada);

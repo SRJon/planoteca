@@ -5,7 +5,6 @@ import { HttpResponse, http } from 'msw'
 import { MemoryRouter } from 'react-router'
 import { describe, expect, it } from 'vitest'
 import { criarCliente } from '@/shared/api'
-import { COMPONENTE_INATIVO_FIXTURE } from '@/teste/planos'
 import { servidor } from '@/teste/servidor'
 import { PaginaVocabulario } from './PaginaVocabulario'
 
@@ -52,16 +51,15 @@ describe('PaginaVocabulario', () => {
   })
 
   /**
-   * O `PUT` substitui o item inteiro, então reativar reenvia todo campo —
-   * inclusive os que a ação não altera.
+   * A tela NÃO manda `ordem`.
    *
-   * Enquanto o tipo `Componente` não trazia `ordem`, a tela mandava um `1`
-   * fixo aqui, e cada desativação reescrevia a posição do componente sem
-   * nada na interface dizer isso. O dano some do olho e fica no banco, que é
-   * a pior forma de um defeito existir. Este teste é o que o impede de
-   * voltar.
+   * A posição do item é calculada pela API no cadastro e preservada na
+   * alteração. Enquanto ela veio do formulário, dois defeitos coexistiram:
+   * cadastrar série com ordem já ocupada estourava a exceção crua do EF Core
+   * (`serie.ordem` é UNIQUE), e reativar um componente reescrevia a posição
+   * dele com um valor fixo. Mandar o campo de volta reabriria os dois.
    */
-  it('preserva a ordem ao reativar um componente', async () => {
+  it('não manda ordem ao reativar um componente', async () => {
     const usuario = userEvent.setup()
     let enviado: { ordem?: number; ativo?: boolean } | null = null
 
@@ -78,8 +76,46 @@ describe('PaginaVocabulario', () => {
     await usuario.click(within(linha).getByRole('button', { name: /reativar/i }))
 
     await waitFor(() => expect(enviado).not.toBeNull())
-    expect(enviado!.ordem).toBe(COMPONENTE_INATIVO_FIXTURE.ordem)
+    expect(enviado!).not.toHaveProperty('ordem')
     expect(enviado!.ativo).toBe(true)
+  })
+
+  /**
+   * O erro de uma mutação não vaza para o diálogo seguinte.
+   *
+   * O `error` do TanStack Query sobrevive até a próxima mutação ou até um
+   * `reset`. Sem isso, a falha ao cadastrar uma série reaparecia no
+   * formulário de metodologia aberto em seguida, apontando para um problema
+   * que não era daquela tela — foi assim que o defeito chegou relatado.
+   */
+  it('não mostra o erro anterior num diálogo novo', async () => {
+    const usuario = userEvent.setup()
+
+    servidor.use(
+      http.post('*/api/v1/admin/vocabulary/grades', () =>
+        HttpResponse.json({ status: 400, messages: ['Falha proposital.'] }, { status: 400 }),
+      ),
+    )
+
+    renderizar()
+
+    // Falha o cadastro de série, e confirma que a mensagem aparece.
+    await usuario.click(await screen.findByRole('button', { name: 'Séries' }))
+    await usuario.click(await screen.findByRole('button', { name: 'Cadastrar série' }))
+    await usuario.type(screen.getByLabelText('Nome'), '5º ano')
+    await usuario.type(screen.getByLabelText('Rótulo completo'), '5º ano do Fundamental')
+    await usuario.type(screen.getByLabelText('Sigla'), '5º')
+    await usuario.click(screen.getByRole('button', { name: 'Salvar' }))
+
+    expect(await screen.findByRole('alert')).toHaveTextContent('Falha proposital.')
+
+    // Fecha, e abre outro diálogo: o erro não pode estar lá.
+    await usuario.click(screen.getByRole('button', { name: 'Cancelar' }))
+    await usuario.click(await screen.findByRole('button', { name: 'Metodologias' }))
+    await usuario.click(await screen.findByRole('button', { name: 'Cadastrar metodologia' }))
+
+    const dialogo = await screen.findByRole('dialog')
+    expect(within(dialogo).queryByRole('alert')).not.toBeInTheDocument()
   })
 
   /**

@@ -111,6 +111,32 @@ namespace SaraivaTech.Planoteca.Infra.Data.Repositories
                             && s.Etapa == etapa
                             && s.Id != (exceto ?? Guid.Empty));
 
+        // `MaxAsync` sobre coleção vazia estoura; `Select` mais `DefaultIfEmpty`
+        // devolve zero, e a primeira série da etapa nasce com ordem 1.
+        public async Task<int> UltimaOrdemDaEtapaAsync(string etapa) =>
+            await _context.Set<Serie>()
+                .AsNoTracking()
+                .Where(s => s.Etapa == etapa)
+                .Select(s => s.Ordem)
+                .DefaultIfEmpty(0)
+                .MaxAsync();
+
+        // Rastreadas de propósito: quem chama as desloca e persiste no mesmo
+        // `Commit`.
+        public async Task<IEnumerable<Serie>> SeriesComOrdemAPartirDeAsync(int ordem) =>
+            await _context.Set<Serie>()
+                .Where(s => s.Ordem >= ordem)
+                .OrderByDescending(s => s.Ordem)
+                .ToListAsync();
+
+        public async Task<int> UltimaOrdemDaAreaAsync(string area) =>
+            await _context.Set<Componente>()
+                .AsNoTracking()
+                .Where(c => c.Area == area)
+                .Select(c => c.Ordem)
+                .DefaultIfEmpty(0)
+                .MaxAsync();
+
         public async Task<bool> ExisteMetodologiaComNomeAsync(string nome, Guid? exceto) =>
             await _context.Set<Metodologia>()
                 .AsNoTracking()

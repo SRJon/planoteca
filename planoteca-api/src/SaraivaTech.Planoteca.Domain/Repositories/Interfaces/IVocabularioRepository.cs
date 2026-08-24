@@ -1,4 +1,4 @@
-#nullable enable
+﻿#nullable enable
 
 using System;
 using System.Collections.Generic;
@@ -44,6 +44,25 @@ namespace SaraivaTech.Planoteca.Domain.Repositories.Interfaces
         /// <summary>A chave natural da série é (Etapa, Nome): "1ª série"
         /// existe no Fundamental e no Médio sem ser repetição.</summary>
         Task<bool> ExisteSerieComNomeAsync(string nome, string etapa, Guid? exceto);
+
+        /// <summary>A maior ordem em uso na etapa, ou zero quando ela está
+        /// vazia.
+        ///
+        /// `serie.ordem` é UNIQUE no banco (`VocabularioMap.SerieMap`): a
+        /// ordem global 1..7 é o que lista Fundamental e Médio numa sequência
+        /// só. Por isso ela é CALCULADA, e não digitada — pedir o número a
+        /// quem cadastra é pedir que adivinhe qual está livre, e punir o
+        /// palpite errado com a exceção crua do EF Core.</summary>
+        Task<int> UltimaOrdemDaEtapaAsync(string etapa);
+
+        /// <summary>As séries com ordem a partir de um valor, para abrir espaço
+        /// quando uma série nova entra no meio da sequência.</summary>
+        Task<IEnumerable<Serie>> SeriesComOrdemAPartirDeAsync(int ordem);
+
+        /// <summary>A maior ordem em uso na área, ou zero quando ela está
+        /// vazia. Componente não tem índice único em ordem — aqui o cálculo
+        /// existe só para o campo sumir do formulário, como na série.</summary>
+        Task<int> UltimaOrdemDaAreaAsync(string area);
         Task<bool> ExisteMetodologiaComNomeAsync(string nome, Guid? exceto);
 
         void Insert(Componente componente);
