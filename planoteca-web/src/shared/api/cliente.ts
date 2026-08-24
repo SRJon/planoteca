@@ -114,6 +114,20 @@ export function criarCliente(opcoes: OpcoesCliente) {
       return corpoDe<T>(resposta)
     },
 
+    // `PUT`, ao lado de `enviar` (`POST`): a gestão de vocabulário (RF-09)
+    // é a primeira escrita do projeto cujo contrato distingue os dois — criar
+    // devolve `201` com o item, alterar devolve `204` sem corpo. Reaproveitar
+    // `enviar` para o `PUT` esconderia esse verbo errado atrás de um nome que
+    // só fala de "enviar", então o método ganha o nome do verbo que faz.
+    async atualizar<T>(caminho: string, corpo: unknown, parametros?: Parametros): Promise<T | null> {
+      const resposta = await bruto(
+        caminho,
+        { method: 'PUT', body: JSON.stringify(corpo) },
+        parametros,
+      )
+      return corpoDe<T>(resposta)
+    },
+
     async remover(caminho: string, parametros?: Parametros): Promise<void> {
       await bruto(caminho, { method: 'DELETE' }, parametros)
     },

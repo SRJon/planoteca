@@ -1,5 +1,5 @@
 import type { Cliente } from '@/shared/api'
-import type { Vocabulario } from './modelo'
+import type { Componente, Metodologia, Serie, Vocabulario } from './modelo'
 
 /**
  * O formato de fio de `GET /api/v1/vocabulary`.
@@ -35,4 +35,89 @@ export async function buscarVocabulario(cliente: Cliente): Promise<Vocabulario> 
   // rede: é uma base recém-criada, sem seed. A tela desenha os filtros
   // vazios em vez de quebrar.
   return resposta ?? { componentes: [], series: [], metodologias: [] }
+}
+
+/**
+ * Busca o vocabulário completo, inativo incluso — `GET
+ * /api/v1/admin/vocabulary` (RF-03). Rota fechada por
+ * `[Authorize(Policy = "Administrador")]`; o `cliente` já manda o token em
+ * toda chamada (`shared/api/cliente.ts`).
+ */
+export async function buscarVocabularioAdmin(cliente: Cliente): Promise<Vocabulario> {
+  const resposta = await cliente.obter<VocabularioApi>('/admin/vocabulary')
+  return resposta ?? { componentes: [], series: [], metodologias: [] }
+}
+
+/** O que o formulário de gestão envia para cadastrar ou alterar um
+ * componente. Espelha `ComponenteEntradaDto` — campo `ativo`, masculino. */
+export type ComponenteEntrada = {
+  nome: string
+  area: string
+  sigla: string
+  cor: string
+  ordem: number
+  ativo: boolean
+}
+
+/** Espelha `SerieEntradaDto` — campo `ativa`, feminino. */
+export type SerieEntrada = {
+  nome: string
+  etapa: string
+  rotuloCompleto: string
+  sigla: string
+  ordem: number
+  ativa: boolean
+}
+
+/** Espelha `MetodologiaEntradaDto` — campo `ativa`, feminino. */
+export type MetodologiaEntrada = {
+  nome: string
+  tipo: string
+  ativa: boolean
+}
+
+/** Cadastra um componente. `201` com o criado (RF-09). */
+export async function criarComponente(cliente: Cliente, entrada: ComponenteEntrada): Promise<Componente> {
+  const criado = await cliente.enviar<Componente>('/admin/vocabulary/components', entrada)
+  // A API sempre devolve corpo num `201`; `enviar` só tipa como nulável
+  // porque também serve rota que responde `204`.
+  return criado as Componente
+}
+
+/** Altera um componente, inclusive para desativar (`ativo: false`). `204`
+ * sem corpo (RF-09). */
+export async function alterarComponente(
+  cliente: Cliente,
+  id: string,
+  entrada: ComponenteEntrada,
+): Promise<void> {
+  await cliente.atualizar(`/admin/vocabulary/components/${id}`, entrada)
+}
+
+/** Cadastra uma série. `201` com a criada (RF-09). */
+export async function criarSerie(cliente: Cliente, entrada: SerieEntrada): Promise<Serie> {
+  const criada = await cliente.enviar<Serie>('/admin/vocabulary/grades', entrada)
+  return criada as Serie
+}
+
+/** Altera uma série, inclusive para desativar (`ativa: false`). `204` sem
+ * corpo (RF-09). */
+export async function alterarSerie(cliente: Cliente, id: string, entrada: SerieEntrada): Promise<void> {
+  await cliente.atualizar(`/admin/vocabulary/grades/${id}`, entrada)
+}
+
+/** Cadastra uma metodologia. `201` com a criada (RF-09). */
+export async function criarMetodologia(cliente: Cliente, entrada: MetodologiaEntrada): Promise<Metodologia> {
+  const criada = await cliente.enviar<Metodologia>('/admin/vocabulary/methodologies', entrada)
+  return criada as Metodologia
+}
+
+/** Altera uma metodologia, inclusive para desativar (`ativa: false`). `204`
+ * sem corpo (RF-09). */
+export async function alterarMetodologia(
+  cliente: Cliente,
+  id: string,
+  entrada: MetodologiaEntrada,
+): Promise<void> {
+  await cliente.atualizar(`/admin/vocabulary/methodologies/${id}`, entrada)
 }

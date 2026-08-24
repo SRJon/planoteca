@@ -19,6 +19,8 @@ export interface ComponenteFixture {
   area: string
   sigla: string
   cor: string
+  /** Campo MASCULINO — espelha `ComponenteDto.Ativo` na API. */
+  ativo: boolean
 }
 
 export interface SerieFixture {
@@ -28,12 +30,17 @@ export interface SerieFixture {
   sigla: string
   etapa: string
   ordem: number
+  /** Campo FEMININO — espelha `SerieDto.Ativa` na API. Não uniformize com o
+   * `ativo` de `ComponenteFixture`. */
+  ativa: boolean
 }
 
 export interface MetodologiaFixture {
   id: string
   nome: string
   tipo: string
+  /** Campo FEMININO — espelha `MetodologiaDto.Ativa` na API. */
+  ativa: boolean
 }
 
 export interface PlanoFixture {
@@ -55,32 +62,55 @@ export interface PlanoFixture {
  * antes. Um GUID gerado ao acaso obrigaria cada teste a ler o vocabulário
  * primeiro só para filtrar. */
 export const COMPONENTES_FIXTURE: ComponenteFixture[] = [
-  { id: '20000000-0000-0000-0000-000000000001', nome: 'Matemática', area: 'Matemática e suas Tecnologias', sigla: 'MA', cor: 'comp-matematica' },
-  { id: '20000000-0000-0000-0000-000000000002', nome: 'Língua Portuguesa', area: 'Linguagens e suas Tecnologias', sigla: 'PT', cor: 'comp-linguagens' },
-  { id: '20000000-0000-0000-0000-000000000003', nome: 'Química', area: 'Ciências da Natureza e suas Tecnologias', sigla: 'QU', cor: 'comp-natureza' },
-  { id: '20000000-0000-0000-0000-000000000004', nome: 'História', area: 'Ciências Humanas e Sociais Aplicadas', sigla: 'HI', cor: 'comp-humanas' },
-  { id: '20000000-0000-0000-0000-000000000005', nome: 'Arte', area: 'Linguagens e suas Tecnologias', sigla: 'AR', cor: 'comp-linguagens' },
+  { id: '20000000-0000-0000-0000-000000000001', nome: 'Matemática', area: 'Matemática e suas Tecnologias', sigla: 'MA', cor: 'comp-matematica', ativo: true },
+  { id: '20000000-0000-0000-0000-000000000002', nome: 'Língua Portuguesa', area: 'Linguagens e suas Tecnologias', sigla: 'PT', cor: 'comp-linguagens', ativo: true },
+  { id: '20000000-0000-0000-0000-000000000003', nome: 'Química', area: 'Ciências da Natureza e suas Tecnologias', sigla: 'QU', cor: 'comp-natureza', ativo: true },
+  { id: '20000000-0000-0000-0000-000000000004', nome: 'História', area: 'Ciências Humanas e Sociais Aplicadas', sigla: 'HI', cor: 'comp-humanas', ativo: true },
+  { id: '20000000-0000-0000-0000-000000000005', nome: 'Arte', area: 'Linguagens e suas Tecnologias', sigla: 'AR', cor: 'comp-linguagens', ativo: true },
 ]
 
+/** Um componente desativado, FORA de `COMPONENTES_FIXTURE`: a lista pública
+ * (`VOCABULARIO_FIXTURE`) precisa continuar só com ativo (RF-01), e é a
+ * gestão administrativa (RF-03) que mistura os dois — ver
+ * `COMPONENTES_ADMIN_FIXTURE` abaixo. */
+export const COMPONENTE_INATIVO_FIXTURE: ComponenteFixture = {
+  id: '20000000-0000-0000-0000-000000000006',
+  nome: 'Filosofia',
+  area: 'Ciências Humanas e Sociais Aplicadas',
+  sigla: 'FI',
+  cor: 'comp-humanas',
+  ativo: false,
+}
+
 export const SERIES_FIXTURE: SerieFixture[] = [
-  { id: '30000000-0000-0000-0000-000000000001', nome: '6º ano', rotuloCompleto: '6º ano do Ensino Fundamental', sigla: '6º', etapa: 'fundamental_anos_finais', ordem: 1 },
-  { id: '30000000-0000-0000-0000-000000000002', nome: '7º ano', rotuloCompleto: '7º ano do Ensino Fundamental', sigla: '7º', etapa: 'fundamental_anos_finais', ordem: 2 },
-  { id: '30000000-0000-0000-0000-000000000003', nome: '8º ano', rotuloCompleto: '8º ano do Ensino Fundamental', sigla: '8º', etapa: 'fundamental_anos_finais', ordem: 3 },
-  { id: '30000000-0000-0000-0000-000000000004', nome: '9º ano', rotuloCompleto: '9º ano do Ensino Fundamental', sigla: '9º', etapa: 'fundamental_anos_finais', ordem: 4 },
-  { id: '30000000-0000-0000-0000-000000000005', nome: '2ª série', rotuloCompleto: '2ª série do Ensino Médio', sigla: '2ªEM', etapa: 'medio', ordem: 6 },
+  { id: '30000000-0000-0000-0000-000000000001', nome: '6º ano', rotuloCompleto: '6º ano do Ensino Fundamental', sigla: '6º', etapa: 'fundamental_anos_finais', ordem: 1, ativa: true },
+  { id: '30000000-0000-0000-0000-000000000002', nome: '7º ano', rotuloCompleto: '7º ano do Ensino Fundamental', sigla: '7º', etapa: 'fundamental_anos_finais', ordem: 2, ativa: true },
+  { id: '30000000-0000-0000-0000-000000000003', nome: '8º ano', rotuloCompleto: '8º ano do Ensino Fundamental', sigla: '8º', etapa: 'fundamental_anos_finais', ordem: 3, ativa: true },
+  { id: '30000000-0000-0000-0000-000000000004', nome: '9º ano', rotuloCompleto: '9º ano do Ensino Fundamental', sigla: '9º', etapa: 'fundamental_anos_finais', ordem: 4, ativa: true },
+  { id: '30000000-0000-0000-0000-000000000005', nome: '2ª série', rotuloCompleto: '2ª série do Ensino Médio', sigla: '2ªEM', etapa: 'medio', ordem: 6, ativa: true },
 ]
 
 export const METODOLOGIAS_FIXTURE: MetodologiaFixture[] = [
-  { id: '40000000-0000-0000-0000-000000000001', nome: 'Rotação por Estações de Aprendizagem', tipo: 'metodologia' },
-  { id: '40000000-0000-0000-0000-000000000002', nome: 'Estudo de Casos', tipo: 'metodologia' },
-  { id: '40000000-0000-0000-0000-000000000003', nome: 'Sala de Aula Invertida', tipo: 'metodologia' },
-  { id: '40000000-0000-0000-0000-000000000004', nome: 'Escape Room', tipo: 'metodologia' },
+  { id: '40000000-0000-0000-0000-000000000001', nome: 'Rotação por Estações de Aprendizagem', tipo: 'metodologia', ativa: true },
+  { id: '40000000-0000-0000-0000-000000000002', nome: 'Estudo de Casos', tipo: 'metodologia', ativa: true },
+  { id: '40000000-0000-0000-0000-000000000003', nome: 'Sala de Aula Invertida', tipo: 'metodologia', ativa: true },
+  { id: '40000000-0000-0000-0000-000000000004', nome: 'Escape Room', tipo: 'metodologia', ativa: true },
   // Uma ferramenta, para provar que o filtro de metodologia NÃO a mostra.
-  { id: '40000000-0000-0000-0000-000000000005', nome: 'Kahoot', tipo: 'ferramenta' },
+  { id: '40000000-0000-0000-0000-000000000005', nome: 'Kahoot', tipo: 'ferramenta', ativa: true },
 ]
 
+/** O vocabulário público (RF-01) — só ativo, como `GET /api/v1/vocabulary`
+ * devolve. */
 export const VOCABULARIO_FIXTURE = {
   componentes: COMPONENTES_FIXTURE,
+  series: SERIES_FIXTURE,
+  metodologias: METODOLOGIAS_FIXTURE,
+}
+
+/** O vocabulário administrativo (RF-03) — inclui o inativo, como `GET
+ * /api/v1/admin/vocabulary` devolve. */
+export const VOCABULARIO_ADMIN_FIXTURE = {
+  componentes: [...COMPONENTES_FIXTURE, COMPONENTE_INATIVO_FIXTURE],
   series: SERIES_FIXTURE,
   metodologias: METODOLOGIAS_FIXTURE,
 }

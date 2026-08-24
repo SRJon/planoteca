@@ -34,6 +34,10 @@ export type Componente = {
    * um valor de cor: `npm run lint` reprova cor literal em componente, e a
    * promessa de trocar a paleta num arquivo só depende disto. */
   cor: string
+  /** Campo MASCULINO — espelha `ComponenteDto.Ativo` na API. Sempre `true`
+   * na rota pública, que só carrega ativo; a tela de gestão é quem precisa
+   * do inativo à vista. */
+  ativo: boolean
 }
 
 /** Uma série da educação básica. */
@@ -51,6 +55,10 @@ export type Serie = {
   /** Ordem global 1..7. Ordene por ela, nunca pelo nome — "10º" viria antes
    * de "9º" em ordem alfabética. */
   ordem: number
+  /** Campo FEMININO — espelha `SerieDto.Ativa` na API. Não uniformize com o
+   * `ativo` de `Componente`: o nome segue o gênero do substantivo do lado do
+   * servidor. */
+  ativa: boolean
 }
 
 /** Uma metodologia ativa, técnica ou ferramenta digital. */
@@ -60,6 +68,9 @@ export type Metodologia = {
   /** `metodologia`, `tecnica` ou `ferramenta`, conforme o Guia de
    * Metodologias Ativas (UGB/FERP, 2020). */
   tipo: string
+  /** Campo FEMININO — espelha `MetodologiaDto.Ativa` na API. Mesma ressalva
+   * de `Serie.ativa`. */
+  ativa: boolean
 }
 
 /** O vocabulário inteiro, como `GET /api/v1/vocabulary` o devolve. */
@@ -95,6 +106,23 @@ const CLASSE_POR_TOKEN: Record<string, string> = {
 
 /** O neutro de quando a cor não é reconhecida. */
 const CLASSE_NEUTRA = 'bg-secondary'
+
+/**
+ * Os quatro tokens de cor que o formulário de gestão oferece, com um rótulo
+ * legível cada.
+ *
+ * A metade gêmea desta lista é `CorComponente.cs`
+ * (`planoteca-api/src/SaraivaTech.Planoteca.Domain/Enumerable/CorComponente.cs`)
+ * — as duas precisam concordar. Deriva de `CLASSE_POR_TOKEN` acima, e não de
+ * uma lista solta, para não existir uma TERCEIRA enumeração dos mesmos quatro
+ * tokens dentro deste arquivo.
+ */
+export const CORES_COMPONENTE: { token: string; rotulo: string }[] = [
+  { token: 'comp-linguagens', rotulo: 'Linguagens e suas Tecnologias' },
+  { token: 'comp-matematica', rotulo: 'Matemática e suas Tecnologias' },
+  { token: 'comp-natureza', rotulo: 'Ciências da Natureza e suas Tecnologias' },
+  { token: 'comp-humanas', rotulo: 'Ciências Humanas e Sociais Aplicadas' },
+]
 
 /**
  * A classe que pinta o bloco de um componente.

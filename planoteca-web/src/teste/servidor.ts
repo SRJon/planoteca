@@ -3,6 +3,7 @@ import { HttpResponse, http } from 'msw'
 import {
   CONTAS_FIXTURE,
   POSTS_FIXTURE,
+  VOCABULARIO_ADMIN_FIXTURE,
   VOCABULARIO_FIXTURE,
   detalharPlano,
   filtrarContas,
@@ -40,6 +41,10 @@ const PESSOA_PADRAO = {
  * quebrada em qualquer teste que dependesse só deste default.
  */
 const PLANOS_PADRAO = gerarPlanos()
+
+/** Os quatro tokens que a API aceita (RF-04) — espelha `CorComponente.cs`.
+ * Só para a simulação recusar cor inválida como o back-end recusaria. */
+const CORES_VALIDAS = ['comp-linguagens', 'comp-matematica', 'comp-natureza', 'comp-humanas']
 
 export const servidor = setupServer(
   http.get('*/api/v1/person-samples', () =>
@@ -198,4 +203,47 @@ export const servidor = setupServer(
     }
     return new HttpResponse(null, { status: 204 })
   }),
+  // ── Gestão de vocabulário ──────────────────────────────────────────────
+  // A leitura administrativa (RF-03): as mesmas três listas da rota pública,
+  // com o inativo à vista.
+  http.get('*/api/v1/admin/vocabulary', () => HttpResponse.json(VOCABULARIO_ADMIN_FIXTURE)),
+  http.post('*/api/v1/admin/vocabulary/components', async ({ request }) => {
+    const entrada = (await request.json()) as { nome?: string; cor?: string }
+    if (!entrada.nome?.trim()) {
+      return HttpResponse.json({ status: 400, messages: ['O nome é obrigatório.'] }, { status: 400 })
+    }
+    if (!CORES_VALIDAS.includes(entrada.cor ?? '')) {
+      return HttpResponse.json(
+        { status: 400, messages: ['A cor precisa ser um token que o tema conhece.'] },
+        { status: 400 },
+      )
+    }
+    return HttpResponse.json(
+      { id: '20000000-0000-0000-0000-000000000900', ...entrada },
+      { status: 201 },
+    )
+  }),
+  http.put('*/api/v1/admin/vocabulary/components/:id', () => new HttpResponse(null, { status: 204 })),
+  http.post('*/api/v1/admin/vocabulary/grades', async ({ request }) => {
+    const entrada = (await request.json()) as { nome?: string }
+    if (!entrada.nome?.trim()) {
+      return HttpResponse.json({ status: 400, messages: ['O nome é obrigatório.'] }, { status: 400 })
+    }
+    return HttpResponse.json(
+      { id: '30000000-0000-0000-0000-000000000900', ...entrada },
+      { status: 201 },
+    )
+  }),
+  http.put('*/api/v1/admin/vocabulary/grades/:id', () => new HttpResponse(null, { status: 204 })),
+  http.post('*/api/v1/admin/vocabulary/methodologies', async ({ request }) => {
+    const entrada = (await request.json()) as { nome?: string }
+    if (!entrada.nome?.trim()) {
+      return HttpResponse.json({ status: 400, messages: ['O nome é obrigatório.'] }, { status: 400 })
+    }
+    return HttpResponse.json(
+      { id: '40000000-0000-0000-0000-000000000900', ...entrada },
+      { status: 201 },
+    )
+  }),
+  http.put('*/api/v1/admin/vocabulary/methodologies/:id', () => new HttpResponse(null, { status: 204 })),
 )
