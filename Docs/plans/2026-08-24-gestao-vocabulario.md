@@ -93,12 +93,12 @@ Testing Library, MSW e Playwright.
 - Produces: `Task<bool> ExisteSerieComNomeAsync(string nome, string etapa, Guid? exceto)`
 - Produces: `Task<bool> ExisteMetodologiaComNomeAsync(string nome, Guid? exceto)`
 
-- [ ] **Step 1: Acrescentar `ativo` aos DTO de saída**
+- [x] **Step 1: Acrescentar `ativo` aos DTO de saída**
 
 Os três DTO de saída ganham o campo. A tela de gestão precisa dele para mostrar o
 estado, e a rota pública devolve sempre `true` porque só carrega ativo.
 
-- [ ] **Step 2: Escrever os DTO de entrada**
+- [x] **Step 2: Escrever os DTO de entrada**
 
 ```csharp
 public class ComponenteEntradaDto
@@ -114,17 +114,17 @@ public class ComponenteEntradaDto
 
 Série e metodologia seguem a mesma forma, com os campos das entidades.
 
-- [ ] **Step 3: Ampliar a interface do repositório**
+- [x] **Step 3: Ampliar a interface do repositório**
 
 As nove assinaturas de `Interfaces` acima. A busca por id e a consulta de nome
 existem para o AppService checar a regra antes de escrever.
 
-- [ ] **Step 4: Implementar no repositório**
+- [x] **Step 4: Implementar no repositório**
 
 A leitura completa repete a ordenação da leitura de ativos. A busca por id não usa
 `AsNoTracking`, porque o `Commit` do UnitOfWork persiste o que o contexto rastreia.
 
-- [ ] **Step 5: Compilar**
+- [x] **Step 5: Compilar**
 
 ```bash
 cd planoteca-api && dotnet build
@@ -132,7 +132,7 @@ cd planoteca-api && dotnet build
 
 Esperado: `Build succeeded` e código 0.
 
-- [ ] **Step 6: Commitar**
+- [x] **Step 6: Commitar**
 
 ```bash
 git add planoteca-api/src
@@ -164,7 +164,7 @@ git commit -m "feat(vocabulario): contrato de entrada e leitura completa"
 - Produces: `Task<Result> AlterarComponenteAsync(Guid id, ComponenteEntradaDto e)`
 - Produces: as mesmas duas formas para série e metodologia.
 
-- [ ] **Step 1: Escrever os testes que falham**
+- [x] **Step 1: Escrever os testes que falham**
 
 Um teste por regra de RF-10, mais o caminho feliz. Todos com repositório e
 UnitOfWork por `Substitute.For`.
@@ -303,7 +303,7 @@ public async Task ObterTudoAsync_devolve_o_inativo()
 }
 ```
 
-- [ ] **Step 2: Executar e confirmar a falha**
+- [x] **Step 2: Executar e confirmar a falha**
 
 ```bash
 cd planoteca-api && dotnet test --filter VocabularioAdminAppServiceTest
@@ -311,7 +311,7 @@ cd planoteca-api && dotnet test --filter VocabularioAdminAppServiceTest
 
 Esperado: falha de compilação, porque `IVocabularioAdminAppService` ainda não existe.
 
-- [ ] **Step 3: Escrever a lista fechada de cor**
+- [x] **Step 3: Escrever a lista fechada de cor**
 
 ```csharp
 public static class CorComponente
@@ -329,13 +329,13 @@ public static class CorComponente
 Ela é a metade de servidor do mapa escrito em `modelo.ts`. As duas listas precisam
 concordar, e um comentário em cada uma aponta para a outra.
 
-- [ ] **Step 4: Implementar o AppService**
+- [x] **Step 4: Implementar o AppService**
 
 Sete métodos. Cada escrita checa a regra, depois `Insert` ou `Update`, depois
 `BeginTransaction` e `Commit` com `Rollback` no `catch`. É o padrão de
 `PessoaAdminAppService`.
 
-- [ ] **Step 5: Executar e confirmar que passa**
+- [x] **Step 5: Executar e confirmar que passa**
 
 ```bash
 cd planoteca-api && dotnet test
@@ -343,7 +343,7 @@ cd planoteca-api && dotnet test
 
 Esperado: `Passed!` e código 0.
 
-- [ ] **Step 6: Commitar**
+- [x] **Step 6: Commitar**
 
 ```bash
 git add planoteca-api/src planoteca-api/tests
@@ -371,14 +371,14 @@ git commit -m "feat(vocabulario): regras de cadastro e alteração"
 - Consumes: `IVocabularioAdminAppService` da Task 2.
 - Produces: as sete rotas de RF-09.
 
-- [ ] **Step 1: Escrever o controller**
+- [x] **Step 1: Escrever o controller**
 
 `[Authorize(Policy = "Administrador")]` na classe, rota
 `api/v{version:apiVersion}/admin/vocabulary`. Cada `POST` devolve `201` com
 `CreatedAtAction`, cada `PUT` devolve `204`, e a recusa devolve `BadRequest` com o
 corpo de `Error`.
 
-- [ ] **Step 2: Registrar no DI**
+- [x] **Step 2: Registrar no DI**
 
 ```csharp
 services.AddScoped<IVocabularioAdminAppService, VocabularioAdminAppService>();
@@ -386,7 +386,7 @@ services.AddScoped<IVocabularioAdminAppService, VocabularioAdminAppService>();
 
 Ao lado do registro de `IVocabularioAppService`, que já existe.
 
-- [ ] **Step 3: Compilar e testar**
+- [x] **Step 3: Compilar e testar**
 
 ```bash
 cd planoteca-api && dotnet build && dotnet test
@@ -394,7 +394,7 @@ cd planoteca-api && dotnet build && dotnet test
 
 Esperado: `Build succeeded`, `Passed!` e código 0.
 
-- [ ] **Step 4: Commitar**
+- [x] **Step 4: Commitar**
 
 ```bash
 git add planoteca-api/src
@@ -431,7 +431,7 @@ git commit -m "feat(vocabulario): rotas administrativas de cadastro"
 - Produces: `useSalvarComponente(cliente)`, `useSalvarSerie(cliente)`, `useSalvarMetodologia(cliente)`
 - Produces: `CORES_COMPONENTE: { token: string; rotulo: string }[]`
 
-- [ ] **Step 1: Escrever o teste que falha**
+- [x] **Step 1: Escrever o teste que falha**
 
 O teste confirma RF-08: a mutação invalida `CHAVE_VOCABULARIO`.
 
@@ -462,7 +462,7 @@ it('invalida o vocabulário depois de salvar um componente', async () => {
 })
 ```
 
-- [ ] **Step 2: Executar e confirmar a falha**
+- [x] **Step 2: Executar e confirmar a falha**
 
 ```bash
 cd planoteca-web && npm run test -- vocabulario
@@ -470,21 +470,21 @@ cd planoteca-web && npm run test -- vocabulario
 
 Esperado: falha de importação, porque `useSalvarComponente` ainda não existe.
 
-- [ ] **Step 3: Acrescentar `ativo` e a lista de cor ao modelo**
+- [x] **Step 3: Acrescentar `ativo` e a lista de cor ao modelo**
 
 `CORES_COMPONENTE` deriva do mapa que já existe. Um comentário aponta para
 `CorComponente.cs`, porque as duas listas precisam concordar.
 
-- [ ] **Step 4: Escrever a api e os hooks**
+- [x] **Step 4: Escrever a api e os hooks**
 
 Toda mutação invalida `CHAVE_VOCABULARIO` e a chave administrativa. Sem isso, quem
 cadastra espera uma hora para ver o item na Biblioteca.
 
-- [ ] **Step 5: Acrescentar os handler MSW**
+- [x] **Step 5: Acrescentar os handler MSW**
 
 `GET /admin/vocabulary`, e os `POST` e `PUT` das três listas.
 
-- [ ] **Step 6: Executar e confirmar que passa**
+- [x] **Step 6: Executar e confirmar que passa**
 
 ```bash
 cd planoteca-web && npm run test -- vocabulario
@@ -492,7 +492,7 @@ cd planoteca-web && npm run test -- vocabulario
 
 Esperado: todos os testes verdes.
 
-- [ ] **Step 7: Commitar**
+- [x] **Step 7: Commitar**
 
 ```bash
 git add planoteca-web/src
@@ -525,7 +525,7 @@ git commit -m "feat(vocabulario): mutações e leitura administrativa no front"
 - Consumes: `useVocabularioAdmin` e as três mutações da Task 4.
 - Produces: `PaginaVocabulario({ cliente })`
 
-- [ ] **Step 1: Escrever o teste que falha**
+- [x] **Step 1: Escrever o teste que falha**
 
 ```tsx
 describe('PaginaVocabulario', () => {
@@ -555,7 +555,7 @@ describe('PaginaVocabulario', () => {
 })
 ```
 
-- [ ] **Step 2: Executar e confirmar a falha**
+- [x] **Step 2: Executar e confirmar a falha**
 
 ```bash
 cd planoteca-web && npm run test -- PaginaVocabulario
@@ -563,13 +563,13 @@ cd planoteca-web && npm run test -- PaginaVocabulario
 
 Esperado: falha de importação, porque a página ainda não existe.
 
-- [ ] **Step 3: Escrever a página**
+- [x] **Step 3: Escrever a página**
 
 Três abas por `Chip`, como `PaginaModeracao`. Cada linha traz nome, os campos do
 tipo, o estado e os botões de alterar e de desativar. O formulário abre em
 `Dialog`, e o campo de cor é `select` sobre `CORES_COMPONENTE`.
 
-- [ ] **Step 4: Registrar a rota e o item de menu**
+- [x] **Step 4: Registrar a rota e o item de menu**
 
 ```ts
 { rota: '/admin/vocabulario', titulo: 'Vocabulário', icone: Tag, papel: 'administrador' },
@@ -577,7 +577,7 @@ tipo, o estado e os botões de alterar e de desativar. O formulário abre em
 
 Entre `Catalogar` e `Pessoas`, porque é onde a tarefa dele acontece.
 
-- [ ] **Step 5: Executar o portão do front**
+- [x] **Step 5: Executar o portão do front**
 
 ```bash
 cd planoteca-web && npm run lint && npm run test && npm run build
@@ -585,7 +585,7 @@ cd planoteca-web && npm run lint && npm run test && npm run build
 
 Esperado: os três verdes.
 
-- [ ] **Step 6: Executar o detector de plástico**
+- [x] **Step 6: Executar o detector de plástico**
 
 ```bash
 python ~/.claude/skills/sem-plastico/scripts/detectar.py planoteca-web/src/pages/admin/PaginaVocabulario.tsx
@@ -593,7 +593,7 @@ python ~/.claude/skills/sem-plastico/scripts/detectar.py planoteca-web/src/pages
 
 Esperado: código 0.
 
-- [ ] **Step 7: Commitar**
+- [x] **Step 7: Commitar**
 
 ```bash
 git add planoteca-web/src
@@ -619,18 +619,18 @@ git commit -m "feat(vocabulario): tela de gestão no painel"
 **Interfaces:**
 - Consumes: a tela da Task 5 e as rotas da Task 3.
 
-- [ ] **Step 1: Acrescentar os handler à simulação**
+- [x] **Step 1: Acrescentar os handler à simulação**
 
 As mesmas rotas que a Task 4 pôs em `src/teste/servidor.ts`. Fixture que entra num
 arquivo precisa entrar no outro. Sem isso o e2e passa com dado que o teste de
 unidade não conhece.
 
-- [ ] **Step 2: Escrever o teste de ponta a ponta**
+- [x] **Step 2: Escrever o teste de ponta a ponta**
 
 Ele entra como administrador, abre `/admin/vocabulario`, cadastra um componente e
 confirma que ele aparece na lista.
 
-- [ ] **Step 3: Executar o portão dos dois lados**
+- [x] **Step 3: Executar o portão dos dois lados**
 
 ```bash
 cd planoteca-api && dotnet build && dotnet test
@@ -639,7 +639,7 @@ cd planoteca-web && npm run lint && npm run test && npm run build && npm run e2e
 
 Esperado: código 0 em todos.
 
-- [ ] **Step 4: Confirmar que a rota pública não se alterou**
+- [x] **Step 4: Confirmar que a rota pública não se alterou**
 
 ```bash
 cd planoteca-api && dotnet test --filter Vocabulary
@@ -648,7 +648,7 @@ cd planoteca-api && dotnet test --filter Vocabulary
 Esperado: o teste de RF-01 verde. A rota pública responde sem token e devolve só
 ativo.
 
-- [ ] **Step 5: Commitar**
+- [x] **Step 5: Commitar**
 
 ```bash
 git add planoteca-web/e2e
@@ -659,13 +659,13 @@ git commit -m "test(vocabulario): cobre a gestão de ponta a ponta"
 
 ## Self-Review
 
-- [ ] Todo `### Task N` usa a palavra inglesa `Task`.
-- [ ] Toda task tem `Papel`: `busca`, `escrita` ou `analise`.
-- [ ] Toda task tem `Verificação` com um comando.
-- [ ] O comando de `Verificação` executa a partir da raiz do repositório.
-- [ ] Toda task tem `Fontes`, com caminho ou com a palavra `nenhuma`.
-- [ ] Todo caminho de `Fontes` existe no disco.
-- [ ] Todo passo tem comando e resultado esperado.
-- [ ] Todo bloco de teste está inteiro, sem reticência.
-- [ ] Todo bloco de código usa cerca, nunca indentação de quatro espaços.
-- [ ] Nenhuma task depende de arquivo que nenhuma task anterior criou.
+- [x] Todo `### Task N` usa a palavra inglesa `Task`.
+- [x] Toda task tem `Papel`: `busca`, `escrita` ou `analise`.
+- [x] Toda task tem `Verificação` com um comando.
+- [x] O comando de `Verificação` executa a partir da raiz do repositório.
+- [x] Toda task tem `Fontes`, com caminho ou com a palavra `nenhuma`.
+- [x] Todo caminho de `Fontes` existe no disco.
+- [x] Todo passo tem comando e resultado esperado.
+- [x] Todo bloco de teste está inteiro, sem reticência.
+- [x] Todo bloco de código usa cerca, nunca indentação de quatro espaços.
+- [x] Nenhuma task depende de arquivo que nenhuma task anterior criou.
