@@ -32,6 +32,12 @@ namespace SaraivaTech.Planoteca.Application.Dto
         /// BANCO, e não de uma lista fechada no front: é a troca que permitiu
         /// Química, Física e Biologia entrarem sem alterar código.</summary>
         public string Cor { get; set; } = string.Empty;
+        public int Ordem { get; set; }
+
+        /// <summary>Sempre `true` na rota pública, que só carrega ativo. A
+        /// tela de gestão do administrador é quem precisa distinguir — é lá
+        /// que o inativo aparece.</summary>
+        public bool Ativo { get; set; } = true;
     }
 
     public class SerieDto
@@ -48,6 +54,10 @@ namespace SaraivaTech.Planoteca.Application.Dto
         /// <summary>Ordem global 1..7. O front ordena por ela, sem regra de
         /// desempate própria.</summary>
         public int Ordem { get; set; }
+
+        /// <summary>Sempre `true` na rota pública. Ver o comentário em
+        /// <see cref="ComponenteDto.Ativo"/>.</summary>
+        public bool Ativa { get; set; } = true;
     }
 
     public class MetodologiaDto
@@ -58,5 +68,9 @@ namespace SaraivaTech.Planoteca.Application.Dto
         /// <summary>`metodologia`, `tecnica` ou `ferramenta`. O filtro agrupa
         /// por isto.</summary>
         public string Tipo { get; set; } = string.Empty;
+
+        /// <summary>Sempre `true` na rota pública. Ver o comentário em
+        /// <see cref="ComponenteDto.Ativo"/>.</summary>
+        public bool Ativa { get; set; } = true;
     }
 }

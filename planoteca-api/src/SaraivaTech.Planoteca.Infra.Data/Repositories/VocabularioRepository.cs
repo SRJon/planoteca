@@ -1,3 +1,6 @@
+﻿#nullable enable
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -48,5 +51,76 @@ namespace SaraivaTech.Planoteca.Infra.Data.Repositories
                 .OrderBy(m => m.Tipo)
                 .ThenBy(m => m.Nome)
                 .ToListAsync();
+
+        // A leitura completa repete a ordenação da leitura de ativos: a tela
+        // de gestão espera a mesma organização visual que a Biblioteca usa,
+        // só que com o inativo junto.
+        public async Task<IEnumerable<Componente>> ComponentesTodosAsync() =>
+            await _context.Set<Componente>()
+                .AsNoTracking()
+                .OrderBy(c => c.Area)
+                .ThenBy(c => c.Ordem)
+                .ToListAsync();
+
+        public async Task<IEnumerable<Serie>> SeriesTodasAsync() =>
+            await _context.Set<Serie>()
+                .AsNoTracking()
+                .OrderBy(s => s.Ordem)
+                .ToListAsync();
+
+        public async Task<IEnumerable<Metodologia>> MetodologiasTodasAsync() =>
+            await _context.Set<Metodologia>()
+                .AsNoTracking()
+                .OrderBy(m => m.Tipo)
+                .ThenBy(m => m.Nome)
+                .ToListAsync();
+
+        // Sem `AsNoTracking`: o `Commit` do UnitOfWork persiste o que o
+        // contexto rastreia, e o AppService altera a entidade devolvida aqui
+        // diretamente, sem chamar `Update` — o mesmo padrão de
+        // `PessoaAdminAppService.AlterarPapelAsync`.
+        public async Task<Componente?> ComponentePorIdAsync(Guid id) =>
+            await _context.Set<Componente>().FirstOrDefaultAsync(c => c.Id == id);
+
+        public async Task<Serie?> SeriePorIdAsync(Guid id) =>
+            await _context.Set<Serie>().FirstOrDefaultAsync(s => s.Id == id);
+
+        public async Task<Metodologia?> MetodologiaPorIdAsync(Guid id) =>
+            await _context.Set<Metodologia>().FirstOrDefaultAsync(m => m.Id == id);
+
+        // `exceto` recebe o id do proprio item numa alteracao, para ele nao
+        // colidir com o proprio nome. Ele vira `Guid.Empty` quando ausente, e
+        // NAO entra na consulta como `Id != null`: em SQL, comparar com NULL
+        // devolve UNKNOWN, a linha nunca casa, e a regra passaria a aceitar
+        // nome repetido em toda criacao — falha silenciosa que o mock do
+        // teste de unidade nao alcanca.
+        //
+        // A comparacao ignora caixa porque "Filosofia" e "filosofia" sao o
+        // mesmo componente para quem le o filtro da Biblioteca.
+
+        public async Task<bool> ExisteComponenteComNomeAsync(string nome, Guid? exceto) =>
+            await _context.Set<Componente>()
+                .AsNoTracking()
+                .AnyAsync(c => c.Nome.ToLower() == nome.ToLower()
+                            && c.Id != (exceto ?? Guid.Empty));
+
+        public async Task<bool> ExisteSerieComNomeAsync(string nome, string etapa, Guid? exceto) =>
+            await _context.Set<Serie>()
+                .AsNoTracking()
+                .AnyAsync(s => s.Nome.ToLower() == nome.ToLower()
+                            && s.Etapa == etapa
+                            && s.Id != (exceto ?? Guid.Empty));
+
+        public async Task<bool> ExisteMetodologiaComNomeAsync(string nome, Guid? exceto) =>
+            await _context.Set<Metodologia>()
+                .AsNoTracking()
+                .AnyAsync(m => m.Nome.ToLower() == nome.ToLower()
+                            && m.Id != (exceto ?? Guid.Empty));
+
+        public void Insert(Componente componente) => _context.Set<Componente>().Add(componente);
+
+        public void Insert(Serie serie) => _context.Set<Serie>().Add(serie);
+
+        public void Insert(Metodologia metodologia) => _context.Set<Metodologia>().Add(metodologia);
     }
 }
