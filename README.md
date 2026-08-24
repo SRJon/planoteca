@@ -38,21 +38,40 @@ Qualquer professor cadastrado escreve. O texto entra como pendente e vai ao ar s
 
 ## Contas e permissões
 
-Login exclusivamente com conta Google — não há sistema de senha a construir nem a guardar.
+Login com **conta Google ou e-mail e senha**, pelo Firebase Authentication. A senha é
+guardada pelo Firebase; não há hash no nosso banco.
+
+O Firebase prova quem é a pessoa. O **papel** — professor ou administrador — mora na coluna
+`pessoa.papel`, e o `PapelClaimsMiddleware` o injeta como claim. Papel nunca vira custom
+claim do Firebase. O console dele é um lugar onde alguém altera permissão sem revisão.
+
+O primeiro administrador nasce por SQL. Todo cadastro nasce professor, e não existe caminho
+de código que crie um administrador.
 
 | Papel | Pode |
 |---|---|
 | **Visitante** (sem conta) | Navegar, filtrar, buscar, baixar qualquer plano |
 | **Professor** | Tudo do visitante, mais escrever textos do blog e acompanhar o status do que enviou |
-| **Administrador** | Tudo do professor, mais aprovar e devolver textos, publicar no blog, e fazer upload e catalogação de planos |
+| **Administrador** | Tudo do professor, mais moderar o blog, catalogar planos, gerir o vocabulário e o acesso das contas |
 
 ## Painel administrativo
 
 Mesa de trabalho, não painel de métricas. Mostra primeiro o que precisa de atenção: textos aguardando aprovação.
 
-Depois vêm a moderação do blog, a gestão dos planos publicados, e o formulário de envio. Esse formulário é o upload do PDF mais os campos de catalogação.
+| Tela | O que faz |
+|---|---|
+| Moderação | fila do blog: publicar, devolver com comentário, recusar, arquivar |
+| Planos | gestão do acervo publicado |
+| Catalogar | upload do PDF mais os campos de catalogação |
+| Vocabulário | cadastro de componente, série e metodologia |
+| Escrever | redação de texto do blog, aberta a qualquer professor |
+| Pessoas | papel e acesso de quem se cadastrou |
 
-Esse formulário será preenchido dezenas de vezes seguidas na fase de povoamento do acervo. É otimizado para repetição, não para a primeira vez.
+O formulário de catalogação será preenchido dezenas de vezes seguidas na fase de povoamento.
+É otimizado para repetição, não para a primeira vez.
+
+A tela de Vocabulário existe porque componente, série e metodologia são **dados**, não lista
+fechada em código. Sem ela, cada componente novo custaria um `INSERT` manual no banco.
 
 ---
 
@@ -65,7 +84,7 @@ Planoteca/
 ├── planoteca-api/     back-end .NET 10, Clean Architecture
 ├── planoteca-web/     front-end React 19 + Vite
 ├── design/            sistema visual: tokens, direções, telas aprovadas
-└── Docs/              todo.md e lessons.md
+└── Docs/              todo.md, lessons.md, specs/, plans/, guias/
 ```
 
 ## Front-end — `planoteca-web`
@@ -94,7 +113,7 @@ src/
 ├── app/          providers, rotas, cascas (LayoutPublico e Shell), estilos
 ├── pages/        uma pasta por tela (inicio, biblioteca, blog, entrar, ...)
 ├── features/     casos de uso (autenticar, filtrar-planos, ...)
-├── entities/     domínio (plano, pessoa, sessao) — modelo, api, mapeador, hook
+├── entities/     domínio (plano, post, vocabulario, conta, autenticacao)
 ├── components/   ui/ (shadcn) e marca/
 ├── shared/       cliente HTTP, config, lib
 └── teste/        servidor MSW e utilitários de teste
@@ -110,8 +129,8 @@ Nome de campo do fio não vaza para a tela.
 
 | Casca | Rotas | Guarda |
 |---|---|---|
-| `LayoutPublico` | `/` (landing), `/biblioteca`, `/blog` | nenhuma |
-| `Shell` | `/pessoas` e o futuro painel administrativo | `RotaProtegida` |
+| `LayoutPublico` | `/`, `/biblioteca`, `/biblioteca/:id`, `/blog`, `/blog/:id` | nenhuma |
+| `Shell` | `/admin/*` e `/pessoas` | `RotaProtegida` |
 
 O acervo é público: navegar, filtrar e baixar não passam por guarda nenhuma.
 
@@ -123,13 +142,31 @@ público", e `e2e/biblioteca.spec.ts`, que filtra e pagina sem login.
 
 ### Domínio de plano
 
-Tipos fechados, não `string` livre — o TypeScript recusa em tempo de escrita um valor que o tema não sabe pintar:
+Componente, série e metodologia são **tabela no banco**, servidas por
+`GET /api/v1/vocabulary`. Até 2026-08-22 eram unions fechados em TypeScript, com a cor
+escrita ao lado. O compilador recusava um componente sem cor.
 
-- **Componentes** (8): Português, Matemática, Ciências, História, Geografia, Arte, Ed. Física, Inglês. Cada um com cor e sigla de duas letras fixas.
-- **Anos** (5): 6º, 7º, 8º, 9º, 1ª EM.
-- **Plano**: `id`, `titulo`, `componente`, `ano`, `bncc`, `metodologia`, `duracao`, `arquivoUrl`.
+O acervo real derrubou isso. Os relatos da SEDU trazem Química, Física e Biologia, e 2ª e 3ª
+série do Ensino Médio. Fechar o vocabulário em código custaria um deploy a cada
+componente novo. Quem povoa a Planoteca administra o acervo, e não escreve código.
 
-O código BNCC é obrigatório, porque a busca por código é o caminho principal de quem chega ao acervo.
+O que se perdeu com a troca foi a garantia em tempo de compilação. Duas defesas substituem o
+compilador: `cor` e `sigla` são `NOT NULL` no banco, e `classeCorComponente()` tem fallback
+neutro.
+
+**A cor continua fechada**, e é a única parte que não virou dado livre. O Tailwind gera
+utilitário varrendo o fonte por texto literal. Uma classe montada em tempo de execução não
+existe no CSS final.
+
+São quatro tokens de área: `comp-linguagens`, `comp-matematica`, `comp-natureza` e
+`comp-humanas`. Eles moram em dois lugares que precisam concordar — `CorComponente.cs` na
+API e `CORES_COMPONENTE` em `modelo.ts`.
+
+A **ordem** de série e componente é calculada pela API, nunca digitada. `serie.ordem` é
+`UNIQUE` no banco: pedir o número a quem cadastra é pedir que ele adivinhe qual está livre.
+
+O código BNCC é obrigatório, porque a busca por código é o caminho principal de quem chega ao
+acervo.
 
 ### Scripts
 
@@ -172,7 +209,7 @@ Passa o que aponta para o tema: `bg-background`, `text-primary`, `border-border`
 | MCP | `ModelContextProtocol.AspNetCore`, servidor em `/mcp` |
 | Testes | xUnit, NSubstitute, AutoFixture, Bogus, FluentAssertions |
 
-Versões de pacote são centralizadas em `Directory.Packages.props`. Não edite versão em `.csproj`.
+Versões de pacote são centralizadas em `Directory.Packages.props`. Não escreva versão em `.csproj`.
 
 ### Camadas
 
@@ -194,7 +231,12 @@ O `Repository<T>` base não chama `SaveChanges()`. A persistência acontece em `
 
 ### Servidor MCP
 
-A API se expõe como servidor Model Context Protocol em `/mcp`. Ferramentas ficam em `Api/McpTools/`, descobertas por reflexão (`WithToolsFromAssembly()`). Uma ferramenta MCP nunca reimplementa regra de negócio — ela injeta o mesmo app service do controller.
+A API registra um servidor Model Context Protocol em `/mcp` (`Program.cs:81`), **sem nenhuma
+ferramenta publicada até agora**. A pasta `Api/McpTools/` não existe.
+
+Quando a primeira nascer, ela vai lá e é descoberta por reflexão (`WithToolsFromAssembly()`).
+Uma ferramenta MCP nunca reimplementa regra de negócio: ela injeta o mesmo app service do
+controller.
 
 ### Comandos
 
@@ -223,7 +265,13 @@ Três consequências que aparecem no código:
 - O upload usa URL pré-assinada: o arquivo vai do navegador direto para o R2.
 - API e banco hibernam quando ociosos. A primeira requisição depois disso demora, e a interface precisa tolerar isso.
 
-CI/CD fica para depois de a API estar de pé.
+O deploy passa pelo **GitHub Actions**, não pelo webhook do Render. O
+`.github/workflows/ci.yml` roda o portão dos dois lados e só então chama o Deploy Hook. O
+webhook nativo nunca disparou neste repositório, e a troca vale por si: nada sobe sem o
+portão passar.
+
+O schema é aplicado no arranque da API. `Program.cs` chama `MigrateAsync()` antes de aceitar
+tráfego, porque o Render não oferece passo de release onde rodar `dotnet ef database update`.
 
 ## Sistema visual
 
@@ -241,30 +289,70 @@ Rampas de cor fechadas, com nome de coisa de escola:
 
 Componentes consomem apenas os tokens semânticos. Trocar tema é trocar um bloco.
 
+`design/tokens.css` é a fonte da verdade. `planoteca-web/src/app/estilos/tema.css` traduz
+esses valores para a estrutura do Tailwind v4 e do shadcn. É esse segundo arquivo que o
+`verifica-tokens.mjs` cobra.
+
 Artefatos em `design/`: `planoteca-sistema.html` (guia visual), `planoteca-direcoes.html` (as direções exploradas), `*.dc.html` (artboards), telas aprovadas em PNG.
 
 ## Estado atual
 
-O que está de pé:
+Estado de 2026-08-24.
 
-- Sistema visual definido e aplicado em `tema.css`
-- Entidade `plano` completa (modelo, mapeador, api, hook `useFiltroPlanos`)
-- Landing page pública com atalhos por componente e por ano
-- Biblioteca pública com filtros, `FichaPlano`, `Chip` e `CampoBusca`
-- Navegação das três áreas (Início · Biblioteca · Blog) em casca própria
-- Guia de estilo com os componentes catalogados
-- API em PostgreSQL 16, com snake_case
-- 175 testes de front passando, lint e build verdes; 10 testes de API passando
+### O que está de pé
 
-Lacunas abertas, herdadas do boilerplate ou ainda não implementadas:
+**Acervo público**
 
-1. **Não existe autenticação no back-end.** `POST /api/v1/auth/login` e `GET /api/v1/auth/userinfo` estão no contrato, e o front já escreve contra eles. Nenhum controller os implementa: contra a API real, o login devolve 404. Use a simulação MSW para desenvolver a interface.
-2. **A API não tem nenhum controller.** A fatia de exemplo `PersonSample` saiu na migração para PostgreSQL. O SQL Dapper dela era T-SQL puro, e ela nunca foi domínio da Planoteca.
-3. **O endpoint de planos ainda não existe.** A Biblioteca consome mocks MSW. Quando ele nascer, **não** leva `[Authorize]`: o acervo é público.
-4. **Login com Google ainda não foi ligado.** O formulário atual é usuário e senha, herdado do boilerplate.
-5. **Não há migration versionada.** Rode `dotnet ef migrations add Inicial` antes do primeiro `database update`.
-6. **O Blog é só uma rota com página de "em breve".** Sem entidade, sem endpoint, sem moderação.
-7. **O painel administrativo não começou.** Quem entra hoje cai em `/pessoas`, que ainda é andaime de boilerplate.
+- Landing, Biblioteca com filtros e paginação, ficha de plano, download do PDF
+- Nenhuma dessas telas passa por guarda, e dois testes travam a regra
+
+**Blog**
+
+- Escrita por qualquer professor, com editor de texto rico e sanitização
+- Moderação completa: publicar, devolver com comentário, recusar, arquivar
+- Contador de visualizações
+
+**Painel administrativo**
+
+- Seis telas: Moderação, Planos, Catalogar, Vocabulário, Escrever, Pessoas
+- Gestão de papel e de acesso, com o primeiro administrador nascendo por SQL
+
+**API**
+
+| Controller | Rota | Acesso |
+|---|---|---|
+| `AuthController` | `/api/v1/auth` | `GET /me` autenticado |
+| `LessonPlansController` | `/api/v1/lesson-plans` | anônimo |
+| `VocabularyController` | `/api/v1/vocabulary` | anônimo |
+| `PostsController` | `/api/v1/posts` | anônimo |
+| `AdminLessonPlansController` | `/api/v1/admin/lesson-plans` | administrador |
+| `AdminVocabularyController` | `/api/v1/admin/vocabulary` | administrador |
+| `AdminPostsController` | `/api/v1/admin/posts` | autenticado, moderação restrita |
+| `AdminPessoasController` | `/api/v1/admin/people` | administrador |
+
+**Infraestrutura**
+
+- Firebase Authentication ligado dos dois lados
+- Três migrations versionadas, aplicadas no arranque por `MigrateAsync()`
+- Deploy pelo GitHub Actions, que roda o portão dos dois lados antes do Deploy Hook
+- Front no ar em `planoteca-theta.vercel.app`
+
+**Portão**
+
+- 66 testes de API, 235 de front, 12 de ponta a ponta
+- `lint`, `build` e o verificador de tokens verdes
+
+### O que falta
+
+1. **A Biblioteca ainda roda contra a simulação MSW.** O endpoint já existe na API. Ligar a
+   tela a ele é o próximo passo.
+2. **`/pessoas` é andaime de boilerplate.** A fatia `pessoa` no front
+   (`src/entities/pessoa`, `src/features/filtrar-pessoas`, `src/pages/pessoas`) não é domínio
+   da Planoteca. O padrão a copiar é `entities/plano`.
+3. **`Api/Policies/` é código morto** herdado do boilerplate, não registrado em lugar nenhum.
+4. **Domínio próprio.** Ainda no subdomínio da Vercel.
+5. **Contagem de planos afetados ao desativar vocabulário.** Hoje o diálogo dá um aviso
+   genérico. O número real exige rota nova.
 
 ## Convenção de commit
 
