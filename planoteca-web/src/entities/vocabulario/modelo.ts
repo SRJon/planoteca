@@ -34,6 +34,10 @@ export type Componente = {
    * um valor de cor: `npm run lint` reprova cor literal em componente, e a
    * promessa de trocar a paleta num arquivo só depende disto. */
   cor: string
+  /** A posição dentro da área. A Biblioteca não a usa — ela agrupa por área e
+   * confia na ordem que a API mandou —, mas a tela de gestão sim: sem ela,
+   * desativar um componente reescreveria a ordem com um palpite. */
+  ordem: number
   /** Campo MASCULINO — espelha `ComponenteDto.Ativo` na API. Sempre `true`
    * na rota pública, que só carrega ativo; a tela de gestão é quem precisa
    * do inativo à vista. */

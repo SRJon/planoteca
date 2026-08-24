@@ -3,6 +3,7 @@ import { Books } from '@phosphor-icons/react/dist/csr/Books'
 import { FilePlus } from '@phosphor-icons/react/dist/csr/FilePlus'
 import { Files } from '@phosphor-icons/react/dist/csr/Files'
 import { NotePencil } from '@phosphor-icons/react/dist/csr/NotePencil'
+import { Tag } from '@phosphor-icons/react/dist/csr/Tag'
 import { Tray } from '@phosphor-icons/react/dist/csr/Tray'
 import { UsersThree } from '@phosphor-icons/react/dist/csr/UsersThree'
 import type { Papel, Sessao } from '@/entities/autenticacao'
@@ -62,6 +63,7 @@ export const ITENS_MENU: ItemMenu[] = [
   { rota: '/admin/moderacao', titulo: 'Moderação', icone: Tray, papel: 'administrador' },
   { rota: '/admin/planos', titulo: 'Planos', icone: Files, papel: 'administrador' },
   { rota: '/admin/catalogar', titulo: 'Catalogar', icone: FilePlus, papel: 'administrador' },
+  { rota: '/admin/vocabulario', titulo: 'Vocabulário', icone: Tag, papel: 'administrador' },
   { rota: '/admin/pessoas', titulo: 'Pessoas', icone: UsersThree, papel: 'administrador' },
   { rota: '/admin/escrever', titulo: 'Escrever', icone: NotePencil },
   { rota: '/biblioteca', titulo: 'Biblioteca', icone: Books },

@@ -19,6 +19,8 @@ export interface ComponenteFixture {
   area: string
   sigla: string
   cor: string
+  /** A posição dentro da área. A tela de gestão a reenvia em todo `PUT`. */
+  ordem: number
   /** Campo MASCULINO — espelha `ComponenteDto.Ativo` na API. */
   ativo: boolean
 }
@@ -62,11 +64,11 @@ export interface PlanoFixture {
  * antes. Um GUID gerado ao acaso obrigaria cada teste a ler o vocabulário
  * primeiro só para filtrar. */
 export const COMPONENTES_FIXTURE: ComponenteFixture[] = [
-  { id: '20000000-0000-0000-0000-000000000001', nome: 'Matemática', area: 'Matemática e suas Tecnologias', sigla: 'MA', cor: 'comp-matematica', ativo: true },
-  { id: '20000000-0000-0000-0000-000000000002', nome: 'Língua Portuguesa', area: 'Linguagens e suas Tecnologias', sigla: 'PT', cor: 'comp-linguagens', ativo: true },
-  { id: '20000000-0000-0000-0000-000000000003', nome: 'Química', area: 'Ciências da Natureza e suas Tecnologias', sigla: 'QU', cor: 'comp-natureza', ativo: true },
-  { id: '20000000-0000-0000-0000-000000000004', nome: 'História', area: 'Ciências Humanas e Sociais Aplicadas', sigla: 'HI', cor: 'comp-humanas', ativo: true },
-  { id: '20000000-0000-0000-0000-000000000005', nome: 'Arte', area: 'Linguagens e suas Tecnologias', sigla: 'AR', cor: 'comp-linguagens', ativo: true },
+  { id: '20000000-0000-0000-0000-000000000001', nome: 'Matemática', area: 'Matemática e suas Tecnologias', sigla: 'MA', cor: 'comp-matematica', ordem: 1, ativo: true },
+  { id: '20000000-0000-0000-0000-000000000002', nome: 'Língua Portuguesa', area: 'Linguagens e suas Tecnologias', sigla: 'PT', cor: 'comp-linguagens', ordem: 2, ativo: true },
+  { id: '20000000-0000-0000-0000-000000000003', nome: 'Química', area: 'Ciências da Natureza e suas Tecnologias', sigla: 'QU', cor: 'comp-natureza', ordem: 3, ativo: true },
+  { id: '20000000-0000-0000-0000-000000000004', nome: 'História', area: 'Ciências Humanas e Sociais Aplicadas', sigla: 'HI', cor: 'comp-humanas', ordem: 4, ativo: true },
+  { id: '20000000-0000-0000-0000-000000000005', nome: 'Arte', area: 'Linguagens e suas Tecnologias', sigla: 'AR', cor: 'comp-linguagens', ordem: 5, ativo: true },
 ]
 
 /** Um componente desativado, FORA de `COMPONENTES_FIXTURE`: a lista pública
@@ -79,6 +81,9 @@ export const COMPONENTE_INATIVO_FIXTURE: ComponenteFixture = {
   area: 'Ciências Humanas e Sociais Aplicadas',
   sigla: 'FI',
   cor: 'comp-humanas',
+  // 6, e não 1: o teste que prova que desativar preserva a ordem precisa de
+  // um valor que não coincida com o palpite que um contorno usaria.
+  ordem: 6,
   ativo: false,
 }
 

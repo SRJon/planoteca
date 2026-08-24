@@ -6,6 +6,7 @@ import {
   PaginaModeracao,
   PaginaPessoasAdmin,
   PaginaPlanos,
+  PaginaVocabulario,
 } from '@/pages/admin'
 import { PaginaBlog, PaginaPost } from '@/pages/blog'
 import { PaginaDesignSystem } from '@/pages/design-system'
@@ -83,6 +84,11 @@ function PaginaPessoasAdminConectada() {
   return <PaginaPessoasAdmin cliente={cliente} minhaContaId={sessao?.id ?? null} />
 }
 
+function PaginaVocabularioConectada() {
+  const { cliente } = useAutenticacao()
+  return <PaginaVocabulario cliente={cliente} />
+}
+
 /** O Blog público: listagem e leitura. */
 function PaginaBlogConectada() {
   const { cliente } = useAutenticacao()
@@ -147,6 +153,7 @@ export function Rotas() {
           <Route path="/admin/moderacao" element={<PaginaModeracaoConectada />} />
           <Route path="/admin/planos" element={<PaginaPlanosConectada />} />
           <Route path="/admin/catalogar" element={<PaginaCatalogarConectada />} />
+          <Route path="/admin/vocabulario" element={<PaginaVocabularioConectada />} />
           <Route path="/admin/escrever" element={<PaginaEscreverConectada />} />
           <Route path="/admin/pessoas" element={<PaginaPessoasAdminConectada />} />
           {/* Andaime do boilerplate. Não é domínio da Planoteca, e sai do
