@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gestão de vocabulário no painel</title>
+<style>
+:root {
+  --st-bg:#FAF9F5; --st-bg-alt:#F0EEE6; --st-surface:#FFFFFF;
+  --st-border:#E3DACC; --st-border-soft:#F0EEE6;
+  --st-ink:#141413; --st-ink-soft:#3D3D3A; --st-ink-muted:#87867F; --st-ink-faint:#D1CFC5;
+  --st-accent:#D97757; --st-accent-soft:#F5E1D4; --st-rose:#E0897A;
+  --st-olive:#788C5D; --st-olive-soft:#DCE3CC;
+  --st-amber:#B47A3C; --st-amber-soft:#EDD9B7;
+  --st-crimson:#B0533C; --st-crimson-soft:#F0CFC3;
+  --st-azure:#3D6688; --st-azure-soft:#CDDAE6;
+  --st-invert-bg:#141413; --st-invert-ink:#F0EEE6;
+  --st-font-serif: ui-serif,"Iowan Old Style","Apple Garamond",Baskerville,"Times New Roman",Times,serif;
+  --st-font-sans: system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --st-font-mono: ui-monospace,"SF Mono","Cascadia Code",Menlo,Consolas,"Liberation Mono",monospace;
+  --st-space-1:.25rem; --st-space-2:.5rem; --st-space-3:.75rem; --st-space-4:1rem;
+  --st-space-5:1.25rem; --st-space-6:1.5rem; --st-space-8:2rem; --st-space-10:2.5rem;
+  --st-space-12:3rem; --st-space-16:4rem;
+  --st-radius-sm:4px; --st-radius:8px;
+  --st-content-width:1100px;
+}
+*{box-sizing:border-box}
+body{margin:0;padding:0;font-family:var(--st-font-sans);font-size:16px;line-height:1.65;
+  color:var(--st-ink);background:var(--st-bg);-webkit-font-smoothing:antialiased}
+.st-doc{max-width:var(--st-content-width);margin:0 auto;padding:var(--st-space-16) var(--st-space-6) var(--st-space-12)}
+.st-eyebrow{font-family:var(--st-font-mono);font-size:.75rem;font-weight:500;text-transform:uppercase;
+  letter-spacing:.08em;color:var(--st-ink-muted);margin:0 0 var(--st-space-4)}
+.st-title{font-family:var(--st-font-serif);font-weight:500;font-size:clamp(2rem,5vw,2.75rem);
+  line-height:1.15;letter-spacing:-.01em;margin:0 0 var(--st-space-6)}
+.st-title em.st-accent{font-style:italic;color:var(--st-accent);font-weight:500}
+.st-lede{font-size:1.1rem;line-height:1.6;color:var(--st-ink-soft);margin:0 0 var(--st-space-8);max-width:64ch}
+h2{font-family:var(--st-font-serif);font-weight:500;font-size:clamp(1.4rem,3vw,1.75rem);
+  margin:var(--st-space-16) 0 var(--st-space-4);display:flex;align-items:center;gap:var(--st-space-3)}
+h3{font-family:var(--st-font-serif);font-weight:500;font-size:1.2rem;margin:var(--st-space-8) 0 var(--st-space-3)}
+h4{font-family:var(--st-font-sans);font-weight:600;font-size:1rem;margin:var(--st-space-6) 0 var(--st-space-2)}
+.st-section-num{display:inline-block;font-family:var(--st-font-mono);font-size:.7rem;font-weight:500;
+  background:var(--st-bg-alt);color:var(--st-ink-muted);padding:3px var(--st-space-2);
+  border-radius:var(--st-radius-sm);letter-spacing:.05em;vertical-align:middle}
+p{margin:0 0 var(--st-space-4)}
+a{color:var(--st-accent);text-decoration:underline;text-underline-offset:3px}
+ul,ol{margin:0 0 var(--st-space-4);padding-left:var(--st-space-6)}
+li{margin-bottom:var(--st-space-2);line-height:1.6}
+li::marker{color:var(--st-accent)}
+strong{font-weight:600;color:var(--st-ink)}
+em{color:var(--st-ink-soft);font-style:italic}
+hr{border:none;border-top:1px solid var(--st-border);margin:var(--st-space-10) 0}
+code{font-family:var(--st-font-mono);font-size:.88em;background:var(--st-bg-alt);
+  padding:2px 6px;border-radius:var(--st-radius-sm)}
+pre{background:var(--st-invert-bg);color:var(--st-invert-ink);padding:var(--st-space-4) var(--st-space-5);
+  border-radius:var(--st-radius);overflow-x:auto;font-size:.85rem;line-height:1.55;
+  margin:var(--st-space-4) 0;min-width:0;max-width:100%}
+pre code{background:none;padding:0;color:inherit;font-size:inherit}
+.st-pills{display:flex;gap:var(--st-space-2);flex-wrap:wrap;margin:0 0 var(--st-space-6)}
+.st-pill{display:inline-flex;align-items:center;gap:var(--st-space-2);padding:4px var(--st-space-3);
+  border-radius:999px;font-family:var(--st-font-mono);font-size:.78rem;background:var(--st-bg-alt);
+  color:var(--st-ink-soft);border:1px solid var(--st-border-soft)}
+.st-pill-label{color:var(--st-ink-muted)}
+.st-pill-value{color:var(--st-ink);font-weight:500}
+.st-pill--accent{background:var(--st-accent-soft);color:var(--st-accent);border-color:transparent}
+.st-pill--olive{background:var(--st-olive-soft);color:var(--st-olive);border-color:transparent}
+.st-pill--crimson{background:var(--st-crimson-soft);color:var(--st-crimson);border-color:transparent}
+.st-tldr{background:var(--st-invert-bg);color:var(--st-invert-ink);padding:var(--st-space-6);
+  border-radius:var(--st-radius);margin:0 0 var(--st-space-10);font-size:1.05rem;line-height:1.6}
+.st-tldr-label{font-family:var(--st-font-mono);font-size:.72rem;text-transform:uppercase;
+  letter-spacing:.1em;color:var(--st-ink-muted);margin-bottom:var(--st-space-2)}
+.st-tldr p{margin:0 0 var(--st-space-3)}
+.st-tldr p:last-child{margin:0}
+.st-tldr strong{color:#FFFFFF}
+.st-tldr em{color:var(--st-accent-soft);font-style:italic}
+.st-tldr code{background:rgba(255,255,255,.1);color:var(--st-invert-ink)}
+.st-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  gap:var(--st-space-3);margin:0 0 var(--st-space-10)}
+.st-stat{background:var(--st-surface);border:1px solid var(--st-border);
+  border-radius:var(--st-radius);padding:var(--st-space-4)}
+.st-stat-label{font-family:var(--st-font-mono);font-size:.7rem;text-transform:uppercase;
+  letter-spacing:.08em;color:var(--st-ink-muted);margin-bottom:var(--st-space-2)}
+.st-stat-value{font-family:var(--st-font-serif);font-weight:500;font-size:1.15rem}
+.st-stat--accent .st-stat-value{color:var(--st-accent)}
+.st-tag{display:inline-block;font-family:var(--st-font-mono);font-size:.78rem;
+  background:var(--st-bg-alt);color:var(--st-ink-soft);padding:2px var(--st-space-2);
+  border-radius:var(--st-radius-sm);margin:2px 4px 2px 0}
+.st-callout{background:var(--st-bg-alt);border-radius:var(--st-radius);
+  padding:var(--st-space-4) var(--st-space-5);margin:var(--st-space-4) 0}
+.st-callout-label{font-family:var(--st-font-mono);font-size:.72rem;text-transform:uppercase;
+  letter-spacing:.08em;color:var(--st-ink-muted);margin-bottom:var(--st-space-2)}
+.st-callout p:last-child{margin-bottom:0}
+.st-callout--accent{background:var(--st-accent-soft)}
+.st-callout--accent .st-callout-label{color:var(--st-accent)}
+.st-callout--olive{background:var(--st-olive-soft)}
+.st-callout--olive .st-callout-label{color:var(--st-olive)}
+.st-callout--amber{background:var(--st-amber-soft)}
+.st-callout--amber .st-callout-label{color:var(--st-amber)}
+.st-callout--crimson{background:var(--st-crimson-soft)}
+.st-callout--crimson .st-callout-label{color:var(--st-crimson)}
+.st-callout--azure{background:var(--st-azure-soft)}
+.st-callout--azure .st-callout-label{color:var(--st-azure)}
+.st-card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:var(--st-space-4);margin:var(--st-space-6) 0}
+.st-card{background:var(--st-surface);border:1px solid var(--st-border);border-radius:var(--st-radius);
+  padding:var(--st-space-5);display:flex;flex-direction:column;gap:var(--st-space-3)}
+.st-card-eyebrow{font-family:var(--st-font-mono);font-size:.7rem;text-transform:uppercase;
+  letter-spacing:.08em;color:var(--st-ink-muted)}
+.st-card-title{font-family:var(--st-font-serif);font-weight:500;font-size:1.15rem;margin:0}
+.st-card-body{font-size:.95rem;color:var(--st-ink-soft);margin:0;flex:1}
+table{width:100%;border-collapse:collapse;margin:var(--st-space-4) 0;font-size:.92rem;
+  background:var(--st-surface);border-radius:var(--st-radius);overflow:hidden;border:1px solid var(--st-border)}
+thead{background:var(--st-bg-alt)}
+th{text-align:left;padding:var(--st-space-3) var(--st-space-4);font-family:var(--st-font-mono);
+  font-weight:500;font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;
+  color:var(--st-ink-muted);border-bottom:1px solid var(--st-border)}
+td{padding:var(--st-space-3) var(--st-space-4);border-bottom:1px solid var(--st-border-soft);vertical-align:top}
+tr:last-child td{border-bottom:none}
+details{background:var(--st-surface);border:1px solid var(--st-border);border-radius:var(--st-radius);
+  padding:var(--st-space-3) var(--st-space-4);margin:var(--st-space-3) 0}
+details summary{cursor:pointer;font-weight:500;list-style:none;display:flex;align-items:center;gap:var(--st-space-2)}
+details summary::before{content:"▸";color:var(--st-accent);font-size:.85rem}
+details[open] summary::before{transform:rotate(90deg)}
+details > *:not(summary){margin-top:var(--st-space-3)}
+.st-diagram{display:block;margin:var(--st-space-6) auto;max-width:100%;height:auto}
+.st-footer{text-align:center;padding:var(--st-space-8) var(--st-space-6) var(--st-space-12);
+  color:var(--st-ink-muted);font-size:.85rem}
+.st-mono{font-family:var(--st-font-mono);font-size:.85em}
+@media (max-width:768px){.st-doc{padding:var(--st-space-8) var(--st-space-4)}}
+</style>
+</head>
+<body>
+<main class="st-doc">
+
+<p class="st-eyebrow">Spec · Planoteca · Painel administrativo</p>
+<h1 class="st-title">Gestão de <em class="st-accent">vocabulário</em> no painel</h1>
+
+<div class="st-pills">
+  <span class="st-pill"><span class="st-pill-label">grau</span><span class="st-pill-value">2</span></span>
+  <span class="st-pill st-pill--crimson"><span class="st-pill-label">contrato</span><span class="st-pill-value">público</span></span>
+  <span class="st-pill st-pill--accent"><span class="st-pill-label">camadas</span><span class="st-pill-value">API + Web</span></span>
+  <span class="st-pill"><span class="st-pill-label">acesso</span><span class="st-pill-value">administrador</span></span>
+</div>
+
+<p class="st-lede">O vocabulário classifica todo plano do acervo. Hoje ele só nasce por
+seed no banco. Esta spec abre o cadastro para o administrador, sem tirar a leitura
+pública que a Biblioteca usa.</p>
+
+<div class="st-tldr">
+  <div class="st-tldr-label">Resumo</div>
+  <p><code>GET /api/v1/vocabulary</code> continua anônimo e continua devolvendo só os
+  ativos. Nada nele se altera.</p>
+  <p>Nasce ao lado dele um bloco de escrita sob <code>/api/v1/admin/vocabulary</code>,
+  fechado pela policy <strong>Administrador</strong>. Ele cria, altera e desativa
+  componente, série e metodologia.</p>
+  <p>No painel nasce a rota <code>/admin/vocabulario</code>, com três abas. A cor do
+  componente é <em>escolha entre quatro tokens</em>, nunca texto livre.</p>
+</div>
+
+<div class="st-stats">
+  <div class="st-stat"><div class="st-stat-label">Rotas novas</div><div class="st-stat-value">7</div></div>
+  <div class="st-stat"><div class="st-stat-label">Tela nova</div><div class="st-stat-value">1, três abas</div></div>
+  <div class="st-stat st-stat--accent"><div class="st-stat-label">Contrato público</div><div class="st-stat-value">intacto</div></div>
+  <div class="st-stat"><div class="st-stat-label">Exclusão física</div><div class="st-stat-value">não existe</div></div>
+</div>
+
+<h2><span class="st-section-num">01</span> Problema</h2>
+
+<p>As três tabelas de vocabulário — <code>Componente</code>, <code>Serie</code> e
+<code>Metodologia</code> — nasceram povoadas por
+<a href="../../planoteca-api/src/SaraivaTech.Planoteca.Infra.Data/Seed/DadosIniciais.cs">DadosIniciais.cs</a>.
+Não existe caminho de aplicação que escreva nelas.</p>
+
+<p>O comentário de <code>entities/vocabulario/modelo.ts</code> declara a intenção
+oposta. Ele registra que a lista fechada em TypeScript foi trocada por tabela
+justamente para o administrador cadastrar sem deploy. A troca ficou pela metade: o
+banco virou a fonte, mas ninguém escreve nele fora do seed.</p>
+
+<p>Enquanto isso durar, cada componente novo custa um <code>INSERT</code> manual no
+Neon. A Planoteca é povoada por quem administra o acervo, e não por quem tem acesso
+ao banco.</p>
+
+<div class="st-callout st-callout--amber">
+  <div class="st-callout-label">A restrição que governa a solução</div>
+  <p>O vocabulário é a espinha do acervo. Um componente desativado por engano some
+  do filtro da Biblioteca inteira. Por isso a escrita fica atrás da policy
+  <code>Administrador</code>, e por isso não existe exclusão física.</p>
+</div>
+
+<h2><span class="st-section-num">02</span> Escopo</h2>
+
+<h3>Dentro</h3>
+<ul>
+  <li>Criar, alterar e desativar componente, série e metodologia.</li>
+  <li>Bloco de rotas <code>/api/v1/admin/vocabulary</code>, fechado por policy.</li>
+  <li>Leitura administrativa que <strong>inclui os inativos</strong>. A rota pública
+  não os mostra, e a tela de gestão precisa deles para reativar.</li>
+  <li>Tela <code>/admin/vocabulario</code> com três abas e um item no menu lateral.</li>
+  <li>Teste de unidade nos dois lados, fixture MSW nos dois arquivos de simulação.</li>
+</ul>
+
+<h3>Fora</h3>
+<ul>
+  <li>Excluir de vez. O domínio já modela <code>Ativo</code> e <code>Ativa</code>, e
+  os comentários dele dizem por quê.</li>
+  <li>Reordenar por arrastar. <code>Ordem</code> é campo numérico no formulário.</li>
+  <li>Cadastrar token de cor novo. Cor sai da lista que o tema conhece.</li>
+  <li>Fundir dois itens duplicados e migrar os planos que os citam.</li>
+</ul>
+
+<h2><span class="st-section-num">03</span> Solução</h2>
+
+<p>Duas superfícies sobre as mesmas três tabelas. A pública lê o que está ativo. A
+administrativa lê tudo e escreve.</p>
+
+<svg class="st-diagram" viewBox="0 0 720 330" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#87867F"/>
+    </marker>
+    <marker id="arrow-accent" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#D97757"/>
+    </marker>
+  </defs>
+
+  <rect x="10" y="20" width="180" height="62" rx="10" fill="#FFFFFF" stroke="#E3DACC" stroke-width="1.5"/>
+  <text x="100" y="45" text-anchor="middle" font-family="ui-serif, Georgia, serif" font-size="14" font-weight="500" fill="#141413">Biblioteca</text>
+  <text x="100" y="64" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="11" fill="#87867F">visitante anônimo</text>
+
+  <rect x="10" y="130" width="180" height="62" rx="10" fill="#F5E1D4" stroke="#D97757" stroke-width="1.5"/>
+  <text x="100" y="155" text-anchor="middle" font-family="ui-serif, Georgia, serif" font-size="14" font-weight="500" fill="#141413">/admin/vocabulario</text>
+  <text x="100" y="174" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="11" fill="#87867F">administrador</text>
+
+  <rect x="10" y="240" width="180" height="62" rx="10" fill="#FFFFFF" stroke="#E3DACC" stroke-width="1.5"/>
+  <text x="100" y="265" text-anchor="middle" font-family="ui-serif, Georgia, serif" font-size="14" font-weight="500" fill="#141413">Catalogar</text>
+  <text x="100" y="284" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="11" fill="#87867F">monta os seletores</text>
+
+  <rect x="290" y="20" width="200" height="62" rx="10" fill="#FFFFFF" stroke="#E3DACC" stroke-width="1.5"/>
+  <text x="390" y="45" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="12" fill="#141413">GET /vocabulary</text>
+  <text x="390" y="64" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="11" fill="#87867F">AllowAnonymous · só ativos</text>
+
+  <rect x="290" y="130" width="200" height="62" rx="10" fill="#FFFFFF" stroke="#D97757" stroke-width="1.5"/>
+  <text x="390" y="152" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="12" fill="#141413">/admin/vocabulary</text>
+  <text x="390" y="170" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="11" fill="#87867F">Policy Administrador</text>
+  <text x="390" y="185" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="11" fill="#87867F">GET tudo · POST · PUT</text>
+
+  <rect x="580" y="75" width="130" height="112" rx="10" fill="#141413"/>
+  <text x="645" y="108" text-anchor="middle" font-family="ui-serif, Georgia, serif" font-size="14" font-weight="500" fill="#F0EEE6">PostgreSQL</text>
+  <text x="645" y="130" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="11" fill="#D1CFC5">componente</text>
+  <text x="645" y="147" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="11" fill="#D1CFC5">serie</text>
+  <text x="645" y="164" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="11" fill="#D1CFC5">metodologia</text>
+
+  <line x1="190" y1="51" x2="285" y2="51" stroke="#87867F" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="190" y1="271" x2="240" y2="271" stroke="#87867F" stroke-width="1.5"/>
+  <path d="M240,271 L240,51 L285,51" fill="none" stroke="#87867F" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="190" y1="161" x2="285" y2="161" stroke="#D97757" stroke-width="1.5" marker-end="url(#arrow-accent)"/>
+
+  <line x1="490" y1="51" x2="575" y2="95" stroke="#87867F" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="520" y="60" font-family="ui-monospace, Menlo, monospace" font-size="11" fill="#87867F">lê</text>
+  <line x1="490" y1="161" x2="575" y2="150" stroke="#D97757" stroke-width="1.5" marker-end="url(#arrow-accent)"/>
+  <text x="512" y="180" font-family="ui-monospace, Menlo, monospace" font-size="11" fill="#D97757">lê e escreve</text>
+</svg>
+
+<h3>As rotas</h3>
+
+<table>
+  <thead><tr><th>Método e rota</th><th>Acesso</th><th>O que faz</th></tr></thead>
+  <tbody>
+    <tr><td><code>GET /api/v1/vocabulary</code></td><td>anônimo</td>
+      <td>Inalterada. Só os ativos.</td></tr>
+    <tr><td><code>GET /api/v1/admin/vocabulary</code></td><td>Administrador</td>
+      <td>As três listas, ativos e inativos, para a tela de gestão.</td></tr>
+    <tr><td><code>POST /api/v1/admin/vocabulary/components</code></td><td>Administrador</td>
+      <td>Cria um componente. Devolve <code>201</code> com o corpo criado.</td></tr>
+    <tr><td><code>PUT …/components/{id}</code></td><td>Administrador</td>
+      <td>Altera nome, área, sigla, cor, ordem e o estado ativo.</td></tr>
+    <tr><td><code>POST …/grades</code> e <code>PUT …/grades/{id}</code></td><td>Administrador</td>
+      <td>O mesmo, para série.</td></tr>
+    <tr><td><code>POST …/methodologies</code> e <code>PUT …/methodologies/{id}</code></td><td>Administrador</td>
+      <td>O mesmo, para metodologia.</td></tr>
+  </tbody>
+</table>
+
+<div class="st-callout st-callout--azure">
+  <div class="st-callout-label">Por que PUT, e não PATCH de campo</div>
+  <p>O formulário da tela altera o item inteiro numa submissão. Um <code>PUT</code>
+  espelha isso e evita seis rotas de campo. O estado ativo entra como campo do mesmo
+  corpo: desativar é alterar.</p>
+</div>
+
+<h3>Regras de validação</h3>
+
+<p>Elas moram no AppService, e devolvem <code>Result.Failure</code> com a frase que a
+tela mostra. É o padrão de <code>PessoaAdminAppService</code>.</p>
+
+<table>
+  <thead><tr><th>Regra</th><th>Vale para</th><th>Frase da recusa</th></tr></thead>
+  <tbody>
+    <tr><td>Nome obrigatório, até 80 caracteres</td><td>os três</td>
+      <td>O nome é obrigatório.</td></tr>
+    <tr><td>Nome não repete dentro do mesmo tipo</td><td>os três</td>
+      <td>Já existe um item com este nome.</td></tr>
+    <tr><td>Cor entre os quatro tokens do tema</td><td>componente</td>
+      <td>A cor precisa ser um token que o tema conhece.</td></tr>
+    <tr><td>Sigla com duas letras</td><td>componente</td>
+      <td>A sigla tem duas letras.</td></tr>
+    <tr><td>Etapa entre as duas conhecidas</td><td>série</td>
+      <td>A etapa é fundamental ou médio.</td></tr>
+    <tr><td>Ordem maior que zero</td><td>componente e série</td>
+      <td>A ordem começa em 1.</td></tr>
+    <tr><td>Tipo entre os três conhecidos</td><td>metodologia</td>
+      <td>O tipo é metodologia, técnica ou ferramenta.</td></tr>
+  </tbody>
+</table>
+
+<h3>A cor, e por que ela é lista fechada</h3>
+
+<p>O front pinta o bloco do card com um mapa escrito à mão em
+<a href="../../planoteca-web/src/entities/vocabulario/modelo.ts">modelo.ts</a>. Ele
+conhece quatro classes: <code>comp-linguagens</code>, <code>comp-matematica</code>,
+<code>comp-natureza</code> e <code>comp-humanas</code>.</p>
+
+<p>O mapa é escrito porque o Tailwind gera utilitário varrendo o fonte por texto
+literal. Uma classe montada em tempo de execução não existe no CSS final, e o bloco
+nasceria transparente.</p>
+
+<p>Um campo de cor livre no formulário criaria exatamente esse caso. Por isso o
+formulário oferece os quatro, e a API recusa o quinto.</p>
+
+<div class="st-callout st-callout--crimson">
+  <div class="st-callout-label">O que isto impõe</div>
+  <p>Área do conhecimento nova exige, na ordem: token em <code>tema.css</code>, entrada
+  no mapa de <code>modelo.ts</code>, e a constante compartilhada da API. Continua sendo
+  deploy — e continua certo que seja. Cor é decisão de design, não de cadastro.</p>
+</div>
+
+<h2><span class="st-section-num">04</span> Componentes</h2>
+
+<h3>API</h3>
+<table>
+  <thead><tr><th>Arquivo</th><th>O que se altera</th></tr></thead>
+  <tbody>
+    <tr><td><span class="st-tag">Api/Controllers/AdminVocabularyController.cs</span></td>
+      <td>Nasce. <code>[Authorize(Policy = "Administrador")]</code> na classe.</td></tr>
+    <tr><td><span class="st-tag">Application/Dto/VocabularioDto.cs</span></td>
+      <td>Ganha os DTO de entrada e o campo <code>ativo</code> nos de saída.</td></tr>
+    <tr><td><span class="st-tag">Application/Services/IVocabularioAdminAppService.cs</span></td>
+      <td>Nasce. Seis métodos de escrita e um de leitura completa.</td></tr>
+    <tr><td><span class="st-tag">Application.Core/Services/VocabularioAdminAppService.cs</span></td>
+      <td>Nasce. Validação e transação por <code>IUnitOfWork</code>.</td></tr>
+    <tr><td><span class="st-tag">Domain/Repositories/Interfaces/IVocabularioRepository.cs</span></td>
+      <td>Ganha a leitura sem filtro e a busca por id para escrita.</td></tr>
+    <tr><td><span class="st-tag">Infra.Data/Repositories/VocabularioRepository.cs</span></td>
+      <td>Implementa o que a interface ganhou. Escrita rastreada, sem <code>AsNoTracking</code>.</td></tr>
+    <tr><td><span class="st-tag">Infra.CrossCutting/IoC/DependencyInjectionBootStrapper.cs</span></td>
+      <td>Registra o AppService novo.</td></tr>
+  </tbody>
+</table>
+
+<div class="st-callout">
+  <div class="st-callout-label">Nota sobre a leitura de escrita</div>
+  <p>O repositório atual usa <code>AsNoTracking</code> em tudo. Alterar exige entidade
+  rastreada — o <code>Commit</code> do UnitOfWork chama <code>SaveChanges</code> sobre o
+  que o contexto rastreia. Por isso a busca por id nasce separada, e sem
+  <code>AsNoTracking</code>.</p>
+</div>
+
+<h3>Web</h3>
+<table>
+  <thead><tr><th>Arquivo</th><th>O que se altera</th></tr></thead>
+  <tbody>
+    <tr><td><span class="st-tag">entities/vocabulario/api.ts</span></td>
+      <td>Ganha a busca administrativa e as seis funções de escrita.</td></tr>
+    <tr><td><span class="st-tag">entities/vocabulario/useVocabulario.ts</span></td>
+      <td>Ganha <code>useVocabularioAdmin</code> e as mutações. Toda mutação invalida <code>CHAVE_VOCABULARIO</code>.</td></tr>
+    <tr><td><span class="st-tag">entities/vocabulario/modelo.ts</span></td>
+      <td>Ganha <code>ativo</code> nos tipos e a lista de tokens de cor que o formulário oferece.</td></tr>
+    <tr><td><span class="st-tag">pages/admin/PaginaVocabulario.tsx</span></td>
+      <td>Nasce. Três abas por <code>Chip</code>, como <code>PaginaModeracao</code>.</td></tr>
+    <tr><td><span class="st-tag">app/shell/permissoes.ts</span></td>
+      <td>Item de menu novo, papel <code>administrador</code>.</td></tr>
+    <tr><td><span class="st-tag">app/rotas/Rotas.tsx</span></td>
+      <td>Rota <code>/admin/vocabulario</code> dentro da casca protegida.</td></tr>
+    <tr><td><span class="st-tag">teste/servidor.ts</span> e <span class="st-tag">e2e/simulacao.ts</span></td>
+      <td>Handler das rotas novas nos dois arquivos.</td></tr>
+  </tbody>
+</table>
+
+<div class="st-callout st-callout--olive">
+  <div class="st-callout-label">Por que a mutação invalida a chave pública</div>
+  <p><code>useVocabulario</code> guarda cache por uma hora, porque vocabulário se altera
+  raramente. Quem acabou de cadastrar é a exceção: sem invalidar, ele cadastra
+  Filosofia e a Biblioteca segue sem mostrá-la por uma hora. O próprio comentário do
+  hook já pedia isto.</p>
+</div>
+
+<h2><span class="st-section-num">05</span> Riscos</h2>
+
+<table>
+  <thead><tr><th>Risco</th><th>Consequência</th><th>Defesa</th></tr></thead>
+  <tbody>
+    <tr><td>Desativar um item que planos citam</td>
+      <td>O plano continua no acervo, e o filtro perde a opção que o encontra.</td>
+      <td>A tela mostra quantos planos citam o item antes de confirmar. Fica de fora
+      desta entrega; entra como aviso genérico no diálogo.</td></tr>
+    <tr><td>Cor fora do mapa do front</td>
+      <td>Bloco do card neutro em vez de colorido.</td>
+      <td>Lista fechada no formulário e recusa na API. O fallback de
+      <code>classeCorComponente</code> segura o caso residual.</td></tr>
+    <tr><td>Escrita exposta sem policy</td>
+      <td>Professor altera o vocabulário do acervo inteiro.</td>
+      <td><code>[Authorize(Policy = "Administrador")]</code> na classe, e teste que
+      exercita a recusa.</td></tr>
+    <tr><td>Rota nova respondendo 404 depois do deploy</td>
+      <td>Parece defeito de código, e é deploy que não subiu.</td>
+      <td>Confirmar com <code>curl</code> numa rota nova, como o CLAUDE.md manda.</td></tr>
+    <tr><td>Ordem repetida entre dois itens</td>
+      <td>Listagem instável entre consultas.</td>
+      <td>Aceita. Desempate por nome na consulta ordenada.</td></tr>
+  </tbody>
+</table>
+
+<h2><span class="st-section-num">06</span> Decisões</h2>
+
+<div class="st-card-grid">
+  <div class="st-card">
+    <div class="st-card-eyebrow">D1 · superfície</div>
+    <h3 class="st-card-title">Um controller de escrita, não três</h3>
+    <p class="st-card-body">As três tabelas viajam juntas, e a interface de
+    repositório já é uma só pelo mesmo motivo. Três controllers repetiriam a policy e
+    o registro de DI sem separar nada de verdade.</p>
+  </div>
+  <div class="st-card">
+    <div class="st-card-eyebrow">D2 · leitura</div>
+    <h3 class="st-card-title">Rota administrativa separada, não parâmetro</h3>
+    <p class="st-card-body">Um <code>?incluirInativos=true</code> na rota pública
+    colocaria a decisão de acesso dentro do corpo do método. Rota separada leva a
+    policy no atributo da classe, onde ela se lê.</p>
+  </div>
+  <div class="st-card">
+    <div class="st-card-eyebrow">D3 · ciclo de vida</div>
+    <h3 class="st-card-title">Desativar, nunca excluir</h3>
+    <p class="st-card-body">O domínio já traz <code>Ativo</code> e <code>Ativa</code>, e
+    o comentário do repositório diz por quê: item desativado continua válido nos planos
+    que já o citam.</p>
+  </div>
+  <div class="st-card">
+    <div class="st-card-eyebrow">D4 · cor</div>
+    <h3 class="st-card-title">Quatro tokens, escolha fechada</h3>
+    <p class="st-card-body">O Tailwind só gera a classe que está escrita no fonte.
+    Campo livre produziria bloco transparente, e o cadastro pareceria ter funcionado.</p>
+  </div>
+</div>
+
+<h2><span class="st-section-num">07</span> Fontes</h2>
+
+<p>Só o repositório. Não há acervo de análise fora dele.</p>
+
+<table>
+  <thead><tr><th>Caminho</th><th>O que decide</th></tr></thead>
+  <tbody>
+    <tr><td><span class="st-tag">planoteca-api/…/Api/Controllers/AdminPessoasController.cs</span></td>
+      <td>A forma do controller administrativo: policy, rota, recusa por <code>Result</code>.</td></tr>
+    <tr><td><span class="st-tag">planoteca-api/…/Application.Core/Services/PessoaAdminAppService.cs</span></td>
+      <td>Como a validação vira <code>Result.Failure</code> e como a transação fecha.</td></tr>
+    <tr><td><span class="st-tag">planoteca-api/…/Domain/Entities/Componente.cs</span>, <span class="st-tag">Serie.cs</span>, <span class="st-tag">Metodologia.cs</span></td>
+      <td>Os campos que o formulário altera, e a razão de cada obrigatoriedade.</td></tr>
+    <tr><td><span class="st-tag">planoteca-api/…/Infra.Data/Repositories/VocabularioRepository.cs</span></td>
+      <td>A ordenação de cada lista, e o uso de <code>AsNoTracking</code>.</td></tr>
+    <tr><td><span class="st-tag">planoteca-web/src/entities/vocabulario/modelo.ts</span></td>
+      <td>Os quatro tokens de cor, e por que o mapa é escrito à mão.</td></tr>
+    <tr><td><span class="st-tag">planoteca-web/src/entities/conta/useContas.ts</span></td>
+      <td>A forma da mutação: <code>useMutation</code> com <code>invalidateQueries</code>.</td></tr>
+    <tr><td><span class="st-tag">planoteca-web/src/pages/admin/PaginaModeracao.tsx</span></td>
+      <td>As abas por <code>Chip</code>, e a forma do estado vazio.</td></tr>
+    <tr><td><span class="st-tag">planoteca-web/src/app/shell/permissoes.ts</span></td>
+      <td>O item de menu e o papel que o revela.</td></tr>
+    <tr><td><span class="st-tag">CLAUDE.md</span> (raiz e das duas pastas)</td>
+      <td>As decisões que não se renegociam, e o portão antes de fechar tarefa.</td></tr>
+  </tbody>
+</table>
+
+<h2><span class="st-section-num">08</span> Critérios de aceite</h2>
+
+<table>
+  <thead><tr><th>Id</th><th>Critério</th></tr></thead>
+  <tbody>
+    <tr><td><strong>RF-01</strong></td>
+      <td><code>GET /api/v1/vocabulary</code> continua anônimo e continua devolvendo só
+      os ativos. Um teste exercita a rota sem token.</td></tr>
+    <tr><td><strong>RF-02</strong></td>
+      <td>As rotas de <code>/api/v1/admin/vocabulary</code> recusam quem não tem a claim
+      de administrador.</td></tr>
+    <tr><td><strong>RF-03</strong></td>
+      <td>A leitura administrativa devolve item inativo, e a pública não devolve o mesmo
+      item.</td></tr>
+    <tr><td><strong>RF-04</strong></td>
+      <td>Criar componente com cor fora dos quatro tokens recusa com
+      <code>400</code> e a frase da tabela de validação.</td></tr>
+    <tr><td><strong>RF-05</strong></td>
+      <td>Criar item com nome que já existe no mesmo tipo recusa com <code>400</code>.</td></tr>
+    <tr><td><strong>RF-06</strong></td>
+      <td>Alterar um item persiste o campo, e desativar retira o item da rota
+      pública.</td></tr>
+    <tr><td><strong>RF-07</strong></td>
+      <td>A tela <code>/admin/vocabulario</code> lista as três abas, e o item de menu
+      aparece só para administrador.</td></tr>
+    <tr><td><strong>RF-08</strong></td>
+      <td>Cadastrar pela tela invalida <code>CHAVE_VOCABULARIO</code>. O teste valida
+      que a lista atualiza sem recarregar a página.</td></tr>
+    <tr><td><strong>RF-09</strong></td>
+      <td>O portão fecha verde: <code>dotnet build</code>, <code>dotnet test</code>,
+      <code>npm run lint</code>, <code>npm run test</code>, <code>npm run build</code> e
+      <code>npm run e2e</code>.</td></tr>
+  </tbody>
+</table>
+
+</main>
+
+<footer class="st-footer">
+  <span class="st-mono">2026-08-24</span>
+</footer>
+</body>
+</html>
