@@ -304,7 +304,11 @@ Estado de 2026-08-24.
 **Acervo público**
 
 - Landing, Biblioteca com filtros e paginação, ficha de plano, download do PDF
+- Ligado à API real: a Biblioteca lê `GET /api/v1/lesson-plans`, e o PDF vem do R2
 - Nenhuma dessas telas passa por guarda, e dois testes travam a regra
+
+O MSW simula a rede **só nos testes**. Não existe `setupWorker`, então nada de mock entra
+no que roda em produção.
 
 **Blog**
 
@@ -344,14 +348,12 @@ Estado de 2026-08-24.
 
 ### O que falta
 
-1. **A Biblioteca ainda roda contra a simulação MSW.** O endpoint já existe na API. Ligar a
-   tela a ele é o próximo passo.
-2. **`/pessoas` é andaime de boilerplate.** A fatia `pessoa` no front
+1. **`/pessoas` é andaime de boilerplate.** A fatia `pessoa` no front
    (`src/entities/pessoa`, `src/features/filtrar-pessoas`, `src/pages/pessoas`) não é domínio
    da Planoteca. O padrão a copiar é `entities/plano`.
-3. **`Api/Policies/` é código morto** herdado do boilerplate, não registrado em lugar nenhum.
-4. **Domínio próprio.** Ainda no subdomínio da Vercel.
-5. **Contagem de planos afetados ao desativar vocabulário.** Hoje o diálogo dá um aviso
+2. **`Api/Policies/` é código morto** herdado do boilerplate, não registrado em lugar nenhum.
+3. **Domínio próprio.** Ainda no subdomínio da Vercel.
+4. **Contagem de planos afetados ao desativar vocabulário.** Hoje o diálogo dá um aviso
    genérico. O número real exige rota nova.
 
 ## Convenção de commit

@@ -202,7 +202,7 @@ ao banco.</p>
 <ul>
   <li>Excluir de vez. O domínio já modela <code>Ativo</code> e <code>Ativa</code>, e
   os comentários dele dizem por quê.</li>
-  <li>Reordenar por arrastar. <code>Ordem</code> é campo numérico no formulário.</li>
+  <li>Reordenar por arrastar, ou escolher a posição. A ordem é calculada pela API.</li>
   <li>Cadastrar token de cor novo. Cor sai da lista que o tema conhece.</li>
   <li>Fundir dois itens duplicados e migrar os planos que os citam.</li>
 </ul>
@@ -272,7 +272,7 @@ administrativa lê tudo e escreve.</p>
     <tr><td><code>POST /api/v1/admin/vocabulary/components</code></td><td>Administrador</td>
       <td>Cria um componente. Devolve <code>201</code> com o corpo criado.</td></tr>
     <tr><td><code>PUT …/components/{id}</code></td><td>Administrador</td>
-      <td>Altera nome, área, sigla, cor, ordem e o estado ativo.</td></tr>
+      <td>Altera nome, área, sigla, cor e o estado ativo.</td></tr>
     <tr><td><code>POST …/grades</code> e <code>PUT …/grades/{id}</code></td><td>Administrador</td>
       <td>O mesmo, para série.</td></tr>
     <tr><td><code>POST …/methodologies</code> e <code>PUT …/methodologies/{id}</code></td><td>Administrador</td>
@@ -305,8 +305,6 @@ tela mostra. É o padrão de <code>PessoaAdminAppService</code>.</p>
       <td>A sigla tem duas letras.</td></tr>
     <tr><td>Etapa entre as duas conhecidas</td><td>série</td>
       <td>A etapa é fundamental ou médio.</td></tr>
-    <tr><td>Ordem maior que zero</td><td>componente e série</td>
-      <td>A ordem começa em 1.</td></tr>
     <tr><td>Tipo entre os três conhecidos</td><td>metodologia</td>
       <td>O tipo é metodologia, técnica ou ferramenta.</td></tr>
   </tbody>
@@ -413,9 +411,11 @@ formulário oferece os quatro, e a API recusa o quinto.</p>
     <tr><td>Rota nova respondendo 404 depois do deploy</td>
       <td>Parece defeito de código, e é deploy que não subiu.</td>
       <td>Confirmar com <code>curl</code> numa rota nova, como o CLAUDE.md manda.</td></tr>
-    <tr><td>Ordem repetida entre dois itens</td>
-      <td>Listagem instável entre consultas.</td>
-      <td>Aceita. Desempate por nome na consulta ordenada.</td></tr>
+    <tr><td>Ordem digitada colidindo com a existente</td>
+      <td><code>serie.ordem</code> é <code>UNIQUE</code>: o <code>INSERT</code> estoura, e
+      quem cadastra lê a exceção crua do EF Core.</td>
+      <td>Resolvido tirando o campo. A API calcula a posição, e as posteriores abrem
+      espaço. Ver a decisão D5.</td></tr>
   </tbody>
 </table>
 
@@ -442,6 +442,14 @@ formulário oferece os quatro, e a API recusa o quinto.</p>
     <p class="st-card-body">O domínio já traz <code>Ativo</code> e <code>Ativa</code>, e
     o comentário do repositório diz por quê: item desativado continua válido nos planos
     que já o citam.</p>
+  </div>
+  <div class="st-card">
+    <div class="st-card-eyebrow">D5 · ordem</div>
+    <h3 class="st-card-title">Calculada, nunca digitada</h3>
+    <p class="st-card-body"><code>serie.ordem</code> é <code>UNIQUE</code> no banco. Pedir
+    o número a quem cadastra é pedir que ele adivinhe qual está livre, e punir o palpite
+    errado com a exceção do EF Core. A série entra no fim da própria etapa, e o componente
+    no fim da própria área.</p>
   </div>
   <div class="st-card">
     <div class="st-card-eyebrow">D4 · cor</div>

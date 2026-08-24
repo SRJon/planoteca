@@ -1,6 +1,6 @@
 <!-- gerado de docs/specs/2026-08-24-gestao-vocabulario.html
-     sha256 da fonte: 058b176af8742040
-     em: 2026-08-24T15:02
+     sha256 da fonte: cc1756f19d69a0ad
+     em: 2026-08-24T17:05
      NAO ESCREVA NESTE ARQUIVO. Altere o HTML e regenere. -->
 
 # Gestão de vocabulário no painel — contrato de máquina
@@ -76,7 +76,33 @@ menu aparece só para administrador.
 Cadastrar pela tela invalida `CHAVE_VOCABULARIO`. A lista atualiza sem recarregar
 a página.
 
-### RF-09 — As rotas de escrita
+### RF-09 — A ordem é calculada, nunca recebida
+
+O corpo de criação e de alteração NÃO traz `ordem`.
+
+| Tipo | Onde o item novo entra |
+|---|---|
+| Série | no fim da própria etapa; as posteriores abrem espaço |
+| Componente | no fim da própria área |
+
+Alterar um item preserva a ordem que ele já tem.
+
+`serie.ordem` é `UNIQUE` no banco. Com o campo no formulário, um número já em
+uso faz o `INSERT` estourar com a exceção crua do EF Core.
+
+### RF-10 — As frases da recusa
+
+| Regra | Vale para | Frase |
+|---|---|---|
+| Nome obrigatório, até 80 caracteres | os três | `O nome é obrigatório.` |
+| Nome não repete dentro do tipo | os três | `Já existe um item com este nome.` |
+| Cor entre os quatro tokens | componente | `A cor precisa ser um token que o tema conhece.` |
+| Sigla com duas letras | componente | `A sigla tem duas letras.` |
+| Área obrigatória | componente | `A área é obrigatória.` |
+| Etapa entre as duas conhecidas | série | `A etapa é fundamental ou médio.` |
+| Tipo entre os três conhecidos | metodologia | `O tipo é metodologia, técnica ou ferramenta.` |
+
+### RF-11 — As rotas de escrita
 
 | Método e rota | Corpo | Resposta |
 |---|---|---|
@@ -93,19 +119,6 @@ A recusa devolve `400` com o corpo de erro do projeto:
 ```json
 { "status": 400, "messages": ["A cor precisa ser um token que o tema conhece."] }
 ```
-
-### RF-10 — As frases da recusa
-
-| Regra | Vale para | Frase |
-|---|---|---|
-| Nome obrigatório, até 80 caracteres | os três | `O nome é obrigatório.` |
-| Nome não repete dentro do tipo | os três | `Já existe um item com este nome.` |
-| Cor entre os quatro tokens | componente | `A cor precisa ser um token que o tema conhece.` |
-| Sigla com duas letras | componente | `A sigla tem duas letras.` |
-| Área obrigatória | componente | `A área é obrigatória.` |
-| Etapa entre as duas conhecidas | série | `A etapa é fundamental ou médio.` |
-| Ordem maior que zero | componente e série | `A ordem começa em 1.` |
-| Tipo entre os três conhecidos | metodologia | `O tipo é metodologia, técnica ou ferramenta.` |
 
 ## Defeitos conhecidos do protótipo
 
