@@ -38,10 +38,13 @@ test('o hover num card de área revela os componentes, e o filho leva ao filtro'
   await expect(page).toHaveURL(new RegExp(`componente=${ID_HISTORIA}`))
   // A Biblioteca abre com o recorte JÁ aplicado — é a mesma porta, não um
   // atalho que só pré-preenche um campo.
-  await expect(page.getByRole('button', { name: 'História' })).toHaveAttribute(
-    'aria-pressed',
-    'true',
-  )
+  //
+  // A prova é a CAIXA marcada, e não mais um botão com `aria-pressed`:
+  // componente virou `checkbox` na coluna de filtro. O `getByRole('button')`
+  // de antes hoje casaria com a pílula "Remover História", que é outra
+  // coisa — ela prova que a seleção foi desenhada, não que o recorte chegou
+  // ao filtro.
+  await expect(page.getByRole('checkbox', { name: 'História' })).toBeChecked()
 })
 
 test('a busca do hero leva à Biblioteca com o termo', async ({ page }) => {
