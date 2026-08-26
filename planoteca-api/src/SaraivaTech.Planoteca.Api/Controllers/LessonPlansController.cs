@@ -74,6 +74,39 @@ namespace SaraivaTech.Planoteca.Api.Controllers
             return total == 0 ? NoContent() : Ok(itens);
         }
 
+        /// <summary>Quantos planos cada item do vocabulário responde, no
+        /// recorte atual.
+        ///
+        /// `[AllowAnonymous]` pela mesma razão da listagem: a coluna de filtro
+        /// é parte da Biblioteca, e a Biblioteca é pública. Ver o comentário
+        /// no alto desta classe antes de acrescentar `[Authorize]`.
+        /// </summary>
+        [HttpGet("facets")]
+        [AllowAnonymous]
+        [ProducesResponseType(typeof(FacetasDto), StatusCodes.Status200OK)]
+        public async Task<IActionResult> Facetas([FromQuery] FiltroPlanoRequest requisicao)
+        {
+            var filtro = new FiltroPlano
+            {
+                Busca = requisicao.Busca,
+                ComponentesIds = requisicao.ComponenteId ?? Array.Empty<Guid>(),
+                SeriesIds = requisicao.SerieId ?? Array.Empty<Guid>(),
+                MetodologiasIds = requisicao.MetodologiaId ?? Array.Empty<Guid>(),
+                DuracaoMinima = requisicao.DuracaoMinima,
+                DuracaoMaxima = requisicao.DuracaoMaxima,
+                // `Pagina` e `TamanhoPagina` ficam de fora de propósito
+                // (RF-01): a contagem é do recorte inteiro. Copiá-los daria um
+                // número que muda ao virar a página.
+                IncluirRascunhos = false,
+            };
+
+            // 200 com as três listas vazias quando nada casa, e não 204: a
+            // coluna de filtro precisa desenhar os itens com zero. Um corpo
+            // ausente faria a tela alternar entre com e sem filtro a cada
+            // teclada da busca.
+            return Ok(await _app.ObterFacetasAsync(filtro));
+        }
+
         /// <summary>A ficha de um plano.</summary>
         [HttpGet("{id:guid}")]
         [AllowAnonymous]
