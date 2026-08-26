@@ -25,7 +25,23 @@ namespace SaraivaTech.Planoteca.Infra.Data.Repositories
     {
         public PlanoRepository(IUnitOfWork uow) : base(uow) { }
 
-        public async Task<(IEnumerable<Plano> Itens, int Total)> BuscarAsync(FiltroPlano filtro)
+        /// <summary>Qual grupo de vocabulário NÃO entra no filtro.
+        ///
+        /// A listagem usa `Nenhum` — ela aplica os três. Cada faceta usa o seu
+        /// próprio grupo, porque a contagem de "História" precisa ignorar o
+        /// componente já marcado para responder "quantos planos eu ganho se
+        /// marcar isto" (RF-02).</summary>
+        private enum GrupoVocabulario { Nenhum, Componente, Serie, Metodologia }
+
+        /// <summary>
+        /// O recorte que a listagem e as facetas compartilham.
+        ///
+        /// Um método só, e não a cláusula repetida em quatro consultas: a
+        /// contagem precisa concordar com a listagem por construção. Duplicada,
+        /// uma correção na busca textual passaria a valer para o resultado e
+        /// não para o número ao lado do item.
+        /// </summary>
+        private IQueryable<Plano> Recorte(FiltroPlano filtro, GrupoVocabulario grupoExcluido)
         {
             var consulta = Context.Set<Plano>().AsNoTracking().AsQueryable();
 
@@ -55,13 +71,13 @@ namespace SaraivaTech.Planoteca.Infra.Data.Repositories
             // nada". No caso do componente, `Any` sem checar `EPrincipal` é o
             // comportamento correto: buscar por "Arte" precisa achar a prática
             // interdisciplinar em que Arte é secundária (RF-08).
-            if (filtro.ComponentesIds is { Length: > 0 })
+            if (grupoExcluido != GrupoVocabulario.Componente && filtro.ComponentesIds is { Length: > 0 })
                 consulta = consulta.Where(p => p.Componentes.Any(c => filtro.ComponentesIds.Contains(c.ComponenteId)));
 
-            if (filtro.SeriesIds is { Length: > 0 })
+            if (grupoExcluido != GrupoVocabulario.Serie && filtro.SeriesIds is { Length: > 0 })
                 consulta = consulta.Where(p => p.Series.Any(s => filtro.SeriesIds.Contains(s.SerieId)));
 
-            if (filtro.MetodologiasIds is { Length: > 0 })
+            if (grupoExcluido != GrupoVocabulario.Metodologia && filtro.MetodologiasIds is { Length: > 0 })
                 consulta = consulta.Where(p => p.Metodologias.Any(m => filtro.MetodologiasIds.Contains(m.MetodologiaId)));
 
             // Plano sem duração declarada fica FORA do recorte por duração:
@@ -72,6 +88,14 @@ namespace SaraivaTech.Planoteca.Infra.Data.Repositories
 
             if (filtro.DuracaoMaxima.HasValue)
                 consulta = consulta.Where(p => p.DuracaoAulas != null && p.DuracaoAulas <= filtro.DuracaoMaxima);
+
+            return consulta;
+        }
+
+        public async Task<(IEnumerable<Plano> Itens, int Total)> BuscarAsync(FiltroPlano filtro)
+        {
+            // `Nenhum`: a listagem aplica os três grupos. Só a faceta exclui um.
+            var consulta = Recorte(filtro, GrupoVocabulario.Nenhum);
 
             var total = await consulta.CountAsync();
 
@@ -92,6 +116,41 @@ namespace SaraivaTech.Planoteca.Infra.Data.Repositories
                 .ToListAsync();
 
             return (itens, total);
+        }
+
+        public async Task<ContagemFacetas> ContarFacetasAsync(FiltroPlano filtro)
+        {
+            // Três consultas, e não uma com três `GroupBy`: um plano de duas
+            // séries e três componentes viraria seis linhas num join só, e o
+            // `count` de cada grupo sairia multiplicado pelo tamanho do outro.
+            //
+            // `SelectMany` desce do plano para a tabela de ligação. O Npgsql
+            // traduz para um join com `group by`, e o filtro do recorte vira
+            // subconsulta — o banco conta, não a aplicação.
+            var series = await Recorte(filtro, GrupoVocabulario.Serie)
+                .SelectMany(p => p.Series)
+                .GroupBy(s => s.SerieId)
+                .Select(g => new FacetaContada(g.Key, g.Count()))
+                .ToListAsync();
+
+            var componentes = await Recorte(filtro, GrupoVocabulario.Componente)
+                .SelectMany(p => p.Componentes)
+                .GroupBy(c => c.ComponenteId)
+                .Select(g => new FacetaContada(g.Key, g.Count()))
+                .ToListAsync();
+
+            var metodologias = await Recorte(filtro, GrupoVocabulario.Metodologia)
+                .SelectMany(p => p.Metodologias)
+                .GroupBy(m => m.MetodologiaId)
+                .Select(g => new FacetaContada(g.Key, g.Count()))
+                .ToListAsync();
+
+            return new ContagemFacetas
+            {
+                Series = series,
+                Componentes = componentes,
+                Metodologias = metodologias,
+            };
         }
 
         public async Task<Plano?> ObterCompletoAsync(Guid id, bool incluirRascunho = false)

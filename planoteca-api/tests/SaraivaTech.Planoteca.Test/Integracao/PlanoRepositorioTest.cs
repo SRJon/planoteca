@@ -293,5 +293,111 @@ namespace SaraivaTech.Planoteca.Test.Integracao
             mapeador.ParaResumo(rascunho).Situacao.Should().Be(SituacaoPlano.Rascunho);
         }
 
+        [SkippableFact]
+        public async Task Faceta_de_um_grupo_ignora_a_selecao_do_proprio_grupo()
+        {
+            await LimparAsync();
+            var (quimica, arte, oitavo, nono, _, _) = await VocabularioAsync();
+
+            // Nono ano com Química: casa a série marcada e o componente marcado.
+            var nonoQuimica = NovoPlano("nono de química");
+            nonoQuimica.Series.Add(new PlanoSerie { SerieId = nono.Id });
+            nonoQuimica.Componentes.Add(new PlanoComponente { ComponenteId = quimica.Id, EPrincipal = true });
+
+            // Nono ano com Arte: casa a série marcada, componente diferente.
+            var nonoArte = NovoPlano("nono de arte");
+            nonoArte.Series.Add(new PlanoSerie { SerieId = nono.Id });
+            nonoArte.Componentes.Add(new PlanoComponente { ComponenteId = arte.Id, EPrincipal = true });
+
+            // Oitavo ano com Química: série diferente, componente marcado.
+            var oitavoQuimica = NovoPlano("oitavo de química");
+            oitavoQuimica.Series.Add(new PlanoSerie { SerieId = oitavo.Id });
+            oitavoQuimica.Componentes.Add(new PlanoComponente { ComponenteId = quimica.Id, EPrincipal = true });
+
+            // Oitavo ano com Arte: fora dos dois recortes.
+            var oitavoArte = NovoPlano("oitavo de arte");
+            oitavoArte.Series.Add(new PlanoSerie { SerieId = oitavo.Id });
+            oitavoArte.Componentes.Add(new PlanoComponente { ComponenteId = arte.Id, EPrincipal = true });
+
+            Contexto.AddRange(nonoQuimica, nonoArte, oitavoQuimica, oitavoArte);
+            await Contexto.SaveChangesAsync();
+
+            var repo = new Infra.Data.Repositories.PlanoRepository(new UoWFalso(Contexto));
+            var contagem = await repo.ContarFacetasAsync(new FiltroPlano
+            {
+                Busca = MarcaTeste,
+                SeriesIds = [nono.Id],
+                ComponentesIds = [quimica.Id],
+            });
+
+            // RF-02: a contagem de componente ignora o componente marcado e
+            // aplica a série marcada. Arte responde pelo plano de 9º com Arte.
+            contagem.Componentes.Should().ContainEquivalentOf(
+                new FacetaContada(arte.Id, 1),
+                "a contagem de componente aplica o 9º e ignora Química");
+            contagem.Componentes.Should().ContainEquivalentOf(
+                new FacetaContada(quimica.Id, 1),
+                "o próprio item marcado conta dentro do recorte dos outros grupos");
+
+            // No outro sentido: a contagem de série ignora a série marcada e
+            // aplica Química. O 8º responde pelo plano de 8º com Química.
+            contagem.Series.Should().ContainEquivalentOf(
+                new FacetaContada(oitavo.Id, 1),
+                "a contagem de série aplica Química e ignora o 9º");
+            contagem.Series.Should().ContainEquivalentOf(
+                new FacetaContada(nono.Id, 1),
+                "o 9º conta o plano de 9º com Química");
+
+            await LimparAsync();
+        }
+
+        [SkippableFact]
+        public async Task Rascunho_nao_entra_em_nenhuma_contagem()
+        {
+            await LimparAsync();
+            var (quimica, _, _, nono, storytelling, _) = await VocabularioAsync();
+
+            var rascunho = NovoPlano("rascunho que não conta", SituacaoPlano.Rascunho);
+            rascunho.Series.Add(new PlanoSerie { SerieId = nono.Id });
+            rascunho.Componentes.Add(new PlanoComponente { ComponenteId = quimica.Id, EPrincipal = true });
+            rascunho.Metodologias.Add(new PlanoMetodologia { MetodologiaId = storytelling.Id });
+            Contexto.Add(rascunho);
+            await Contexto.SaveChangesAsync();
+
+            var repo = new Infra.Data.Repositories.PlanoRepository(new UoWFalso(Contexto));
+            var contagem = await repo.ContarFacetasAsync(new FiltroPlano { Busca = MarcaTeste });
+
+            contagem.Series.Should().NotContain(f => f.Id == nono.Id,
+                "a contagem é do acervo público, e rascunho não é público");
+            contagem.Componentes.Should().NotContain(f => f.Id == quimica.Id);
+            contagem.Metodologias.Should().NotContain(f => f.Id == storytelling.Id);
+
+            await LimparAsync();
+        }
+
+        [SkippableFact]
+        public async Task Item_sem_plano_fica_fora_da_resposta()
+        {
+            await LimparAsync();
+            var (quimica, _, _, nono, storytelling, escape) = await VocabularioAsync();
+
+            var plano = NovoPlano("só storytelling");
+            plano.Series.Add(new PlanoSerie { SerieId = nono.Id });
+            plano.Componentes.Add(new PlanoComponente { ComponenteId = quimica.Id, EPrincipal = true });
+            plano.Metodologias.Add(new PlanoMetodologia { MetodologiaId = storytelling.Id });
+            Contexto.Add(plano);
+            await Contexto.SaveChangesAsync();
+
+            var repo = new Infra.Data.Repositories.PlanoRepository(new UoWFalso(Contexto));
+            var contagem = await repo.ContarFacetasAsync(new FiltroPlano { Busca = MarcaTeste });
+
+            // RF-01: só id com pelo menos um plano entra. Id ausente vale zero,
+            // e o front desenha o item com zero do mesmo jeito.
+            contagem.Metodologias.Should().ContainEquivalentOf(new FacetaContada(storytelling.Id, 1));
+            contagem.Metodologias.Should().NotContain(f => f.Id == escape.Id);
+
+            await LimparAsync();
+        }
+
     }
 }
