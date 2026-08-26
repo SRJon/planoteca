@@ -25,7 +25,10 @@ namespace SaraivaTech.Planoteca.Application.Dto
 
         public int? DuracaoAulas { get; set; }
         public string? DuracaoDescricao { get; set; }
-        public string ArquivoUrl { get; set; } = string.Empty;
+
+        /// <summary>O anexo do plano: PDF ou imagem. NULO quando o plano não
+        /// tem anexo — o card continua na Biblioteca, sem o botão de baixar.</summary>
+        public string? ArquivoUrl { get; set; }
         public DateTime? PublicadoEm { get; set; }
 
         /// <summary>
@@ -75,8 +78,10 @@ namespace SaraivaTech.Planoteca.Application.Dto
         public string? DuracaoDescricao { get; set; }
 
         /// <summary>A URL que o upload assinado devolveu. O arquivo já subiu
-        /// direto para o R2 quando esta requisição chega.</summary>
-        public string ArquivoUrl { get; set; } = string.Empty;
+        /// direto para o R2 quando esta requisição chega.
+        ///
+        /// OPCIONAL: catalogar um plano sem anexo é caso legítimo.</summary>
+        public string? ArquivoUrl { get; set; }
         public string? LinksExtras { get; set; }
 
         public Guid ComponentePrincipalId { get; set; }

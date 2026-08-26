@@ -57,9 +57,14 @@ namespace SaraivaTech.Planoteca.Domain.Entities
         /// "1 bimestre".</summary>
         public string? DuracaoDescricao { get; set; }
 
-        /// <summary>O PDF. Público, servido sem token — ver a regra do acervo
-        /// público no CLAUDE.md da raiz.</summary>
-        public string ArquivoUrl { get; set; } = string.Empty;
+        /// <summary>O anexo: PDF ou imagem. Público, servido sem token — ver
+        /// a regra do acervo público no CLAUDE.md da raiz.
+        ///
+        /// OPCIONAL. Um plano sem anexo continua no acervo e aparece na
+        /// Biblioteca como qualquer outro; só o botão de download some. Nem
+        /// todo relato chega com arquivo, e recusar o plano por causa disso
+        /// deixaria o acervo mais pobre do que precisa.</summary>
+        public string? ArquivoUrl { get; set; }
 
         /// <summary>Links de material de apoio que os relatos trazem (Drive).</summary>
         public string? LinksExtras { get; set; }

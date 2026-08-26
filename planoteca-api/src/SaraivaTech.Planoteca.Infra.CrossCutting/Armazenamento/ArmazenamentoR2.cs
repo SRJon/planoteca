@@ -42,7 +42,7 @@ namespace SaraivaTech.Planoteca.Infra.CrossCutting.Armazenamento
 
         public async Task<UploadAssinado> AssinarUploadAsync(string nomeArquivo, string tipoConteudo)
         {
-            var chave = MontarChave(nomeArquivo);
+            var chave = MontarChave(nomeArquivo, tipoConteudo);
             var expira = DateTime.UtcNow.AddMinutes(_opcoes.MinutosValidadeUpload);
 
             var pedido = new GetPreSignedUrlRequest
@@ -96,16 +96,21 @@ namespace SaraivaTech.Planoteca.Infra.CrossCutting.Armazenamento
         /// serve só para duas coisas — a extensão e um trecho legível, ambos
         /// higienizados. A unicidade vem de um GUID, nunca do nome.
         ///
+        /// Quando a extensão do nome não serve, quem decide é o TIPO DE
+        /// CONTEÚDO, não um `.pdf` fixo. O acervo passou a aceitar imagem, e
+        /// um PNG gravado como `.pdf` chegaria ao professor com o nome errado
+        /// — o navegador o baixaria como PDF e nenhum leitor o abriria.
+        ///
         /// O prefixo por ano e mês não é enfeite: é o que mantém a listagem do
         /// bucket navegável depois de mil planos.
         /// </summary>
-        private static string MontarChave(string nomeArquivo)
+        private static string MontarChave(string nomeArquivo, string tipoConteudo)
         {
             var agora = DateTime.UtcNow;
             var extensao = Path.GetExtension(nomeArquivo);
             extensao = Regex.IsMatch(extensao ?? string.Empty, @"^\.[A-Za-z0-9]{1,8}$")
                 ? extensao!.ToLowerInvariant()
-                : ".pdf";
+                : ExtensaoDoTipo(tipoConteudo);
 
             var semExtensao = Path.GetFileNameWithoutExtension(nomeArquivo) ?? string.Empty;
             var legivel = Regex.Replace(semExtensao, @"[^A-Za-z0-9]+", "-").Trim('-').ToLowerInvariant();
@@ -114,6 +119,26 @@ namespace SaraivaTech.Planoteca.Infra.CrossCutting.Armazenamento
 
             return $"planos/{agora:yyyy}/{agora:MM}/{legivel}-{Guid.NewGuid():N}{extensao}";
         }
+
+        /// <summary>
+        /// A extensão que corresponde ao `Content-Type`, para quando o nome do
+        /// arquivo não trouxer uma utilizável.
+        ///
+        /// Lista fechada, espelhando os tipos que a catalogação aceita
+        /// (`PlanoAppService.TiposAceitos`). O caso padrão é `.bin`, e não
+        /// `.pdf`: um tipo desconhecido não deveria ganhar a extensão de um
+        /// formato que ele não tem. De todo modo ele não chega aqui — o
+        /// serviço recusa antes de assinar.
+        /// </summary>
+        private static string ExtensaoDoTipo(string tipoConteudo) =>
+            tipoConteudo?.Trim().ToLowerInvariant() switch
+            {
+                "application/pdf" => ".pdf",
+                "image/jpeg" => ".jpg",
+                "image/png" => ".png",
+                "image/webp" => ".webp",
+                _ => ".bin",
+            };
 
         public void Dispose()
         {

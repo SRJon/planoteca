@@ -23,8 +23,13 @@ namespace SaraivaTech.Planoteca.Application.Core.Services
 
         /// <summary>Os tipos que a catalogação aceita. Lista fechada: o
         /// `Content-Type` entra na assinatura da URL, então aceitar qualquer
-        /// coisa aqui é aceitar qualquer coisa no bucket.</summary>
-        private static readonly string[] TiposAceitos = ["application/pdf"];
+        /// coisa aqui é aceitar qualquer coisa no bucket.
+        ///
+        /// Imagem entra junto do PDF porque parte do acervo chega fotografada
+        /// ou como cartaz. Ela é entregue do mesmo jeito: o mesmo botão baixa
+        /// o arquivo, sem visualizador.</summary>
+        private static readonly string[] TiposAceitos =
+            ["application/pdf", "image/jpeg", "image/png", "image/webp"];
 
         public PlanoAppService(
             IPlanoRepository repositorio,
@@ -75,7 +80,7 @@ namespace SaraivaTech.Planoteca.Application.Core.Services
 
             if (!TiposAceitos.Contains(tipoConteudo))
                 return Result<UploadAssinado>.Failure(
-                    $"Tipo de arquivo não aceito: {tipoConteudo}. O acervo recebe PDF.");
+                    $"Tipo de arquivo não aceito: {tipoConteudo}. O acervo recebe PDF ou imagem (JPEG, PNG, WebP).");
 
             try
             {
@@ -133,7 +138,8 @@ namespace SaraivaTech.Planoteca.Application.Core.Services
                     "Este plano está publicado e pode ter sido compartilhado. Despublique antes de remover.");
             }
 
-            var chave = _armazenamento.ChaveDaUrl(plano.ArquivoUrl);
+            // Plano sem anexo não tem o que apagar no armazenamento.
+            var chave = plano.ArquivoUrl is null ? null : _armazenamento.ChaveDaUrl(plano.ArquivoUrl);
 
             try
             {
@@ -206,7 +212,10 @@ namespace SaraivaTech.Planoteca.Application.Core.Services
                 TurmaOrigem = entrada.TurmaOrigem?.Trim(),
                 DuracaoAulas = entrada.DuracaoAulas,
                 DuracaoDescricao = entrada.DuracaoDescricao?.Trim(),
-                ArquivoUrl = entrada.ArquivoUrl?.Trim() ?? string.Empty,
+                // Vazio vira NULO: "sem anexo" é um estado só, e deixar
+                // string vazia conviver com nulo faria a interface precisar
+                // testar os dois para decidir se mostra o botão de baixar.
+                ArquivoUrl = string.IsNullOrWhiteSpace(entrada.ArquivoUrl) ? null : entrada.ArquivoUrl.Trim(),
                 LinksExtras = entrada.LinksExtras,
                 Situacao = publicar ? SituacaoPlano.Publicado : SituacaoPlano.Rascunho,
                 // `DateTime.UtcNow` sempre: o Npgsql recusa `Kind != Utc` numa

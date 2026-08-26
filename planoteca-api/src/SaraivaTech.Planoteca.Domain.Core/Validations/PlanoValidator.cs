@@ -17,6 +17,11 @@ namespace SaraivaTech.Planoteca.Domain.Core.Validations
     ///   único parcial no banco (RF-04b). Duplicar a regra aqui daria a
     ///   impressão de que a aplicação é a dona dela, e uma escrita que não
     ///   passe por este validador continuaria barrada — como deve ser.
+    /// - **O anexo.** Havia um `ArquivoUrl` obrigatório aqui, e ele saiu: o
+    ///   anexo passou a ser opcional por decisão de produto. Um plano sem
+    ///   arquivo entra no acervo e aparece na Biblioteca como qualquer outro;
+    ///   o que some é o botão de download. Exigi-lo recusava plano que o
+    ///   acervo quer ter.
     /// </summary>
     public class PlanoValidator : AbstractValidator<Plano>
     {
@@ -59,9 +64,6 @@ namespace SaraivaTech.Planoteca.Domain.Core.Validations
 
             RuleFor(x => x.ExpectativasAprendizagem)
                 .NotEmpty().WithMessage("Informe as expectativas de aprendizagem.");
-
-            RuleFor(x => x.ArquivoUrl)
-                .NotEmpty().WithMessage("O plano precisa do arquivo PDF.");
 
             // Zero aula não é duração; é erro de digitação. Nulo continua
             // valendo — significa "não declarada".

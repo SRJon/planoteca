@@ -20,7 +20,9 @@ namespace SaraivaTech.Planoteca.Infra.Data.Mappings
             builder.Property(x => x.ExpectativasAprendizagem).IsRequired().HasColumnType("text");
             builder.Property(x => x.Recursos).HasColumnType("text");
             builder.Property(x => x.DuracaoDescricao).HasColumnType("text");
-            builder.Property(x => x.ArquivoUrl).IsRequired().HasColumnType("text");
+            // Sem `IsRequired()`: o anexo é opcional. Plano sem arquivo fica
+            // no acervo; só o botão de download some.
+            builder.Property(x => x.ArquivoUrl).HasColumnType("text");
             builder.Property(x => x.LinksExtras).HasColumnType("jsonb");
             builder.Property(x => x.Situacao).IsRequired().HasColumnType("text");
 
