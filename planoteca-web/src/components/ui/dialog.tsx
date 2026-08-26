@@ -152,7 +152,35 @@ function DialogDescription({
   )
 }
 
+/**
+ * A variante de GAVETA do `DialogContent`.
+ *
+ * **Por que uma classe e não um componente.** O Radix já entrega tudo o que
+ * a gaveta precisa — foco preso, Escape, `aria-modal`, retorno do foco ao
+ * gatilho. O que muda é geometria: onde a caixa encosta e por onde ela
+ * entra. Uma classe expressa isso sem uma segunda árvore de componentes a
+ * manter em paralelo, e sem `vaul` nem outra biblioteca no `package.json`.
+ *
+ * As três anulações são deliberadas, e cada uma desfaz um padrão do shadcn
+ * que a direção B contradiz (`Docs/lessons.md`, 2026-08-23: o painel do
+ * shadcn não segue a direção sozinho):
+ *
+ * - `rounded-none` contra o `rounded-xl` de fábrica — raio zero é a direção.
+ * - `border-t-2 border-traco` contra o `ring-1` — a elevação aqui é traço,
+ *   não anel difuso.
+ * - `translate-x-0 translate-y-0` contra o `-translate-1/2` do centro — a
+ *   gaveta sobe de baixo, e não nasce no meio da tela.
+ *
+ * `max-h-[85svh]` e não `h-full`: `svh` acompanha a barra do navegador
+ * móvel, que `vh` ignora — com `vh`, o rodapé de "Ver N planos" ficaria
+ * debaixo da barra do Safari. Os 15% restantes mostram a lista por trás,
+ * o que diz de onde a gaveta veio.
+ */
+const CLASSE_GAVETA =
+  "top-auto bottom-0 left-0 max-h-[85svh] w-full max-w-full translate-x-0 translate-y-0 grid-rows-[auto_1fr_auto] gap-0 overflow-y-auto rounded-none border-t-2 border-traco bg-card p-0 ring-0 data-open:slide-in-from-bottom data-closed:slide-out-to-bottom data-open:zoom-in-100 data-closed:zoom-out-100 sm:max-w-full"
+
 export {
+  CLASSE_GAVETA,
   Dialog,
   DialogClose,
   DialogContent,
