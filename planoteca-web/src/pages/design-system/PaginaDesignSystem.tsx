@@ -7,6 +7,7 @@ import { Plus } from '@phosphor-icons/react/dist/csr/Plus'
 import { cn } from '@/shared/lib/cn'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { CaixaMarcar } from '@/components/ui/caixa-marcar'
 import { CampoArquivo } from '@/components/ui/campo-arquivo'
 import { CampoBusca } from '@/components/ui/campo-busca'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -294,6 +295,29 @@ export function PaginaDesignSystem() {
               <Chip>Desligado</Chip>
               <Chip ativo>Ligado</Chip>
               <Chip disabled>Indisponível</Chip>
+            </Amostra>
+
+            <Amostra
+              arquivo="caixa-marcar"
+              nota="Marcação de uma lista longa, na coluna de filtro. O quadrado é o nativo pintado por accent-color: sem SVG próprio, o alto contraste do sistema continua reconhecendo o estado."
+            >
+              {/* Amostra estática: `defaultChecked` em vez de `checked`, pelo
+                  mesmo motivo do campo-arquivo — o guia não guarda estado, e
+                  um `checked` sem `onChange` deixaria a caixa travada. */}
+              <div className="flex flex-col gap-2">
+                <Label className="flex items-center gap-2 font-normal">
+                  <CaixaMarcar />
+                  Desmarcada
+                </Label>
+                <Label className="flex items-center gap-2 font-normal">
+                  <CaixaMarcar defaultChecked />
+                  Marcada
+                </Label>
+                <Label className="flex items-center gap-2 font-normal">
+                  <CaixaMarcar disabled />
+                  Indisponível
+                </Label>
+              </div>
             </Amostra>
 
             <Amostra
