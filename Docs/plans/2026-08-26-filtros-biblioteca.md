@@ -58,7 +58,7 @@ MSW e Playwright.
 | `planoteca-api/tests/SaraivaTech.Planoteca.Test/Integracao/BaseBancoReal.cs` | conexão, limpeza por prefixo `[teste-integracao]` |
 | `planoteca-api/tests/SaraivaTech.Planoteca.Test/Application/PlanoRemocaoTest.cs` | forma do teste de AppService com NSubstitute |
 | `planoteca-web/src/pages/biblioteca/PaginaBiblioteca.tsx` | o layout atual: header, filtros, lista, paginação |
-| `planoteca-web/src/features/filtrar-planos/FiltrosPlanos.tsx` | o componente que sai; os comentários de acessibilidade que ficam |
+| `planoteca-web/src/features/filtrar-planos/FiltrosPlanos.tsx` | o componente que sai; os comentários de acessibilidade que ficam. Removido pela Task 11 (RF-12); no histórico em `git show 5756ac3:<caminho>` |
 | `planoteca-web/src/features/filtrar-planos/useFiltroPlanos.ts` | o contrato de seleção que a coluna consome, sem alteração |
 | `planoteca-web/src/entities/plano/api.ts` | `listarPlanos`, `paraParametros` e a forma da chamada tipada |
 | `planoteca-web/src/pages/biblioteca/FichaPlano.tsx` | o bloco de sigla com `classeCorComponente` |
@@ -526,11 +526,12 @@ git commit -m "feat(plano): conta as facetas do filtro no repositório"
 ### Task 3: A tradução para DTO no AppService
 
 > **Nota de execução, 2026-08-26.** O projeto de teste referencia
-> `Application.Core`, então o `CS0535` que a Task 1 deixou no `PlanoAppService`
-> impede QUALQUER teste de compilar — inclusive os da Task 2. Por isso esta
-> task foi executada logo depois da Task 2, e o portão da Task 2 só fechou
-> depois dela. Num próximo ciclo, o contrato do AppService deve nascer na
-> mesma task que o implementa.
+> `Application.Core`. O `CS0535` que a Task 1 deixou no `PlanoAppService`
+> impede QUALQUER teste de compilar, inclusive os da Task 2.
+>
+> Por isso esta task correu logo depois da Task 2. O portão da Task 2 só
+> fechou depois dela. Num próximo ciclo, o contrato do AppService deve
+> nascer na mesma task que o implementa.
 
 **Papel:** escrita
 **Verificação:** `cd planoteca-api && dotnet test --filter PlanoFacetasTest`
@@ -1165,7 +1166,7 @@ git commit -m "feat(biblioteca): busca as contagens por item do vocabulário"
 - `design/2026-08-26-filtros-biblioteca-opcoes.html` — o desenho aprovado da opção B, desktop e celular
 - `design/DirecaoB.dc.html` — a régua de série e o bloco de sigla como assinatura
 - `planoteca-web/src/components/ui/chip.tsx` — o chip da régua de série
-- `planoteca-web/src/features/filtrar-planos/FiltrosPlanos.tsx` — o componente que sai; os comentários de acessibilidade que ficam
+- `planoteca-web/src/features/filtrar-planos/FiltrosPlanos.tsx` — o componente que sai; os comentários de acessibilidade que ficam (removido pela Task 11, RF-12: leia em `git show 5756ac3:planoteca-web/src/features/filtrar-planos/FiltrosPlanos.tsx`)
 - `planoteca-web/src/entities/vocabulario/modelo.ts` — tipos de `Vocabulario`, `classeCorComponente` e os quatro tokens de cor
 
 **Files:**
@@ -1753,7 +1754,7 @@ git commit -m "feat(biblioteca): grupo de filtro com contagem e dobra"
 
 **Fontes:**
 - `design/2026-08-26-filtros-biblioteca-opcoes.html` — o desenho aprovado da opção B, desktop e celular
-- `planoteca-web/src/features/filtrar-planos/FiltrosPlanos.tsx` — o componente que sai; os comentários de acessibilidade que ficam
+- `planoteca-web/src/features/filtrar-planos/FiltrosPlanos.tsx` — o componente que sai; os comentários de acessibilidade que ficam (removido pela Task 11, RF-12: leia em `git show 5756ac3:planoteca-web/src/features/filtrar-planos/FiltrosPlanos.tsx`)
 - `planoteca-web/src/entities/vocabulario/modelo.ts` — tipos de `Vocabulario`, `classeCorComponente` e os quatro tokens de cor
 
 **Files:**
@@ -2004,7 +2005,7 @@ git commit -m "feat(biblioteca): pílulas da seleção ativa"
 
 **Fontes:**
 - `design/2026-08-26-filtros-biblioteca-opcoes.html` — o desenho aprovado da opção B, desktop e celular
-- `planoteca-web/src/features/filtrar-planos/FiltrosPlanos.tsx` — o componente que sai; os comentários de acessibilidade que ficam
+- `planoteca-web/src/features/filtrar-planos/FiltrosPlanos.tsx` — o componente que sai; os comentários de acessibilidade que ficam (removido pela Task 11, RF-12: leia em `git show 5756ac3:planoteca-web/src/features/filtrar-planos/FiltrosPlanos.tsx`)
 - `planoteca-web/src/entities/vocabulario/modelo.ts` — tipos de `Vocabulario`, `classeCorComponente` e os quatro tokens de cor
 - `planoteca-web/src/components/ui/chip.tsx` — o chip da régua de série
 
@@ -2577,7 +2578,7 @@ git commit -m "feat(biblioteca): gaveta de filtro no celular sobre o Dialog"
 
 **Fontes:**
 - `planoteca-web/src/pages/biblioteca/PaginaBiblioteca.tsx` — o layout atual: header, filtros, lista, paginação
-- `planoteca-web/src/features/filtrar-planos/FiltrosPlanos.tsx` — o componente que sai; os comentários de acessibilidade que ficam
+- `planoteca-web/src/features/filtrar-planos/FiltrosPlanos.tsx` — o componente que sai; os comentários de acessibilidade que ficam (removido pela Task 11, RF-12: leia em `git show 5756ac3:planoteca-web/src/features/filtrar-planos/FiltrosPlanos.tsx`)
 - `planoteca-web/src/features/filtrar-planos/useFiltroPlanos.ts` — o contrato de seleção que a coluna consome, sem alteração
 - `planoteca-web/src/app/shell/LayoutPublico.tsx` — largura de 1180px e padding por breakpoint
 - `design/2026-08-26-filtros-biblioteca-opcoes.html` — o desenho aprovado da opção B, desktop e celular
