@@ -214,16 +214,22 @@ function ConteudoPlano({ cliente }: { cliente: Cliente }) {
         )}
 
         {/* O download fica no ALTO, e repetido embaixo: quem já decidiu não
-            deveria precisar rolar a ficha inteira para baixar. */}
-        <a
-          href={plano.arquivoUrl}
-          download
-          className="flex min-h-12 w-fit items-center gap-2 border-2 border-traco bg-acao px-6 text-[15px] font-bold text-acao-texto transition-colors hover:bg-acao-hover active:bg-acao-ativa"
-        >
-          <DownloadSimple size={17} weight="bold" aria-hidden />
-          Baixar plano
-          <span className="sr-only">: {plano.titulo}</span>
-        </a>
+            deveria precisar rolar a ficha inteira para baixar.
+
+            Os dois só existem quando HÁ anexo, e no lugar deles não entra
+            nada — a ficha inteira (objetivo, expectativas, roteiro) continua
+            de pé, que é o que o professor lê para decidir. */}
+        {plano.arquivoUrl && (
+          <a
+            href={plano.arquivoUrl}
+            download
+            className="flex min-h-12 w-fit items-center gap-2 border-2 border-traco bg-acao px-6 text-[15px] font-bold text-acao-texto transition-colors hover:bg-acao-hover active:bg-acao-ativa"
+          >
+            <DownloadSimple size={17} weight="bold" aria-hidden />
+            Baixar plano
+            <span className="sr-only">: {plano.titulo}</span>
+          </a>
+        )}
       </header>
 
       <Secao titulo="Objetos de conhecimento" texto={plano.objetosConhecimento} />
@@ -233,17 +239,19 @@ function ConteudoPlano({ cliente }: { cliente: Cliente }) {
 
       <Roteiro plano={plano} />
 
-      <footer className="flex flex-col gap-3 border-t-2 border-traco pt-6">
-        <a
-          href={plano.arquivoUrl}
-          download
-          className="flex min-h-12 w-fit items-center gap-2 border-2 border-traco bg-acao px-6 text-[15px] font-bold text-acao-texto transition-colors hover:bg-acao-hover active:bg-acao-ativa"
-        >
-          <DownloadSimple size={17} weight="bold" aria-hidden />
-          Baixar plano
-          <span className="sr-only">: {plano.titulo}</span>
-        </a>
-      </footer>
+      {plano.arquivoUrl && (
+        <footer className="flex flex-col gap-3 border-t-2 border-traco pt-6">
+          <a
+            href={plano.arquivoUrl}
+            download
+            className="flex min-h-12 w-fit items-center gap-2 border-2 border-traco bg-acao px-6 text-[15px] font-bold text-acao-texto transition-colors hover:bg-acao-hover active:bg-acao-ativa"
+          >
+            <DownloadSimple size={17} weight="bold" aria-hidden />
+            Baixar plano
+            <span className="sr-only">: {plano.titulo}</span>
+          </a>
+        </footer>
+      )}
     </article>
   )
 }

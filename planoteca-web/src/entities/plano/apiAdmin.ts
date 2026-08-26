@@ -23,7 +23,9 @@ export type PlanoEntrada = {
   turmaOrigem?: string
   duracaoAulas?: number
   duracaoDescricao?: string
-  arquivoUrl: string
+  /** Opcional desde 2026-08-26: o validador da API não exige mais o anexo.
+   * Ausente significa plano sem arquivo, e não erro de preenchimento. */
+  arquivoUrl?: string
   componentePrincipalId: string
   componentesSecundariosIds: string[]
   seriesIds: string[]

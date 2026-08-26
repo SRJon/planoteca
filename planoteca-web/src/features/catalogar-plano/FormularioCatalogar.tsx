@@ -72,8 +72,8 @@ function AvisoRascunho({
       className="flex flex-wrap items-center gap-3 border-2 border-traco bg-card px-4 py-3"
     >
       <p className="text-sm">
-        Existe um rascunho salvo de uma catalogação anterior. O arquivo PDF precisa ser
-        escolhido de novo — ele não fica guardado.
+        Existe um rascunho salvo de uma catalogação anterior. Se você tinha anexado um
+        arquivo, escolha-o de novo — ele não fica guardado.
       </p>
       <div className="ml-auto flex gap-2">
         <Button type="button" variant="outline" className="rounded-none border-2" onClick={aoDescartar}>
@@ -130,15 +130,15 @@ export function FormularioCatalogar({
   const [passoAtual, setPassoAtual] = useState<NumeroPasso>(1)
 
   /** Envolve `submeter`: ele mesmo decide se o passo 1 precisa reabrir — não
-   * um efeito observando o resultado depois. Dois casos, os dois só visíveis
-   * DEPOIS do envio (que só o passo 4 dispara):
-   *   - falta o arquivo → o erro mora no campo, que está no passo 1;
-   *   - o envio deu certo → o próximo plano da leva começa no passo 1.
+   * um efeito observando o resultado depois. Um caso só, desde que o anexo
+   * virou opcional: o envio deu certo, e o próximo plano da leva começa no
+   * passo 1. (Antes havia um segundo, "falta o arquivo", que reabria o passo
+   * 1 para mostrar o erro no campo — não existe mais erro a mostrar.)
    * `submeter` devolve o desfecho: o valor já vem pronto quando o `await`
    * resolve, sem depender de uma nova renderização. */
   async function enviarPasso4(evento: React.FormEvent<HTMLFormElement>) {
     const desfecho = await submeter(evento)
-    if (desfecho === 'sucesso' || desfecho === 'falta-arquivo') setPassoAtual(1)
+    if (desfecho === 'sucesso') setPassoAtual(1)
   }
 
   const principalId = watch('componentePrincipalId')
@@ -175,11 +175,16 @@ export function FormularioCatalogar({
       {passoAtual === 1 && (
       <Bloco titulo="Arquivo">
         <CampoArquivo
-          rotulo="Escolher o PDF do plano"
+          rotulo="Escolher o arquivo do plano"
           arquivo={arquivo}
           aoEscolher={escolherArquivo}
           erro={erroArquivo}
         />
+        {/* O anexo deixou de ser obrigatório: plano sem arquivo entra no
+            acervo e aparece na Biblioteca, só sem o botão de baixar. */}
+        <p className="text-xs text-muted-foreground">
+          Opcional. PDF ou imagem (JPEG, PNG, WebP).
+        </p>
       </Bloco>
       )}
 

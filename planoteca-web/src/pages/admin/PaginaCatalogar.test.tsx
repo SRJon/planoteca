@@ -69,7 +69,7 @@ describe('PaginaCatalogar', () => {
 
     await screen.findByRole('heading', { name: 'Catalogar plano', level: 1 })
 
-    await usuario.upload(screen.getByLabelText('Escolher o PDF do plano'), pdfFalso())
+    await usuario.upload(screen.getByLabelText('Escolher o arquivo do plano'), pdfFalso())
     await preencherMinimo(usuario)
     await usuario.click(screen.getByRole('button', { name: 'Catalogar plano' }))
 
@@ -84,7 +84,7 @@ describe('PaginaCatalogar', () => {
     renderizar()
 
     await screen.findByRole('heading', { name: 'Catalogar plano', level: 1 })
-    await usuario.upload(screen.getByLabelText('Escolher o PDF do plano'), pdfFalso())
+    await usuario.upload(screen.getByLabelText('Escolher o arquivo do plano'), pdfFalso())
     await preencherMinimo(usuario)
 
     // O padrão é publicar. Quem quer rascunho precisa DIZER — e ver, antes
@@ -114,7 +114,7 @@ describe('PaginaCatalogar', () => {
     renderizar()
 
     await screen.findByRole('heading', { name: 'Catalogar plano', level: 1 })
-    await usuario.upload(screen.getByLabelText('Escolher o PDF do plano'), pdfFalso())
+    await usuario.upload(screen.getByLabelText('Escolher o arquivo do plano'), pdfFalso())
     await preencherMinimo(usuario)
 
     // Sem tocar em nada: o padrão já é publicar.
@@ -135,7 +135,7 @@ describe('PaginaCatalogar', () => {
     renderizar()
 
     await screen.findByRole('heading', { name: 'Catalogar plano', level: 1 })
-    await usuario.upload(screen.getByLabelText('Escolher o PDF do plano'), pdfFalso())
+    await usuario.upload(screen.getByLabelText('Escolher o arquivo do plano'), pdfFalso())
     await preencherMinimo(usuario)
     await usuario.click(screen.getByRole('button', { name: 'Catalogar plano' }))
 
@@ -173,13 +173,13 @@ describe('PaginaCatalogar', () => {
     ).toHaveAttribute('aria-pressed', 'true')
   })
 
-  it('recusa arquivo que não é PDF, antes de tocar na rede', async () => {
+  it('recusa arquivo que não é PDF nem imagem, antes de tocar na rede', async () => {
     renderizar()
 
     await screen.findByRole('heading', { name: 'Catalogar plano', level: 1 })
 
     // `fireEvent`, e não `userEvent.upload`: o `upload` respeita o
-    // `accept="application/pdf"` do input e simplesmente NÃO entrega o
+    // `accept` do input e simplesmente NÃO entrega o
     // arquivo, então a validação em JS nunca rodaria e o teste passaria sem
     // provar nada.
     //
@@ -187,17 +187,19 @@ describe('PaginaCatalogar', () => {
     // acontece: arrastar e soltar, colar, ou um navegador que trata o
     // atributo como sugestão. O `accept` é conveniência de UI; a validação
     // é a garantia.
-    const entrada = screen.getByLabelText('Escolher o PDF do plano') as HTMLInputElement
+    const entrada = screen.getByLabelText('Escolher o arquivo do plano') as HTMLInputElement
     const planilha = new File(['x'], 'planilha.xlsx', {
       type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     })
     Object.defineProperty(entrada, 'files', { value: [planilha], configurable: true })
     fireEvent.change(entrada)
 
-    expect(await screen.findByRole('alert')).toHaveTextContent('O acervo recebe PDF')
+    expect(await screen.findByRole('alert')).toHaveTextContent('O acervo recebe PDF ou imagem')
   })
 
-  it('exige o arquivo, mesmo com o formulário todo preenchido', async () => {
+  // Era "exige o arquivo, mesmo com o formulário todo preenchido". O anexo
+  // deixou de ser obrigatório, e o teste passou a provar o contrário.
+  it('cataloga sem anexo nenhum', async () => {
     const usuario = userEvent.setup()
     renderizar()
 
@@ -205,7 +207,24 @@ describe('PaginaCatalogar', () => {
     await preencherMinimo(usuario)
     await usuario.click(screen.getByRole('button', { name: 'Catalogar plano' }))
 
-    expect(await screen.findByText('Escolha o PDF do plano.')).toBeInTheDocument()
+    expect(await screen.findByText('1 plano catalogado nesta sessão')).toBeInTheDocument()
+  })
+
+  it('aceita uma imagem PNG como anexo', async () => {
+    const usuario = userEvent.setup()
+    renderizar()
+
+    await screen.findByRole('heading', { name: 'Catalogar plano', level: 1 })
+    await usuario.upload(
+      screen.getByLabelText('Escolher o arquivo do plano'),
+      new File(['PNG'], 'quadro.png', { type: 'image/png' }),
+    )
+    expect(await screen.findByText('quadro.png')).toBeInTheDocument()
+
+    await preencherMinimo(usuario)
+    await usuario.click(screen.getByRole('button', { name: 'Catalogar plano' }))
+
+    expect(await screen.findByText('1 plano catalogado nesta sessão')).toBeInTheDocument()
   })
 
   it('exige componente principal e série', async () => {
@@ -213,7 +232,7 @@ describe('PaginaCatalogar', () => {
     renderizar()
 
     await screen.findByRole('heading', { name: 'Catalogar plano', level: 1 })
-    await usuario.upload(screen.getByLabelText('Escolher o PDF do plano'), pdfFalso())
+    await usuario.upload(screen.getByLabelText('Escolher o arquivo do plano'), pdfFalso())
     await usuario.type(screen.getByLabelText('Título'), 'Escape Room: Missão Termoscópio')
     await usuario.type(screen.getByLabelText('Autoria'), 'Anna Ruth de Souza e Souza')
     await usuario.type(
@@ -245,7 +264,7 @@ describe('PaginaCatalogar', () => {
     renderizar()
 
     await screen.findByRole('heading', { name: 'Catalogar plano', level: 1 })
-    await usuario.upload(screen.getByLabelText('Escolher o PDF do plano'), pdfFalso())
+    await usuario.upload(screen.getByLabelText('Escolher o arquivo do plano'), pdfFalso())
     await preencherMinimo(usuario)
     await usuario.click(screen.getByRole('button', { name: 'Catalogar plano' }))
 
@@ -277,7 +296,7 @@ describe('PaginaCatalogar', () => {
     renderizar()
 
     await screen.findByRole('heading', { name: 'Catalogar plano', level: 1 })
-    await usuario.upload(screen.getByLabelText('Escolher o PDF do plano'), pdfFalso())
+    await usuario.upload(screen.getByLabelText('Escolher o arquivo do plano'), pdfFalso())
     await preencherMinimo(usuario)
     await usuario.click(screen.getByRole('button', { name: 'Catalogar plano' }))
 
@@ -291,7 +310,7 @@ describe('PaginaCatalogar', () => {
     renderizar()
 
     await screen.findByRole('heading', { name: 'Catalogar plano', level: 1 })
-    await usuario.upload(screen.getByLabelText('Escolher o PDF do plano'), pdfFalso())
+    await usuario.upload(screen.getByLabelText('Escolher o arquivo do plano'), pdfFalso())
     await preencherMinimo(usuario)
 
     // "Como conduzir" só existe na tela no passo 4.

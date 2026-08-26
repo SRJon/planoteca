@@ -105,8 +105,17 @@ export type Plano = {
   duracaoAulas: number | null
   /** O que o número não expressa: "Sequência didática", "1 bimestre". */
   duracaoDescricao: string | null
-  /** O PDF, no Cloudflare R2. Público, sem token. */
-  arquivoUrl: string
+  /**
+   * O anexo, no Cloudflare R2. Público, sem token. PDF ou imagem — o acervo
+   * recebe os dois, e a tela entrega ambos pelo mesmo botão de baixar.
+   *
+   * OPCIONAL: um plano pode entrar no acervo sem anexo, e continua aparecendo
+   * na Biblioteca com título, componente e metodologia. Só a faixa de
+   * download some. `?` E `| null` porque as duas formas chegam: a API OMITE o
+   * campo quando não há arquivo, e um plano gravado antes desta mudança pode
+   * trazer `null` explícito.
+   */
+  arquivoUrl?: string | null
   publicadoEm: string | null
   /**
    * `rascunho` ou `publicado`.

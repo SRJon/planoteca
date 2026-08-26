@@ -56,7 +56,9 @@ export interface PlanoFixture {
   metodologias: MetodologiaFixture[]
   duracaoAulas: number | null
   duracaoDescricao: string | null
-  arquivoUrl: string
+  /** Ausente no plano SEM anexo — a API omite o campo, e não manda `null`.
+   * Ver `SEM_ANEXO` em `gerarPlanos`. */
+  arquivoUrl?: string
   publicadoEm: string | null
 }
 
@@ -141,6 +143,13 @@ const DURACOES: [number | null, string | null][] = [
  * componente secundário, e duas séries. É o alvo dos testes que provam que
  * buscar por um componente secundário acha a prática, e que um plano atende
  * mais de uma série.
+ *
+ * O plano de índice 3 (o quarto, `Plano004`) NÃO TEM ANEXO: `arquivoUrl` vem
+ * ausente, como a API o omite. É o alvo dos testes que provam que um plano
+ * sem arquivo aparece inteiro na Biblioteca e só perde o botão de baixar.
+ * Índice 3 e não 0 de propósito — o primeiro plano é o que a maior parte dos
+ * testes de listagem inspeciona, e tirar o download dele quebraria asserções
+ * que nada têm a ver com anexo.
  */
 export function gerarPlanos(quantidade = 14): PlanoFixture[] {
   return Array.from({ length: quantidade }, (_, indice) => {
@@ -150,6 +159,7 @@ export function gerarPlanos(quantidade = 14): PlanoFixture[] {
     const metodologia = METODOLOGIAS_FIXTURE[indice % 4]!
     const [aulas, descricao] = DURACOES[indice % DURACOES.length]!
     const interdisciplinar = indice === 2
+    const semAnexo = indice === 3
 
     return {
       id: `10000000-0000-0000-0000-${String(numero).padStart(12, '0')}`,
@@ -164,7 +174,12 @@ export function gerarPlanos(quantidade = 14): PlanoFixture[] {
         : [metodologia],
       duracaoAulas: aulas,
       duracaoDescricao: descricao,
-      arquivoUrl: `/planos/plano-${String(numero).padStart(3, '0')}.pdf`,
+      // Espalhado, e não `arquivoUrl: undefined`: com
+      // `exactOptionalPropertyTypes`, "campo ausente" e "campo com undefined"
+      // são coisas diferentes, e é a AUSÊNCIA que a API produz.
+      ...(semAnexo
+        ? {}
+        : { arquivoUrl: `/planos/plano-${String(numero).padStart(3, '0')}.pdf` }),
       publicadoEm: '2026-08-01T12:00:00Z',
     }
   })

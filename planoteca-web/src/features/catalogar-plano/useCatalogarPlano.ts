@@ -136,14 +136,32 @@ export const CAMPOS_POR_PASSO: Record<NumeroPasso, (keyof CamposCatalogar)[]> = 
 }
 
 /**
+ * O que o acervo aceita como anexo — espelha a lista que a API assina em
+ * `POST /admin/lesson-plans/upload-url`. Divergir daqui produz um upload que
+ * o R2 recusa depois de a pessoa já ter esperado o envio inteiro.
+ *
+ * Imagem entra porque boa parte do acervo real é foto ou print do material, e
+ * ela é entregue como o PDF: o mesmo botão baixa o arquivo.
+ */
+export const TIPOS_ACEITOS: readonly string[] = [
+  'application/pdf',
+  'image/jpeg',
+  'image/png',
+  'image/webp',
+]
+
+/**
  * A catalogação de um plano, de ponta a ponta.
  *
  * ── Os três passos, e por que são três ───────────────────────────────────
  *
  * 1. **Assinar**: a API devolve uma URL temporária do Cloudflare R2.
- * 2. **Subir**: o navegador manda o PDF DIRETO para o R2, sem passar pela
+ * 2. **Subir**: o navegador manda o arquivo DIRETO para o R2, sem passar pela
  *    API. Ver `entities/plano/apiAdmin.ts` para o porquê.
  * 3. **Catalogar**: a API grava o plano com a URL pública do arquivo.
+ *
+ * Os passos 1 e 2 são PULADOS quando não há anexo — ele é opcional desde
+ * 2026-08-26, e um plano sem arquivo é catalogado direto no passo 3.
  *
  * Se o passo 3 falhar, o arquivo já está no R2 e vira órfão. É uma troca
  * consciente: a alternativa seria a API mediar o upload, o que não cabe no
@@ -175,8 +193,8 @@ export function useCatalogarPlano(cliente: Cliente) {
 
   function escolherArquivo(novo: File | null) {
     setErroArquivo(null)
-    if (novo && novo.type !== 'application/pdf') {
-      setErroArquivo('O acervo recebe PDF. Converta o arquivo antes de enviar.')
+    if (novo && !TIPOS_ACEITOS.includes(novo.type)) {
+      setErroArquivo('O acervo recebe PDF ou imagem. Converta o arquivo antes de enviar.')
       setArquivo(null)
       return
     }
@@ -188,7 +206,7 @@ export function useCatalogarPlano(cliente: Cliente) {
    * repassa o retorno do callback interno, então `submeter` (abaixo) captura
    * o desfecho numa variável local e o devolve depois do `await` — sem
    * `ref` nem efeito, só o fluxo normal de uma função assíncrona. */
-  type DesfechoEnvio = 'sucesso' | 'falta-arquivo' | 'invalido' | 'erro'
+  type DesfechoEnvio = 'sucesso' | 'invalido' | 'erro'
 
   async function submeter(evento?: BaseSyntheticEvent): Promise<DesfechoEnvio> {
     let desfecho: DesfechoEnvio = 'invalido'
@@ -196,21 +214,20 @@ export function useCatalogarPlano(cliente: Cliente) {
     await form.handleSubmit(async (campos) => {
       setErroGeral(null)
 
-      // O arquivo não passa pelo Zod: ele não é um campo do formulário, é
-      // estado à parte (`input type="file"` não é controlado pelo RHF sem
-      // ginástica que não paga o preço).
-      if (!arquivo) {
-        setErroArquivo('Escolha o PDF do plano.')
-        desfecho = 'falta-arquivo'
-        return
-      }
-
       try {
-        setEtapaEnvio('assinando')
-        const assinado = await assinarUpload(cliente, arquivo.name, arquivo.type)
+        // O anexo é OPCIONAL: sem arquivo, os dois primeiros passos (assinar e
+        // subir) simplesmente não acontecem, e o plano é catalogado sem
+        // `arquivoUrl`. Ele aparece na Biblioteca normalmente — só a faixa de
+        // download some do card.
+        let urlPublica: string | null = null
+        if (arquivo) {
+          setEtapaEnvio('assinando')
+          const assinado = await assinarUpload(cliente, arquivo.name, arquivo.type)
 
-        setEtapaEnvio('subindo')
-        await subirArquivo(assinado.urlUpload, arquivo, arquivo.type)
+          setEtapaEnvio('subindo')
+          await subirArquivo(assinado.urlUpload, arquivo, arquivo.type)
+          urlPublica = assinado.urlPublica
+        }
 
         setEtapaEnvio('catalogando')
         const duracao = Number(campos.duracaoAulas)
@@ -220,7 +237,6 @@ export function useCatalogarPlano(cliente: Cliente) {
           objetosConhecimento: campos.objetosConhecimento.trim(),
           objetivo: campos.objetivo.trim(),
           expectativasAprendizagem: campos.expectativasAprendizagem.trim(),
-          arquivoUrl: assinado.urlPublica,
           componentePrincipalId: campos.componentePrincipalId,
           componentesSecundariosIds: campos.componentesSecundariosIds,
           seriesIds: campos.seriesIds,
@@ -242,6 +258,7 @@ export function useCatalogarPlano(cliente: Cliente) {
             .map((c) => c.trim().toUpperCase())
             .filter((c) => c !== ''),
           publicar: campos.publicar,
+          ...(urlPublica ? { arquivoUrl: urlPublica } : {}),
           ...(campos.recursos.trim() ? { recursos: campos.recursos.trim() } : {}),
           ...(campos.modalidade.trim() ? { modalidade: campos.modalidade.trim() } : {}),
           ...(campos.turmaOrigem.trim() ? { turmaOrigem: campos.turmaOrigem.trim() } : {}),
@@ -274,6 +291,7 @@ export function useCatalogarPlano(cliente: Cliente) {
           modalidade: campos.modalidade,
           turmaOrigem: campos.turmaOrigem,
           publicar: campos.publicar,
+          ...(urlPublica ? { arquivoUrl: urlPublica } : {}),
         })
         setArquivo(null)
         desfecho = 'sucesso'

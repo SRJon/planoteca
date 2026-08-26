@@ -47,6 +47,11 @@ const PLANOS_PADRAO = gerarPlanos()
  * Só para a simulação recusar cor inválida como o back-end recusaria. */
 const CORES_VALIDAS = ['comp-linguagens', 'comp-matematica', 'comp-natureza', 'comp-humanas']
 
+/** Os tipos que a API assina em `POST /admin/lesson-plans/upload-url` — PDF e
+ * imagem, desde a alteração do validador na API. Espelhado aqui para a
+ * simulação recusar o que o back-end recusaria, e só isso. */
+const TIPOS_ACEITOS_UPLOAD = ['application/pdf', 'image/jpeg', 'image/png', 'image/webp']
+
 export const servidor = setupServer(
   http.get('*/api/v1/person-samples', () =>
     HttpResponse.json([PESSOA_PADRAO], { headers: { 'X-Total-Count': '1' } }),
@@ -78,7 +83,7 @@ export const servidor = setupServer(
   // MSW intercepta abaixo.
   http.post('*/api/v1/admin/lesson-plans/upload-url', async ({ request }) => {
     const corpo = (await request.json()) as { nomeArquivo: string; tipoConteudo: string }
-    if (corpo.tipoConteudo !== 'application/pdf') {
+    if (!TIPOS_ACEITOS_UPLOAD.includes(corpo.tipoConteudo)) {
       return HttpResponse.json(
         { status: 400, messages: [`Tipo de arquivo não aceito: ${corpo.tipoConteudo}.`] },
         { status: 400 },

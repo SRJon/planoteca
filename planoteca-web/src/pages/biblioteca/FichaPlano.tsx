@@ -100,16 +100,23 @@ export function FichaPlano({ plano }: { plano: Plano }) {
             arquivo É navegar até ele. Assim o menu de contexto, o
             "abrir em nova aba" e o clique do meio funcionam sozinhos.
             O arquivo mora no Cloudflare R2 e responde sem token — baixar
-            plano não exige conta. */}
-        <a
-          href={plano.arquivoUrl}
-          download
-          className="flex min-h-11 items-center justify-center gap-2 border-2 border-traco bg-acao text-[14.5px] font-bold text-acao-texto transition-colors hover:bg-acao-hover active:bg-acao-ativa"
-        >
-          <DownloadSimple size={16} weight="bold" />
-          Baixar plano
-          <span className="sr-only">: {plano.titulo}</span>
-        </a>
+            plano não exige conta.
+
+            Só existe quando HÁ anexo, e no lugar dele não entra nada: nem
+            aviso, nem botão desabilitado. O plano sem arquivo continua
+            valendo pelo que a ficha mostra, e anunciar a ausência em todo
+            card transformaria um caso normal em falha aparente. */}
+        {plano.arquivoUrl && (
+          <a
+            href={plano.arquivoUrl}
+            download
+            className="flex min-h-11 items-center justify-center gap-2 border-2 border-traco bg-acao text-[14.5px] font-bold text-acao-texto transition-colors hover:bg-acao-hover active:bg-acao-ativa"
+          >
+            <DownloadSimple size={16} weight="bold" />
+            Baixar plano
+            <span className="sr-only">: {plano.titulo}</span>
+          </a>
+        )}
       </div>
     </article>
   )

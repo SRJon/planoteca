@@ -1,8 +1,16 @@
 import { useId, useRef } from 'react'
-import { FilePdf } from '@phosphor-icons/react/dist/csr/FilePdf'
+import { File as IconeArquivo } from '@phosphor-icons/react/dist/csr/File'
+import { Image as IconeImagem } from '@phosphor-icons/react/dist/csr/Image'
 import { X } from '@phosphor-icons/react/dist/csr/X'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/shared/lib/cn'
+
+/** O que o campo aceita quando quem o usa não diz outra coisa: PDF e as três
+ * imagens que a API assina. Espelha `TIPOS_ACEITOS` de
+ * `features/catalogar-plano` — este componente é de `components/ui/` e não
+ * pode importar de uma feature, então a lista é repetida de propósito, e a
+ * validação de verdade continua sendo a da feature. */
+const TIPOS_PADRAO = 'application/pdf,image/jpeg,image/png,image/webp'
 
 /** Bytes em algo legível. `1.4 MB` diz mais que `1468006`. */
 function tamanhoLegivel(bytes: number): string {
@@ -26,7 +34,7 @@ function tamanhoLegivel(bytes: number): string {
 export function CampoArquivo({
   arquivo,
   aoEscolher,
-  accept = 'application/pdf',
+  accept = TIPOS_PADRAO,
   erro,
   rotulo,
   className,
@@ -63,7 +71,13 @@ export function CampoArquivo({
 
       {arquivo ? (
         <div className="flex items-center gap-3 border-2 border-traco bg-card px-3 py-2.5">
-          <FilePdf size={20} weight="bold" aria-hidden className="flex-none text-primary" />
+          {/* O ícone segue o arquivo escolhido: um `FilePdf` fixo mentiria
+              sobre o PNG que o acervo agora aceita. */}
+          {arquivo.type.startsWith('image/') ? (
+            <IconeImagem size={20} weight="bold" aria-hidden className="flex-none text-primary" />
+          ) : (
+            <IconeArquivo size={20} weight="bold" aria-hidden className="flex-none text-primary" />
+          )}
           <div className="flex min-w-0 flex-col">
             <span className="truncate text-sm font-bold">{arquivo.name}</span>
             <span className="text-xs text-muted-foreground">{tamanhoLegivel(arquivo.size)}</span>

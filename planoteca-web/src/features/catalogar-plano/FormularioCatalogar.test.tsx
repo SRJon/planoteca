@@ -35,7 +35,7 @@ async function preencherPasso1(usuario: ReturnType<typeof userEvent.setup>) {
 }
 
 async function avancarParaPasso2(usuario: ReturnType<typeof userEvent.setup>) {
-  await usuario.upload(screen.getByLabelText('Escolher o PDF do plano'), pdfFalso())
+  await usuario.upload(screen.getByLabelText('Escolher o arquivo do plano'), pdfFalso())
   await preencherPasso1(usuario)
   await usuario.click(screen.getByRole('button', { name: 'Continuar' }))
   await screen.findByText('Passo 2 de 4 — Onde se aplica')
@@ -174,16 +174,29 @@ describe('FormularioCatalogar', () => {
     })
   })
 
-  it('recusa arquivo que não é PDF, antes de tocar na rede', async () => {
+  it('recusa arquivo que não é PDF nem imagem, antes de tocar na rede', async () => {
     renderizar()
 
-    const entrada = screen.getByLabelText('Escolher o PDF do plano') as HTMLInputElement
+    const entrada = screen.getByLabelText('Escolher o arquivo do plano') as HTMLInputElement
     const planilha = new File(['x'], 'planilha.xlsx', {
       type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     })
     Object.defineProperty(entrada, 'files', { value: [planilha], configurable: true })
     fireEvent.change(entrada)
 
-    expect(await screen.findByRole('alert')).toHaveTextContent('O acervo recebe PDF')
+    expect(await screen.findByRole('alert')).toHaveTextContent('O acervo recebe PDF ou imagem')
+  })
+
+  it('aceita uma imagem PNG', async () => {
+    const usuario = userEvent.setup()
+    renderizar()
+
+    await usuario.upload(
+      screen.getByLabelText('Escolher o arquivo do plano'),
+      new File(['PNG'], 'quadro.png', { type: 'image/png' }),
+    )
+
+    expect(await screen.findByText('quadro.png')).toBeInTheDocument()
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
   })
 })
