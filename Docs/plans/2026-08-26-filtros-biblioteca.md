@@ -3175,13 +3175,18 @@ git commit -m "chore(biblioteca): fecha o portão da coluna de filtro"
 
 ## Self-Review
 
-- [ ] Todo `### Task N` usa a palavra inglesa `Task`.
-- [ ] Toda task tem `Papel`: `busca`, `escrita` ou `analise`.
-- [ ] Toda task tem `Verificação` com um comando.
-- [ ] O comando de `Verificação` executa a partir da raiz do repositório.
-- [ ] Toda task tem `Fontes`, com caminho ou com a palavra `nenhuma`.
-- [ ] Todo caminho de `Fontes` existe no disco.
-- [ ] Todo passo tem comando e resultado esperado.
-- [ ] Todo bloco de teste está inteiro, sem reticência.
-- [ ] Todo bloco de código usa cerca, nunca indentação de quatro espaços.
-- [ ] Nenhuma task depende de arquivo que nenhuma task anterior criou.
+- [x] Todo `### Task N` usa a palavra inglesa `Task`.
+- [x] Toda task tem `Papel`: `busca`, `escrita` ou `analise`.
+- [x] Toda task tem `Verificação` com um comando.
+- [x] O comando de `Verificação` executa a partir da raiz do repositório.
+- [x] Toda task tem `Fontes`, com caminho ou com a palavra `nenhuma`.
+- [x] Todo caminho de `Fontes` existe no disco.
+- [x] Todo passo tem comando e resultado esperado.
+- [x] Todo bloco de teste está inteiro, sem reticência.
+- [x] Todo bloco de código usa cerca, nunca indentação de quatro espaços.
+- [x] Nenhuma task depende de arquivo que nenhuma task anterior criou.
+
+O item acima teve UMA exceção, registrada na nota da Task 3: o contrato do
+`IPlanoAppService` nasceu na Task 1 e só foi implementado na Task 3. Como o
+projeto de teste referencia `Application.Core`, nenhum teste compilava nesse
+intervalo. Num próximo ciclo, contrato e implementação vão na mesma task.
