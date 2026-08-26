@@ -718,7 +718,7 @@ git commit -m "feat(plano): traduz a contagem de facetas para DTO"
 - Consumes: `IPlanoAppService.ObterFacetasAsync` da Task 3.
 - Produces: `GET /api/v1/lesson-plans/facets` → `200 FacetasDto`
 
-- [ ] **Step 1: Escrever a ação**
+- [x] **Step 1: Escrever a ação**
 
 Não há teste de controller neste projeto: `tests/SaraivaTech.Planoteca.Test`
 tem `Application`, `Base`, `Dominio`, `Helpers` e `Integracao`, e nenhuma pasta
@@ -765,7 +765,7 @@ Em `LessonPlansController`, entre `Listar` e `Obter`:
 `FiltroPlanoRequest` é reusado sem alteração. A rota `facets` é literal e não
 conflita com `{id:guid}` — a restrição de rota já recusa o texto.
 
-- [ ] **Step 2: Confirmar que o DI não precisa de registro novo**
+- [x] **Step 2: Confirmar que o DI não precisa de registro novo**
 
 ```bash
 grep -n "IPlanoAppService" planoteca-api/src/SaraivaTech.Planoteca.Infra.CrossCutting/IoC/DependencyInjectionBootStrapper.cs
@@ -774,7 +774,7 @@ grep -n "IPlanoAppService" planoteca-api/src/SaraivaTech.Planoteca.Infra.CrossCu
 Esperado: a linha `services.AddScoped<IPlanoAppService, PlanoAppService>();`.
 Nenhuma interface nasceu nesta feature, então nada entra no bootstrapper.
 
-- [ ] **Step 3: Compilar e executar a suíte**
+- [x] **Step 3: Compilar e executar a suíte**
 
 ```bash
 cd planoteca-api && dotnet build && dotnet test
@@ -782,7 +782,7 @@ cd planoteca-api && dotnet build && dotnet test
 
 Esperado: `Build succeeded`, `Passed!` e código 0.
 
-- [ ] **Step 4: Confirmar que a rota responde sem token**
+- [x] **Step 4: Confirmar que a rota responde sem token**
 
 ```bash
 cd planoteca-api && dotnet run --project src/SaraivaTech.Planoteca.Api &
@@ -792,7 +792,7 @@ curl -i -k "https://localhost:7206/api/v1/lesson-plans/facets"
 Esperado: `HTTP/1.1 200` e um corpo com `series`, `componentes` e
 `metodologias`. Nenhum cabeçalho `Authorization` foi enviado.
 
-- [ ] **Step 5: Commitar**
+- [x] **Step 5: Commitar**
 
 ```bash
 git add planoteca-api/src
