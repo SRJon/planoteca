@@ -5,6 +5,7 @@ import {
   POSTS_FIXTURE,
   VOCABULARIO_ADMIN_FIXTURE,
   VOCABULARIO_FIXTURE,
+  contarFacetas,
   detalharPlano,
   filtrarContas,
   filtrarPosts,
@@ -55,6 +56,12 @@ export const servidor = setupServer(
   // devolver sempre a mesma lista: uma tela cujo modo de uso É filtrar
   // precisa de uma simulação que reaja ao filtro, senão o teste de filtro
   // passaria contra um handler que ignora a querystring.
+  // As contagens da coluna de filtro (RF-10). Entra ANTES do handler de
+  // `/lesson-plans/:id`: o MSW casa por ordem, e o parâmetro `:id` casaria
+  // com o literal `facets`, devolvendo 404 para a rota certa.
+  http.get('*/api/v1/lesson-plans/facets', ({ request }) =>
+    HttpResponse.json(contarFacetas(new URL(request.url).searchParams, PLANOS_PADRAO)),
+  ),
   http.get('*/api/v1/lesson-plans', ({ request }) => {
     const { itens, total } = paginarPlanos(new URL(request.url).searchParams, PLANOS_PADRAO)
     if (total === 0) return new HttpResponse(null, { status: 204 })

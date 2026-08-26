@@ -3,6 +3,7 @@ import {
   POSTS_FIXTURE,
   VOCABULARIO_ADMIN_FIXTURE,
   VOCABULARIO_FIXTURE,
+  contarFacetas,
   detalharPlano,
   filtrarContas,
   filtrarPosts,
@@ -273,6 +274,14 @@ export async function instalarSimulacao(page: Page, opcoes: OpcoesSimulacao = {}
       } else {
         await json(route, 200, itens, { 'X-Total-Count': String(total) })
       }
+      return
+    }
+
+    // ANTES da ficha por id (RF-10): o `match` de `/lesson-plans/([0-9a-f-]+)`
+    // não casa com `facets`, mas manter a ordem do MSW aqui evita que uma
+    // frouxidão futura na expressão engula o literal.
+    if (metodo === 'GET' && caminho === '/lesson-plans/facets') {
+      await json(route, 200, contarFacetas(url.searchParams, planos))
       return
     }
 

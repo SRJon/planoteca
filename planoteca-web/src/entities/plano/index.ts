@@ -6,10 +6,12 @@ export type {
   SerieDoPlano,
   MetodologiaDoPlano,
 } from './modelo'
-export { rotuloDuracao } from './modelo'
-export { listarPlanos, buscarPlano } from './api'
+export type { Facetas, ContagemFaceta } from './modelo'
+export { rotuloDuracao, FACETAS_VAZIAS } from './modelo'
+export { listarPlanos, buscarPlano, obterFacetas } from './api'
 export type { FiltroPlano } from './api'
 export { usePlanos, usePlano } from './usePlanos'
+export { useFacetas } from './useFacetas'
 export {
   assinarUpload,
   subirArquivo,

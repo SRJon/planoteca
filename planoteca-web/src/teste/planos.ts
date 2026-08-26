@@ -227,6 +227,57 @@ export function paginarPlanos(
   return { itens: filtrados.slice(inicio, inicio + porPagina), total: filtrados.length }
 }
 
+/**
+ * As contagens por item, do jeito que a API as calcula (RF-02).
+ *
+ * A regra em uma linha: a contagem de um grupo aplica o filtro inteiro MENOS
+ * a seleção do próprio grupo. É isso que faz o número ao lado de História
+ * responder "quantos planos eu ganharia se marcasse História".
+ *
+ * Só id com pelo menos um plano entra na lista devolvida (RF-01) — id ausente
+ * vale zero para quem lê.
+ */
+export function contarFacetas(
+  parametros: URLSearchParams,
+  todos: PlanoFixture[],
+): {
+  series: { id: string; total: number }[]
+  componentes: { id: string; total: number }[]
+  metodologias: { id: string; total: number }[]
+} {
+  // Reusa `paginarPlanos` com o grupo alvo apagado da querystring, e com a
+  // paginação neutralizada: a contagem é sobre o conjunto inteiro, e um
+  // `perPage` de 12 truncaria o `total` se ele viesse do tamanho da fatia.
+  function semGrupo(grupo: string): PlanoFixture[] {
+    const copia = new URLSearchParams(parametros)
+    copia.delete(grupo)
+    copia.delete('page')
+    copia.set('perPage', String(todos.length + 1))
+    return paginarPlanos(copia, todos).itens
+  }
+
+  function contar(planos: PlanoFixture[], idsDoPlano: (p: PlanoFixture) => string[]) {
+    const soma = new Map<string, number>()
+    for (const plano of planos) {
+      // `Set`: um plano interdisciplinar pode citar o mesmo componente como
+      // principal e secundário, e ele conta UMA vez.
+      for (const id of new Set(idsDoPlano(plano))) {
+        soma.set(id, (soma.get(id) ?? 0) + 1)
+      }
+    }
+    return [...soma.entries()].map(([id, total]) => ({ id, total }))
+  }
+
+  return {
+    series: contar(semGrupo('serie'), (p) => p.series.map((s) => s.id)),
+    componentes: contar(semGrupo('componente'), (p) => [
+      ...(p.componentePrincipal ? [p.componentePrincipal.id] : []),
+      ...p.componentesSecundarios.map((c) => c.id),
+    ]),
+    metodologias: contar(semGrupo('metodologia'), (p) => p.metodologias.map((m) => m.id)),
+  }
+}
+
 /** A ficha completa, como `GET /api/v1/lesson-plans/{id}` a devolve. */
 export function detalharPlano(plano: PlanoFixture) {
   return {

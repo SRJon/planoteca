@@ -164,3 +164,37 @@ export function rotuloDuracao(plano: {
   const emAulas = aulas === 1 ? '1 aula' : `${aulas} aulas`
   return descricao ? `${emAulas} · ${descricao}` : emAulas
 }
+
+/**
+ * Quantos planos um item do vocabulário devolveria, dada a seleção atual.
+ *
+ * A resposta traz só id com pelo menos um plano (RF-01). Id ausente vale
+ * zero, e o item continua VISÍVEL na coluna: esconder o que dá zero tiraria
+ * da tela a informação de que o componente existe no acervo.
+ */
+export type ContagemFaceta = {
+  id: string
+  total: number
+}
+
+/**
+ * As três contagens de `GET /api/v1/lesson-plans/facets`.
+ *
+ * A contagem de um grupo IGNORA a seleção do próprio grupo (RF-02). É o que
+ * faz o número ao lado de História responder "quantos planos eu ganharia se
+ * marcasse História", e não "quantos tenho agora", que seria sempre zero
+ * para todo item não marcado.
+ */
+export type Facetas = {
+  series: ContagemFaceta[]
+  componentes: ContagemFaceta[]
+  metodologias: ContagemFaceta[]
+}
+
+/** As facetas vazias. Valor corrente enquanto a busca está em voo: a coluna
+ * desenha sem número em vez de quebrar. */
+export const FACETAS_VAZIAS: Facetas = {
+  series: [],
+  componentes: [],
+  metodologias: [],
+}

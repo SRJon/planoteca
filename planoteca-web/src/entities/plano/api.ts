@@ -1,6 +1,7 @@
 import { ErroApi } from '@/shared/api'
 import type { Cliente, Pagina, Parametros } from '@/shared/api'
-import type { Plano, PlanoDetalhe } from './modelo'
+import type { Facetas, Plano, PlanoDetalhe } from './modelo'
+import { FACETAS_VAZIAS } from './modelo'
 
 /**
  * O recorte que a Biblioteca aplica, como `GET /api/v1/lesson-plans` o
@@ -83,4 +84,26 @@ export async function buscarPlano(cliente: Cliente, id: string): Promise<PlanoDe
     if (erro instanceof ErroApi && erro.status === 404) return null
     throw erro
   }
+}
+
+/**
+ * As contagens por item do vocabulário, para a coluna de filtro.
+ *
+ * `pagina` e `tamanhoPagina` são DESCARTADOS antes de montar a querystring.
+ * A rota os ignora do lado do servidor, mas mandá-los mudaria a chave de
+ * cache de `useFacetas` a cada troca de página — e a coluna refaria a busca
+ * sem que nenhum número tivesse mudado.
+ *
+ * O 204 vira facetas vazias, pelo mesmo motivo de `buscarVocabulario`: uma
+ * base sem plano publicado não é erro de rede.
+ */
+export async function obterFacetas(cliente: Cliente, filtro?: FiltroPlano): Promise<Facetas> {
+  // A paginação sai por `delete` e não por descarte de desestruturação
+  // (`const { pagina: _pagina, ... }`): o lint deste projeto reprova binding
+  // não usado, sem exceção por prefixo de sublinhado.
+  const semPaginacao: FiltroPlano = { ...filtro }
+  delete semPaginacao.pagina
+  delete semPaginacao.tamanhoPagina
+  const resposta = await cliente.obter<Facetas>('/lesson-plans/facets', paraParametros(semPaginacao))
+  return resposta ?? FACETAS_VAZIAS
 }
