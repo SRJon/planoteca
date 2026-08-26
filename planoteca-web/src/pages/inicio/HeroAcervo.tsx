@@ -77,11 +77,11 @@ export function HeroAcervo() {
               Ver os planos
             </Link>
 
-            {/* O `CampoBusca` de `components/ui` não serve aqui: o traço dele
-                é `border-traco`, que no tema claro é tinta preta — invisível
-                contra o bloco escuro do hero. Este campo repete a mesma
-                anatomia (lupa dentro da moldura, foco no contêiner) com o
-                traço de papel do bloco invertido. */}
+            {/* O campo é de PAPEL, como todo campo do sistema, mesmo sobre o
+                bloco escuro: um campo escuro sobre fundo escuro parecia
+                desabilitado. Repete a anatomia do `CampoBusca` (lupa dentro
+                da moldura, foco no contêiner); o foco é de papel porque o
+                anel índigo padrão sumiria contra o hero. */}
             <form
               onSubmit={buscar}
               role="search"
@@ -90,11 +90,11 @@ export function HeroAcervo() {
               <label htmlFor="busca-hero" className="sr-only">
                 Buscar por assunto ou objeto de conhecimento
               </label>
-              <div className="flex grow items-center gap-2 border-2 border-inverso-ink bg-inverso-bg-2 px-3 focus-within:outline-3 focus-within:outline-offset-2 focus-within:outline-inverso-ink">
+              <div className="flex grow items-center gap-2 border-2 border-traco bg-campo px-3 focus-within:outline-3 focus-within:outline-offset-2 focus-within:outline-inverso-ink">
                 <MagnifyingGlass
                   size={17}
                   weight="bold"
-                  className="shrink-0 text-inverso-ink-2"
+                  className="shrink-0 text-muted-foreground"
                   aria-hidden
                 />
                 <Input
@@ -103,7 +103,7 @@ export function HeroAcervo() {
                   value={termo}
                   onChange={(evento) => definirTermo(evento.target.value)}
                   placeholder="Buscar: frações, Revolução Industrial, ecossistemas…"
-                  className="min-h-12 w-full border-0 bg-transparent text-[14.5px] text-inverso-ink shadow-none outline-none placeholder:text-inverso-ink-2 focus-visible:ring-0"
+                  className="min-h-12 w-full border-0 bg-transparent text-[14.5px] text-foreground shadow-none outline-none placeholder:text-muted-foreground focus-visible:ring-0"
                 />
               </div>
               <Button
