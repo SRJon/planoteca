@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Filtros da Biblioteca em coluna lateral</title>
+  <style>
+    :root {
+      --st-bg: #FAF9F5; --st-bg-alt: #F0EEE6; --st-surface: #FFFFFF;
+      --st-border: #E3DACC; --st-border-soft: #F0EEE6;
+      --st-ink: #141413; --st-ink-soft: #3D3D3A; --st-ink-muted: #87867F; --st-ink-faint: #D1CFC5;
+      --st-accent: #D97757; --st-accent-soft: #F5E1D4; --st-rose: #E0897A;
+      --st-olive: #788C5D; --st-olive-soft: #DCE3CC;
+      --st-amber: #B47A3C; --st-amber-soft: #EDD9B7;
+      --st-crimson: #B0533C; --st-crimson-soft: #F0CFC3;
+      --st-azure: #3D6688; --st-azure-soft: #CDDAE6;
+      --st-invert-bg: #141413; --st-invert-ink: #F0EEE6;
+      --st-font-serif: ui-serif, "Iowan Old Style", "Apple Garamond", Baskerville, "Times New Roman", serif;
+      --st-font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      --st-font-mono: ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, monospace;
+      --st-space-1: .25rem; --st-space-2: .5rem; --st-space-3: .75rem; --st-space-4: 1rem;
+      --st-space-5: 1.25rem; --st-space-6: 1.5rem; --st-space-8: 2rem; --st-space-10: 2.5rem;
+      --st-space-12: 3rem; --st-space-16: 4rem;
+      --st-radius-sm: 4px; --st-radius: 8px;
+      --st-content-width: 1100px;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: var(--st-font-sans); font-size: 16px; line-height: 1.65; color: var(--st-ink); background: var(--st-bg); -webkit-font-smoothing: antialiased; }
+    .st-doc { max-width: var(--st-content-width); margin: 0 auto; padding: var(--st-space-16) var(--st-space-6) var(--st-space-12); }
+    .st-eyebrow { font-family: var(--st-font-mono); font-size: .75rem; font-weight: 500; text-transform: uppercase; letter-spacing: .08em; color: var(--st-ink-muted); margin: 0 0 var(--st-space-4); }
+    .st-title { font-family: var(--st-font-serif); font-weight: 500; font-size: clamp(2rem, 5vw, 2.75rem); line-height: 1.15; letter-spacing: -.01em; margin: 0 0 var(--st-space-6); }
+    .st-title em.st-accent { font-style: italic; color: var(--st-accent); }
+    .st-lede { font-size: 1.1rem; color: var(--st-ink-soft); margin: 0 0 var(--st-space-8); max-width: 60ch; }
+    h2 { font-family: var(--st-font-serif); font-weight: 500; font-size: clamp(1.4rem, 3vw, 1.75rem); margin: var(--st-space-16) 0 var(--st-space-4); display: flex; align-items: center; gap: var(--st-space-3); }
+    h3 { font-family: var(--st-font-serif); font-weight: 500; font-size: 1.2rem; margin: var(--st-space-8) 0 var(--st-space-3); }
+    .st-section-num { display: inline-block; font-family: var(--st-font-mono); font-size: .7rem; background: var(--st-bg-alt); color: var(--st-ink-muted); padding: 3px var(--st-space-2); border-radius: var(--st-radius-sm); letter-spacing: .05em; }
+    p { margin: 0 0 var(--st-space-4); }
+    a { color: var(--st-accent); text-underline-offset: 3px; }
+    ul, ol { margin: 0 0 var(--st-space-4); padding-left: var(--st-space-6); }
+    li { margin-bottom: var(--st-space-2); }
+    li::marker { color: var(--st-accent); }
+    strong { font-weight: 600; }
+    code { font-family: var(--st-font-mono); font-size: .88em; background: var(--st-bg-alt); padding: 2px 6px; border-radius: var(--st-radius-sm); }
+    pre { background: var(--st-invert-bg); color: var(--st-invert-ink); padding: var(--st-space-4) var(--st-space-5); border-radius: var(--st-radius); overflow-x: auto; font-size: .85rem; line-height: 1.55; margin: var(--st-space-4) 0; min-width: 0; max-width: 100%; }
+    pre code { background: none; padding: 0; color: inherit; font-size: inherit; }
+    .st-pills { display: flex; gap: var(--st-space-2); flex-wrap: wrap; margin: 0 0 var(--st-space-6); }
+    .st-pill { display: inline-flex; gap: var(--st-space-2); padding: 4px var(--st-space-3); border-radius: 999px; font-family: var(--st-font-mono); font-size: .78rem; background: var(--st-bg-alt); color: var(--st-ink-soft); border: 1px solid var(--st-border-soft); }
+    .st-pill .st-pill-label { color: var(--st-ink-muted); }
+    .st-pill--accent { background: var(--st-accent-soft); color: var(--st-accent); border-color: transparent; }
+    .st-pill--azure { background: var(--st-azure-soft); color: var(--st-azure); border-color: transparent; }
+    .st-tldr { background: var(--st-invert-bg); color: var(--st-invert-ink); padding: var(--st-space-6); border-radius: var(--st-radius); margin: 0 0 var(--st-space-10); font-size: 1.05rem; }
+    .st-tldr-label { font-family: var(--st-font-mono); font-size: .72rem; text-transform: uppercase; letter-spacing: .1em; color: var(--st-ink-muted); margin-bottom: var(--st-space-2); }
+    .st-tldr p { margin: 0; }
+    .st-tldr strong { color: #FFFFFF; }
+    .st-tldr code { background: rgba(255,255,255,.1); color: var(--st-invert-ink); }
+    .st-callout { background: var(--st-bg-alt); border-radius: var(--st-radius); padding: var(--st-space-4) var(--st-space-5); margin: var(--st-space-4) 0; }
+    .st-callout-label { font-family: var(--st-font-mono); font-size: .72rem; text-transform: uppercase; letter-spacing: .08em; color: var(--st-ink-muted); margin-bottom: var(--st-space-2); }
+    .st-callout p:last-child { margin-bottom: 0; }
+    .st-callout--amber { background: var(--st-amber-soft); } .st-callout--amber .st-callout-label { color: var(--st-amber); }
+    .st-callout--azure { background: var(--st-azure-soft); } .st-callout--azure .st-callout-label { color: var(--st-azure); }
+    .st-callout--crimson { background: var(--st-crimson-soft); } .st-callout--crimson .st-callout-label { color: var(--st-crimson); }
+    table { width: 100%; border-collapse: collapse; margin: var(--st-space-4) 0; font-size: .92rem; background: var(--st-surface); border: 1px solid var(--st-border); border-radius: var(--st-radius); overflow: hidden; }
+    thead { background: var(--st-bg-alt); }
+    th { text-align: left; padding: var(--st-space-3) var(--st-space-4); font-family: var(--st-font-mono); font-weight: 500; font-size: .72rem; text-transform: uppercase; letter-spacing: .08em; color: var(--st-ink-muted); border-bottom: 1px solid var(--st-border); }
+    td { padding: var(--st-space-3) var(--st-space-4); border-bottom: 1px solid var(--st-border-soft); vertical-align: top; }
+    tr:last-child td { border-bottom: none; }
+    .st-diagram { display: block; margin: var(--st-space-6) auto; max-width: 100%; height: auto; }
+    .st-footer { text-align: center; padding: var(--st-space-8) var(--st-space-6) var(--st-space-12); color: var(--st-ink-muted); font-size: .85rem; }
+    .st-mono { font-family: var(--st-font-mono); font-size: .85em; }
+    @media (max-width: 768px) { .st-doc { padding: var(--st-space-8) var(--st-space-4); } }
+  </style>
+</head>
+<body>
+<main class="st-doc">
+  <p class="st-eyebrow">Spec · Planoteca · Biblioteca</p>
+  <h1 class="st-title">Filtros da Biblioteca em <em class="st-accent">coluna lateral</em></h1>
+  <div class="st-pills">
+    <span class="st-pill"><span class="st-pill-label">grau</span> 2</span>
+    <span class="st-pill st-pill--azure"><span class="st-pill-label">lados</span> web + api</span>
+    <span class="st-pill st-pill--accent"><span class="st-pill-label">decisão</span> opção B, 2026-08-26</span>
+  </div>
+  <p class="st-lede">A Biblioteca abre com 37 chips esticados antes do primeiro plano. Esta spec troca a grade por uma coluna de filtro à esquerda no desktop e uma gaveta no celular, com o número de planos ao lado de cada item.</p>
+
+  <div class="st-tldr">
+    <div class="st-tldr-label">Resumo</div>
+    <p>A API ganha <code>GET /api/v1/lesson-plans/facets</code>, pública, que devolve quantos planos cada série, componente e metodologia tem sob o recorte atual. O front reorganiza <code>PaginaBiblioteca</code> em duas colunas a partir de <code>lg</code>, move os grupos para listas verticais com caixa de marcar, mantém a série como régua e mostra a seleção em pílulas acima da lista. <strong>A URL continua a fonte da verdade do filtro</strong>: <code>useFiltroPlanos</code> não se altera.</p>
+  </div>
+
+  <h2><span class="st-section-num">01</span> Problema</h2>
+  <p>A tela atual põe cada grupo de filtro num <code>grid</code> de colunas iguais (<code>FiltrosPlanos.tsx</code>, linhas 104 a 149). O chip mede a coluna, não o texto: "6º" ocupa 72px e "Filosofia" 280px. Os três grupos somam 37 chips de 44px e empurram o primeiro plano para 700px abaixo do topo.</p>
+  <p>O vocabulário vem do banco desde a spec de 2026-08-24. Cada metodologia cadastrada no painel acrescenta uma linha à grade. A tela não escala.</p>
+  <p>Falta o retorno antes do toque. Um chip que devolve lista vazia parece um chip quebrado, e o professor só descobre depois de clicar.</p>
+
+  <h2><span class="st-section-num">02</span> Escopo</h2>
+  <h3>Entra</h3>
+  <ul>
+    <li>Endpoint de facetas na API, público, com o mesmo contrato de entrada da listagem.</li>
+    <li>Layout de duas colunas em <code>PaginaBiblioteca</code> a partir de <code>lg</code> (1024px).</li>
+    <li>Coluna de filtro: busca, régua de série, grupo de componente e grupo de metodologia.</li>
+    <li>Grupo com dobra por <code>details</code> e limite de 8 itens visíveis com "mais N".</li>
+    <li>Gaveta no celular, sobre o <code>Dialog</code> do projeto, com rodapé "Limpar" e "Ver N planos".</li>
+    <li>Pílulas de seleção acima da lista, com remoção individual e "Limpar".</li>
+    <li>Handlers de facetas no MSW dos testes de unidade e na simulação do Playwright.</li>
+    <li>Atualização do e2e: componente e metodologia passam de botão a caixa de marcar.</li>
+  </ul>
+  <h3>Não entra</h3>
+  <ul>
+    <li>Ordenação da lista. A faixa mostra "ordenados pelos mais recentes" como texto fixo, e isso já é o comportamento do repositório.</li>
+    <li>Filtro por duração. O contrato o aceita, a tela não o expõe hoje e continua sem expor.</li>
+    <li>Alteração em <code>useFiltroPlanos</code>, na querystring ou no contrato da listagem.</li>
+    <li>Dependência nova no front. A gaveta reusa o Radix Dialog já instalado.</li>
+  </ul>
+
+  <h2><span class="st-section-num">03</span> Solução</h2>
+  <p>O fluxo de dados ganha uma consulta ao lado da listagem. As duas leem o mesmo filtro da URL e correm em paralelo.</p>
+
+  <svg class="st-diagram" viewBox="0 0 900 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Fluxo: a URL alimenta useFiltroPlanos, que alimenta usePlanos e useFacetas; cada um chama a API; a lista e a coluna consomem o resultado">
+    <defs>
+      <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#87867F"/></marker>
+      <marker id="arrow-accent" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#D97757"/></marker>
+    </defs>
+    <rect x="20" y="115" width="150" height="70" rx="10" fill="#F5E1D4" stroke="#D97757" stroke-width="1.5"/>
+    <text x="95" y="145" text-anchor="middle" font-family="ui-serif, Georgia, serif" font-size="14" font-weight="500" fill="#141413">querystring</text>
+    <text x="95" y="165" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="11" fill="#87867F">?serie=&amp;componente=</text>
+
+    <rect x="230" y="115" width="160" height="70" rx="10" fill="#FFFFFF" stroke="#E3DACC" stroke-width="1.5"/>
+    <text x="310" y="145" text-anchor="middle" font-family="ui-serif, Georgia, serif" font-size="14" font-weight="500" fill="#141413">useFiltroPlanos</text>
+    <text x="310" y="165" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="11" fill="#87867F">não se altera</text>
+
+    <rect x="450" y="40" width="150" height="60" rx="10" fill="#FFFFFF" stroke="#E3DACC" stroke-width="1.5"/>
+    <text x="525" y="66" text-anchor="middle" font-family="ui-serif, Georgia, serif" font-size="14" font-weight="500" fill="#141413">usePlanos</text>
+    <text x="525" y="84" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="11" fill="#87867F">GET /lesson-plans</text>
+
+    <rect x="450" y="200" width="150" height="60" rx="10" fill="#F5E1D4" stroke="#D97757" stroke-width="1.5"/>
+    <text x="525" y="226" text-anchor="middle" font-family="ui-serif, Georgia, serif" font-size="14" font-weight="500" fill="#141413">useFacetas</text>
+    <text x="525" y="244" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="11" fill="#D97757">GET /lesson-plans/facets</text>
+
+    <rect x="700" y="40" width="170" height="60" rx="10" fill="#141413"/>
+    <text x="785" y="66" text-anchor="middle" font-family="ui-serif, Georgia, serif" font-size="14" font-weight="500" fill="#F0EEE6">lista de fichas</text>
+    <text x="785" y="84" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="11" fill="#D1CFC5">itens + total</text>
+
+    <rect x="700" y="200" width="170" height="60" rx="10" fill="#141413"/>
+    <text x="785" y="226" text-anchor="middle" font-family="ui-serif, Georgia, serif" font-size="14" font-weight="500" fill="#F0EEE6">coluna de filtro</text>
+    <text x="785" y="244" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="11" fill="#D1CFC5">contagem por item</text>
+
+    <line x1="170" y1="150" x2="228" y2="150" stroke="#87867F" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <line x1="390" y1="140" x2="448" y2="80" stroke="#87867F" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <line x1="390" y1="160" x2="448" y2="220" stroke="#D97757" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#arrow-accent)"/>
+    <line x1="600" y1="70" x2="698" y2="70" stroke="#87867F" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <line x1="600" y1="230" x2="698" y2="230" stroke="#D97757" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#arrow-accent)"/>
+    <text x="649" y="60" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="11" fill="#87867F">página</text>
+    <text x="649" y="220" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="11" fill="#D97757">sem página</text>
+  </svg>
+
+  <h3>A regra da contagem</h3>
+  <p>A contagem de um item responde à pergunta "quantos planos aparecem se eu marcar este item". Dentro de um grupo a seleção é OU, entre grupos é E. Por isso a contagem de um grupo ignora a seleção do próprio grupo e aplica a dos outros dois, mais a busca livre.</p>
+  <table>
+    <thead><tr><th>Seleção atual</th><th>Contagem de "História" (componente)</th><th>Contagem de "7º" (série)</th></tr></thead>
+    <tbody>
+      <tr><td>nenhuma</td><td>planos publicados de História</td><td>planos publicados do 7º</td></tr>
+      <tr><td>9º + Matemática</td><td>planos do 9º com História (Matemática ignorada: mesmo grupo)</td><td>planos de Matemática no 7º (9º ignorado: mesmo grupo)</td></tr>
+      <tr><td>busca "juros"</td><td>planos de História que casam "juros"</td><td>planos do 7º que casam "juros"</td></tr>
+    </tbody>
+  </table>
+  <p>Um item com contagem zero continua na lista e continua clicável. O zero é o aviso. Esconder o item mudaria a posição dos outros a cada toque, e a lista precisa ser estável.</p>
+
+  <h3>O contrato do endpoint</h3>
+  <p><code>GET /api/v1/lesson-plans/facets</code> aceita a mesma querystring da listagem, sem <code>pagina</code> e <code>tamanhoPagina</code>. Conta só plano publicado, como a listagem pública. Responde:</p>
+  <pre><code>{
+  "series":       [ { "id": "guid", "total": 12 }, ... ],
+  "componentes":  [ { "id": "guid", "total": 9 },  ... ],
+  "metodologias": [ { "id": "guid", "total": 5 },  ... ]
+}</code></pre>
+  <p>Quando nada casa, responde <code>200</code> com as três listas vazias, e não <code>204</code> como a listagem: a coluna não pode sumir a cada tecla.</p>
+  <p>Item de vocabulário ausente da resposta vale zero. A resposta só lista ids com pelo menos um plano, o que reduz o corpo. O front cruza com <code>useVocabulario</code> para nome, sigla e cor.</p>
+
+  <h3>A tela no desktop</h3>
+  <p>Acima de <code>lg</code>, <code>PaginaBiblioteca</code> vira um <code>grid</code> de <code>272px</code> mais <code>minmax(0,1fr)</code>. A coluna da esquerda é um <code>aside</code> com borda de 2px. A da direita leva pílulas de seleção, a faixa de contagem e a lista de fichas em duas colunas até <code>xl</code>, três a partir daí.</p>
+  <p>Dentro da coluna:</p>
+  <ul>
+    <li><strong>Busca</strong>: o <code>CampoBusca</code> atual, sem borda própria, separado por traço.</li>
+    <li><strong>Série</strong>: régua de células iguais, uma por série, com o <code>Chip</code> atual. Continua <code>button</code> com <code>aria-pressed</code>, e o rótulo acessível continua <code>rotuloCompleto</code>.</li>
+    <li><strong>Componente e metodologia</strong>: <code>details</code> aberto por padrão, com <code>summary</code> mostrando nome do grupo e total de itens. Cada item é um <code>label</code> com <code>input type="checkbox"</code>, o bloco de sigla colorido no componente, o nome e a contagem à direita em mono.</li>
+    <li><strong>Limite</strong>: cada grupo mostra os 8 primeiros na ordem da API e um botão "mais N". Item marcado aparece sempre, mesmo fora dos 8. O estado aberto ou fechado do "mais" é local ao componente e não vai para a URL.</li>
+  </ul>
+
+  <h3>A tela no celular</h3>
+  <p>Abaixo de <code>lg</code>, a coluna some. No lugar entra um botão "Filtros" de largura total com o número de itens ativos. Ele abre a gaveta: um <code>DialogContent</code> com variante que ocupa a altura toda e sobe de baixo. O conteúdo é o mesmo <code>PainelFiltros</code> do desktop, sem a busca, que fica na página.</p>
+  <p>O rodapé da gaveta tem "Limpar" e "Ver N planos". Os dois fecham a gaveta. Marcar um item aplica na hora, porque escreve na URL; o "Ver" só fecha. Escape e o ✕ do topo também fecham. O Radix cuida do foco.</p>
+  <p>As pílulas de seleção ficam visíveis com a gaveta fechada, para o professor ver o que está marcado sem abrir nada.</p>
+
+  <h2><span class="st-section-num">04</span> Componentes</h2>
+  <table>
+    <thead><tr><th>Peça</th><th>Onde</th><th>O que faz</th></tr></thead>
+    <tbody>
+      <tr><td><code>FacetasDto</code>, <code>ContagemDto</code></td><td><code>Application/Dto/</code></td><td>Contrato de saída do endpoint.</td></tr>
+      <tr><td><code>IPlanoRepository.ContarFacetasAsync(FiltroPlano)</code></td><td><code>Domain/Repositories/Interfaces/</code></td><td>Devolve três listas de <code>(Guid Id, int Total)</code>.</td></tr>
+      <tr><td><code>PlanoRepository.ContarFacetasAsync</code></td><td><code>Infra.Data/Repositories/</code></td><td>Três consultas LINQ com <code>GroupBy</code> sobre as tabelas de junção. Cada uma aplica o filtro base menos o próprio grupo.</td></tr>
+      <tr><td><code>IPlanoAppService.ObterFacetasAsync</code></td><td><code>Application.Core/Services/PlanoAppService.cs</code></td><td>Chama o repositório e mapeia para o DTO.</td></tr>
+      <tr><td><code>LessonPlansController.Facetas</code></td><td><code>Api/Controllers/</code></td><td><code>GET facets</code>, sem <code>[Authorize]</code>, reusa <code>FiltroPlanoRequest</code>.</td></tr>
+      <tr><td><code>obterFacetas</code>, <code>useFacetas</code></td><td><code>web/src/entities/plano/</code></td><td>Chamada tipada e cache por filtro sem página. Fica <code>placeholderData</code> da consulta anterior para a coluna não piscar.</td></tr>
+      <tr><td><code>PainelFiltros</code></td><td><code>web/src/features/filtrar-planos/</code></td><td>Substitui <code>FiltrosPlanos</code>. Recebe vocabulário, seleção, facetas e callbacks. Não conhece URL.</td></tr>
+      <tr><td><code>CaixaMarcar</code></td><td><code>web/src/components/ui/</code></td><td>O <code>input type="checkbox"</code> do sistema. Mora em <code>components/ui</code> porque o lint proíbe <code>input</code> cru fora dali.</td></tr>
+      <tr><td><code>GrupoFiltro</code></td><td><code>web/src/features/filtrar-planos/</code></td><td>Um grupo: <code>details</code>, lista de itens, limite de 8 e "mais N".</td></tr>
+      <tr><td><code>ReguaSeries</code></td><td><code>web/src/features/filtrar-planos/</code></td><td>A régua de <code>Chip</code>, uma célula por série.</td></tr>
+      <tr><td><code>SelecaoAtiva</code></td><td><code>web/src/features/filtrar-planos/</code></td><td>Pílulas com ✕ e o botão "Limpar filtros".</td></tr>
+      <tr><td><code>GavetaFiltros</code></td><td><code>web/src/features/filtrar-planos/</code></td><td>Botão "Filtros" e o <code>Dialog</code> em variante de gaveta, com rodapé.</td></tr>
+      <tr><td><code>PaginaBiblioteca</code></td><td><code>web/src/pages/biblioteca/</code></td><td>O grid de duas colunas e a troca coluna/gaveta por breakpoint.</td></tr>
+    </tbody>
+  </table>
+  <p><code>FiltrosPlanos.tsx</code> sai do repositório quando <code>PainelFiltros</code> entrar. Os testes de <code>useFiltroPlanos</code> não se alteram.</p>
+
+  <h2><span class="st-section-num">05</span> Riscos</h2>
+  <div class="st-callout st-callout--amber">
+    <div class="st-callout-label">Custo da consulta</div>
+    <p>Três <code>GroupBy</code> por requisição, numa base que hiberna. Com o acervo de hoje isso é irrelevante. Se passar de milhares de planos, a saída é uma consulta só com <code>UNION ALL</code>, ou cache de um minuto no AppService. Fica registrado, não se implementa agora.</p>
+  </div>
+  <div class="st-callout st-callout--amber">
+    <div class="st-callout-label">O e2e altera o papel ARIA</div>
+    <p><code>e2e/biblioteca.spec.ts</code> acha "Matemática" por <code>getByRole('button')</code>. Componente vira <code>checkbox</code>. O teste se altera com a tela, no mesmo commit, e o teste "combina dois chips do mesmo grupo" continua provando OU e E.</p>
+  </div>
+  <div class="st-callout st-callout--azure">
+    <div class="st-callout-label">Duas consultas por toque</div>
+    <p>Cada marcação dispara listagem e facetas. O TanStack Query dedupa por chave e as duas correm em paralelo. A faixa de contagem lê o total da listagem, não das facetas, para não haver dois números diferentes na tela.</p>
+  </div>
+  <div class="st-callout st-callout--crimson">
+    <div class="st-callout-label">Regra que não se negocia</div>
+    <p>O endpoint de facetas é público. Nada na Biblioteca fica atrás de <code>RotaProtegida</code> nem de <code>[Authorize]</code>. O teste de guarda existente continua valendo.</p>
+  </div>
+
+  <h2><span class="st-section-num">06</span> Decisões</h2>
+  <table>
+    <thead><tr><th>Decisão</th><th>Alternativa descartada</th><th>Por quê</th></tr></thead>
+    <tbody>
+      <tr><td>Endpoint separado para facetas</td><td>Devolver as facetas junto com a listagem</td><td>A listagem pagina e as facetas não. Misturar obrigaria a recontar a cada troca de página.</td></tr>
+      <tr><td>Contagem ignora o próprio grupo</td><td>Contagem sob o filtro inteiro</td><td>Com OU dentro do grupo, o número sob o filtro inteiro mentiria: "História" mostraria zero enquanto Matemática estivesse marcada.</td></tr>
+      <tr><td>Item com zero fica visível</td><td>Esconder item sem plano</td><td>Lista estável. Item que some e volta a cada toque desorienta.</td></tr>
+      <tr><td>Ordem da API, não por contagem</td><td>Ordenar por total</td><td>Mesmo motivo. E a ordem do vocabulário é decisão do administrador.</td></tr>
+      <tr><td><code>details</code> nativo para dobrar grupo</td><td>Estado React</td><td>Zero estado, acessível de fábrica, sem JS para lembrar.</td></tr>
+      <tr><td>"mais N" com limite 8</td><td>Rolagem interna na coluna</td><td>Rolagem dentro de rolagem esconde conteúdo. O "mais" diz quanto falta.</td></tr>
+      <tr><td>Gaveta sobre o <code>Dialog</code> existente</td><td>Instalar <code>Sheet</code> ou <code>Drawer</code></td><td>Sem dependência nova. Uma classe de variante resolve a posição.</td></tr>
+      <tr><td>Série continua <code>button</code></td><td>Caixa de marcar como os outros</td><td>Sete células fixas cabem numa régua. A régua é a assinatura da direção B.</td></tr>
+      <tr><td>Marcar aplica na hora, também na gaveta</td><td>Aplicar só no "Ver N planos"</td><td>A URL é a fonte da verdade. Um estado pendente na gaveta criaria uma segunda fonte.</td></tr>
+      <tr><td>Busca fora da gaveta no celular</td><td>Busca dentro da gaveta</td><td>Digitar é a ação mais frequente. Não pode custar um toque a mais.</td></tr>
+    </tbody>
+  </table>
+
+  <h2><span class="st-section-num">07</span> Fontes</h2>
+  <p>Acervo apontado em 2026-08-26: o demonstrativo, a direção visual e a spec do vocabulário. O restante é o código atual.</p>
+  <table>
+    <thead><tr><th>Caminho</th><th>O que decide</th></tr></thead>
+    <tbody>
+      <tr><td><code>design/2026-08-26-filtros-biblioteca-opcoes.html</code></td><td>o desenho aprovado da opção B, desktop e celular</td></tr>
+      <tr><td><code>design/tokens.css</code></td><td>paleta, traço, alvo de 44px, fontes</td></tr>
+      <tr><td><code>design/DirecaoB.dc.html</code></td><td>a régua de série e o bloco de sigla como assinatura</td></tr>
+      <tr><td><code>docs/specs/2026-08-24-gestao-vocabulario.md</code></td><td>o vocabulário vem do banco; a rota pública não se altera</td></tr>
+      <tr><td><code>planoteca-api/src/SaraivaTech.Planoteca.Api/Controllers/LessonPlansController.cs</code></td><td>a rota pública, <code>FiltroPlanoRequest</code> e a razão de não ter <code>[Authorize]</code></td></tr>
+      <tr><td><code>planoteca-api/src/SaraivaTech.Planoteca.Domain/Repositories/Interfaces/IPlanoRepository.cs</code></td><td><code>FiltroPlano</code> e a assinatura de <code>BuscarAsync</code></td></tr>
+      <tr><td><code>planoteca-api/src/SaraivaTech.Planoteca.Infra.Data/Repositories/PlanoRepository.cs</code></td><td>como o filtro composto se aplica em LINQ; o <code>Any()</code> nas junções</td></tr>
+      <tr><td><code>planoteca-api/src/SaraivaTech.Planoteca.Infra.Data/Mappings/AcervoMap.cs</code></td><td>as tabelas <code>plano_componente</code>, <code>plano_serie</code> e <code>plano_metodologia</code></td></tr>
+      <tr><td><code>planoteca-api/src/SaraivaTech.Planoteca.Application.Core/Services/PlanoAppService.cs</code></td><td>forma do AppService e do mapeamento para DTO</td></tr>
+      <tr><td><code>planoteca-api/src/SaraivaTech.Planoteca.Application/Dto/VocabularioDto.cs</code></td><td>forma de um DTO de leitura</td></tr>
+      <tr><td><code>planoteca-api/src/SaraivaTech.Planoteca.Infra.CrossCutting/IoC/DependencyInjectionBootStrapper.cs</code></td><td>onde o registro de DI mora, caso surja interface nova</td></tr>
+      <tr><td><code>planoteca-api/tests/SaraivaTech.Planoteca.Test/Integracao/PlanoRepositorioTest.cs</code></td><td>forma do teste de repositório contra PostgreSQL real e o skip sem banco</td></tr>
+      <tr><td><code>planoteca-api/tests/SaraivaTech.Planoteca.Test/Integracao/BaseBancoReal.cs</code></td><td>conexão, limpeza por prefixo <code>[teste-integracao]</code></td></tr>
+      <tr><td><code>planoteca-api/tests/SaraivaTech.Planoteca.Test/Application/PlanoRemocaoTest.cs</code></td><td>forma do teste de AppService com NSubstitute</td></tr>
+      <tr><td><code>planoteca-web/src/pages/biblioteca/PaginaBiblioteca.tsx</code></td><td>o layout atual: header, filtros, lista, paginação</td></tr>
+      <tr><td><code>planoteca-web/src/features/filtrar-planos/FiltrosPlanos.tsx</code></td><td>o componente que sai; os comentários de acessibilidade que ficam</td></tr>
+      <tr><td><code>planoteca-web/src/features/filtrar-planos/useFiltroPlanos.ts</code></td><td>o contrato de seleção que a coluna consome, sem alteração</td></tr>
+      <tr><td><code>planoteca-web/src/entities/plano/api.ts</code></td><td><code>listarPlanos</code>, <code>paraParametros</code> e a forma da chamada tipada</td></tr>
+      <tr><td><code>planoteca-web/src/pages/biblioteca/FichaPlano.tsx</code></td><td>o bloco de sigla com <code>classeCorComponente</code></td></tr>
+      <tr><td><code>planoteca-web/src/entities/vocabulario/modelo.ts</code></td><td>tipos de <code>Vocabulario</code>, <code>classeCorComponente</code> e os quatro tokens de cor</td></tr>
+      <tr><td><code>planoteca-web/src/entities/vocabulario/useVocabulario.ts</code></td><td>chave de cache e <code>staleTime</code></td></tr>
+      <tr><td><code>planoteca-web/src/components/ui/dialog.tsx</code></td><td>o Radix Dialog que vira gaveta</td></tr>
+      <tr><td><code>planoteca-web/src/components/ui/chip.tsx</code></td><td>o chip da régua de série</td></tr>
+      <tr><td><code>planoteca-web/src/shared/api/cliente.ts</code></td><td><code>obter</code> e como array vira querystring repetida</td></tr>
+      <tr><td><code>planoteca-web/src/teste/servidor.ts</code></td><td>handlers MSW de <code>lesson-plans</code> e <code>vocabulary</code></td></tr>
+      <tr><td><code>planoteca-web/e2e/simulacao.ts</code></td><td>o roteador do Playwright e a lógica de filtro da simulação</td></tr>
+      <tr><td><code>planoteca-web/e2e/biblioteca.spec.ts</code></td><td>os três testes e os seletores que se alteram</td></tr>
+      <tr><td><code>planoteca-web/src/app/shell/LayoutPublico.tsx</code></td><td>largura de 1180px e padding por breakpoint</td></tr>
+      <tr><td><code>planoteca-web/scripts/verifica-tokens.mjs</code></td><td>o que o lint reprova em classe e cor</td></tr>
+      <tr><td><code>CLAUDE.md</code></td><td>o portão antes de dizer "pronto"</td></tr>
+    </tbody>
+  </table>
+
+  <h2><span class="st-section-num">08</span> Critérios de aceite</h2>
+  <ul>
+    <li><code>GET /api/v1/lesson-plans/facets</code> responde 200 sem token.</li>
+    <li>Teste de repositório: com seleção 9º + Matemática, a contagem de História conta planos do 9º com História, e a de 7º conta planos de Matemática no 7º.</li>
+    <li>Teste de repositório: plano rascunho não entra em nenhuma contagem.</li>
+    <li>Teste de unidade de <code>GrupoFiltro</code>: com 12 itens mostra 8 e "mais 4"; item marcado na posição 11 aparece sem expandir.</li>
+    <li>Teste de unidade de <code>SelecaoAtiva</code>: ✕ numa pílula chama o callback do grupo certo com o id certo.</li>
+    <li>e2e "filtra por componente e pagina": marca a caixa "Matemática", a URL carrega <code>componente=</code>, recarrega e a caixa continua marcada.</li>
+    <li>e2e "combina dois do mesmo grupo por OU e grupos por E": passa com caixa em componente e botão em série.</li>
+    <li>e2e novo em 390px: "Filtros" abre a gaveta, marca "Matemática", "Ver N planos" fecha, a pílula "Matemática" aparece na página.</li>
+    <li>Teste de guarda "o acervo é público" continua verde.</li>
+    <li><code>npm run lint</code>, <code>npm run test</code>, <code>npm run build</code>, <code>npm run e2e</code> saem com código 0.</li>
+    <li><code>dotnet build</code> e <code>dotnet test</code> saem com código 0.</li>
+    <li><code>python ~/.claude/skills/sem-plastico/scripts/detectar.py</code> nos arquivos novos sai com código 0.</li>
+  </ul>
+</main>
+<footer class="st-footer"><span class="st-mono">2026-08-26</span></footer>
+</body>
+</html>

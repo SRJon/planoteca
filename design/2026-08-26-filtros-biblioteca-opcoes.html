@@ -1,0 +1,409 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Planoteca — duas opções para os filtros da Biblioteca</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Work+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --caneta-900:#1B2739; --caneta-700:#2B4059; --caneta-500:#3A5578; --caneta-100:#E4E9F0;
+  --mimeo-500:#A6522E; --regua-500:#C9A54A; --regua-100:#F7F0DC;
+  --tinta-900:#14161C; --tinta-700:#3A3F4D; --tinta-500:#55596A; --tinta-300:#A9AEC0;
+  --tinta-200:#D5D1C8; --tinta-100:#E7E4DD; --tinta-050:#F2F0EC; --branco:#fff;
+  --comp-portugues:#7A3B4E; --comp-matematica:#3A5578; --comp-ciencias:#2F6B5E;
+  --comp-historia:#8A5A2B; --comp-geografia:#4A6B33; --comp-arte:#6E4076;
+  --comp-edfisica:#2C5F6B; --comp-ingles:#5B4A7A;
+  --comp-filosofia:#5C4630; --comp-sociologia:#6B5340;
+  --comp-biologia:#3E7A54; --comp-quimica:#2F6B6B; --comp-fisica:#4A5A7A;
+  --comp-computacao:#3F4F5F;
+  --display:"Space Grotesk","Trebuchet MS",system-ui,sans-serif;
+  --corpo:"Work Sans",-apple-system,"Segoe UI",system-ui,sans-serif;
+  --dados:"IBM Plex Mono",ui-monospace,"Courier New",monospace;
+  --traco:var(--tinta-900);
+}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--tinta-200);color:var(--tinta-900);
+  font-family:var(--corpo);font-size:14px;line-height:1.45;-webkit-font-smoothing:antialiased}
+
+/* ---- casca do documento ---- */
+.doc{max-width:1420px;margin:0 auto;padding:40px 24px 80px}
+.doc-cabeca{max-width:72ch;margin-bottom:36px}
+.doc-cabeca h1{font-family:var(--display);font-size:32px;line-height:1.15;letter-spacing:-.02em;margin:0 0 12px}
+.doc-cabeca p{margin:0 0 8px;color:var(--tinta-700);font-size:15px;line-height:1.6}
+code{font-family:var(--dados);font-size:12.5px;background:var(--tinta-100);padding:1px 5px;border:1px solid var(--tinta-300)}
+
+.faixa-diag{border:2px solid var(--traco);background:var(--regua-100);padding:16px 20px;margin-bottom:44px;max-width:80ch}
+.faixa-diag h2{font-family:var(--display);font-size:15px;margin:0 0 8px;text-transform:uppercase;letter-spacing:.08em}
+.faixa-diag ul{margin:0;padding-left:20px}
+.faixa-diag li{margin-bottom:5px;color:var(--tinta-700)}
+.faixa-diag li b{color:var(--tinta-900)}
+
+.rotulo-dir{display:flex;align-items:baseline;gap:14px;margin:0 0 4px;flex-wrap:wrap}
+.rotulo-dir .tag{font-family:var(--dados);font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;background:var(--tinta-900);color:var(--tinta-050);padding:4px 9px}
+.rotulo-dir h2{font-family:var(--display);font-size:25px;letter-spacing:-.02em;margin:0}
+.rotulo-nota{max-width:76ch;margin:0 0 18px;color:var(--tinta-700);font-size:14.5px;line-height:1.6}
+
+.moldura{border:3px solid var(--traco);background:var(--tinta-050);margin-bottom:24px;overflow:hidden}
+.moldura-barra{background:var(--tinta-900);color:var(--tinta-300);font-family:var(--dados);font-size:10.5px;letter-spacing:.08em;padding:6px 12px}
+.palco{max-width:1180px;margin:0 auto;padding:20px 24px 28px}
+
+.compara{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin:0 0 64px;max-width:96ch}
+.compara div{border:2px solid var(--traco);background:var(--branco);padding:14px 18px}
+.compara h3{font-family:var(--display);font-size:14px;margin:0 0 8px;letter-spacing:.04em;text-transform:uppercase}
+.compara ul{margin:0;padding-left:18px;color:var(--tinta-700)}
+.compara li{margin-bottom:4px}
+
+/* ---- peças da aplicação real ---- */
+h1.pagina{font-family:var(--display);font-size:28px;letter-spacing:-.02em;margin:0 0 4px;line-height:1.15}
+p.sub{margin:0 0 16px;color:var(--tinta-500)}
+.busca{display:flex;align-items:center;gap:10px;border:2px solid var(--traco);background:var(--branco);padding:0 14px;height:48px;color:var(--tinta-500);font-size:14px}
+.busca svg{flex:none}
+.etiq{font-family:var(--dados);font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--tinta-500);display:block;margin:0 0 7px}
+.grupo{margin-bottom:13px}
+
+.chip{display:inline-flex;align-items:center;justify-content:center;min-height:44px;border:2px solid var(--traco);background:var(--branco);color:var(--tinta-900);font-weight:600;font-size:13px;padding:0 12px;line-height:1.2}
+.chip.on{background:var(--caneta-500);color:#fff}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chips .chip{padding:0 14px}
+.chip.serie{min-width:52px}
+
+/* chip de componente com o bloco de sigla, o mesmo do card */
+.chip.comp{padding:0 12px 0 0;gap:9px;justify-content:flex-start}
+.sigla{display:grid;place-items:center;align-self:stretch;width:34px;color:#fff;font-family:var(--display);font-weight:700;font-size:12px;letter-spacing:.02em;flex:none}
+.chip.comp.on .sigla{box-shadow:inset 3px 0 0 var(--regua-500)}
+.c-pt{background:var(--comp-portugues)} .c-ma{background:var(--comp-matematica)}
+.c-cn{background:var(--comp-ciencias)}  .c-hi{background:var(--comp-historia)}
+.c-ge{background:var(--comp-geografia)} .c-ar{background:var(--comp-arte)}
+.c-ef{background:var(--comp-edfisica)}  .c-in{background:var(--comp-ingles)}
+.c-fl{background:var(--comp-filosofia)} .c-so{background:var(--comp-sociologia)}
+.c-bi{background:var(--comp-biologia)}  .c-qu{background:var(--comp-quimica)}
+.c-fs{background:var(--comp-fisica)}    .c-co{background:var(--comp-computacao)}
+
+.mais{display:inline-flex;align-items:center;min-height:44px;padding:0 6px;font-size:13px;font-weight:700;color:var(--caneta-500);text-decoration:underline;text-underline-offset:3px}
+
+.faixa{display:flex;align-items:center;justify-content:space-between;background:var(--tinta-900);color:var(--tinta-050);padding:10px 13px;font-family:var(--dados);font-size:12.5px;font-weight:600}
+.faixa .limpar{font-family:var(--corpo);color:var(--regua-500);font-weight:700;font-size:13px;text-decoration:underline;text-underline-offset:3px}
+
+.lista{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px}
+.ficha{border:2px solid var(--traco);background:var(--branco);display:flex;flex-direction:column}
+.ficha-topo{display:flex;gap:0;border-bottom:2px solid var(--traco)}
+.ficha-topo .sigla{width:56px;font-size:18px;min-height:64px}
+.ficha-topo div:last-child{padding:10px 12px}
+.ficha-kicker{font-family:var(--dados);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--tinta-500)}
+.ficha h3{font-family:var(--display);font-size:16px;margin:2px 0 0;line-height:1.24}
+.ficha-meta{display:flex;align-items:center;gap:8px;padding:10px 12px;font-size:12.5px;color:var(--tinta-500)}
+.tagm{background:var(--regua-500);color:var(--tinta-900);font-weight:700;font-size:11.5px;padding:3px 8px}
+.ficha-meta code{background:none;border:0;padding:0;font-size:11.5px}
+.bt-baixar{margin:0 12px 12px;border:2px solid var(--traco);background:var(--mimeo-500);color:#fff;font-weight:700;text-align:center;padding:11px;font-size:14px}
+.reticencia{grid-column:1/-1;text-align:center;color:var(--tinta-500);font-family:var(--dados);font-size:11px;letter-spacing:.1em;padding:8px 0 0}
+
+/* ---- opção B: coluna lateral ---- */
+.b-layout{display:grid;grid-template-columns:272px minmax(0,1fr);gap:24px;align-items:start}
+.b-aside{border:2px solid var(--traco);background:var(--branco)}
+.b-aside .busca{border:0;border-bottom:2px solid var(--traco)}
+.b-grupo{border-bottom:2px solid var(--traco)}
+.b-grupo:last-of-type{border-bottom:0}
+.b-cabeca{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;font-family:var(--dados);font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--tinta-500)}
+.b-cabeca .n{color:var(--tinta-300)}
+.b-cabeca .seta{font-family:var(--corpo);font-size:12px;color:var(--tinta-900)}
+.b-serie{display:grid;grid-template-columns:repeat(7,1fr);border-top:2px solid var(--traco)}
+.b-serie span{display:grid;place-items:center;min-height:40px;border-right:2px solid var(--traco);font-weight:600;font-size:12.5px;background:var(--branco)}
+.b-serie span:last-child{border-right:0}
+.b-serie span.on{background:var(--caneta-500);color:#fff}
+.b-lista{list-style:none;margin:0;padding:0 0 6px}
+.b-lista li{display:flex;align-items:center;gap:10px;min-height:38px;padding:0 14px;font-size:13.5px;font-weight:500}
+.b-lista li .caixa{width:16px;height:16px;border:2px solid var(--traco);background:var(--branco);flex:none;display:grid;place-items:center}
+.b-lista li.on{font-weight:700}
+.b-lista li.on .caixa{background:var(--caneta-500);border-color:var(--caneta-500)}
+.b-lista li.on .caixa::after{content:"";width:8px;height:5px;border-left:2px solid #fff;border-bottom:2px solid #fff;transform:translateY(-1px) rotate(-45deg)}
+.b-lista .sigla{width:22px;height:22px;font-size:9.5px}
+.b-lista li .qtd{margin-left:auto;font-family:var(--dados);font-size:11px;color:var(--tinta-300)}
+.b-mais{padding:4px 14px 12px}
+.b-main .faixa{margin-top:0}
+.b-main .lista{margin-top:12px}
+.b-selecao{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:12px;font-size:13px;color:var(--tinta-500)}
+.b-selecao .pill{display:inline-flex;align-items:center;gap:6px;border:2px solid var(--traco);background:var(--branco);padding:4px 8px 4px 10px;font-weight:600;color:var(--tinta-900)}
+.b-selecao .pill i{font-style:normal;color:var(--tinta-500)}
+
+/* celular, opção B */
+.celular{display:grid;grid-template-columns:390px 390px;gap:24px;margin-bottom:24px}
+.tela{border:3px solid var(--traco);background:var(--tinta-050);overflow:hidden}
+.tela .palco{padding:16px 16px 20px}
+.tela .lista{grid-template-columns:1fr}
+.bt-filtros{display:flex;align-items:center;justify-content:space-between;border:2px solid var(--traco);background:var(--branco);padding:12px 14px;font-weight:700;font-size:14px;margin-bottom:12px}
+.bt-filtros span{font-family:var(--dados);font-size:11px;font-weight:600;color:var(--tinta-500);letter-spacing:.06em}
+.gaveta{background:var(--branco);border-top:3px solid var(--traco)}
+.gaveta-topo{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:2px solid var(--traco);font-family:var(--display);font-weight:700;font-size:16px}
+.gaveta-pe{display:flex;gap:8px;padding:12px 16px;border-top:2px solid var(--traco)}
+.gaveta-pe .chip{flex:1;font-size:14px}
+.gaveta-pe .chip.on{background:var(--tinta-900)}
+.fundo-esc{background:var(--tinta-700);padding:0 0 0}
+</style>
+</head>
+<body>
+<div class="doc">
+
+<div class="doc-cabeca">
+  <h1>Filtros da Biblioteca: duas opções</h1>
+  <p>As duas telas abaixo usam o vocabulário real de hoje — 7 séries, 14 componentes e 16 metodologias — com a mesma seleção ligada: <b>9º ano</b>, <b>Matemática</b> e <b>Aprendizagem Baseada em Problemas</b>. As cores, o traço de 2px, o alvo de 44px e as fontes vêm de <code>design/tokens.css</code>. Nada aqui é interativo: é papel.</p>
+  <p>A pergunta que decide: o que acontece quando o painel cadastrar a 40ª metodologia.</p>
+</div>
+
+<div class="faixa-diag">
+  <h2>O que a tela atual faz de errado</h2>
+  <ul>
+    <li><b>Chip esticado.</b> Cada grupo é um <code>grid</code> de colunas iguais. "6º" ganha 72px e "Filosofia" 280px, e o traço de 2px em volta de tanto branco vira caixa vazia.</li>
+    <li><b>Tudo aberto.</b> 37 chips de 44px antes do primeiro plano: uns 700px de filtro. Cada metodologia nova no painel acrescenta uma linha.</li>
+    <li><b>Sem assinatura.</b> O bloco de cor com a sigla — a marca da direção B — está no card e no atalho da landing, mas não no filtro.</li>
+  </ul>
+</div>
+
+<!-- ============================================================ OPÇÃO A -->
+<div class="rotulo-dir"><span class="tag">Opção A</span><h2>Chips com largura própria, grupo longo dobra</h2></div>
+<p class="rotulo-nota">Mesma estrutura de hoje, três correções: o chip mede o texto em vez de esticar para a coluna; o componente ganha o bloco de sigla do card; metodologia mostra 8 e dobra o resto atrás de "mais 8". Item selecionado aparece sempre, mesmo fora dos 8. O filtro cai de ~700px para ~300px.</p>
+
+<div class="moldura">
+  <div class="moldura-barra">planoteca.com.br/biblioteca — 1180 × conteúdo</div>
+  <div class="palco">
+    <h1 class="pagina">Biblioteca</h1>
+    <p class="sub">Prontos para levar para a sala. Filtre por série, componente ou metodologia.</p>
+
+    <div class="grupo"><div class="busca">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="7" cy="7" r="5"/><path d="M11 11l3.5 3.5"/></svg>
+      Assunto, autoria ou objeto de conhecimento
+    </div></div>
+
+    <div class="grupo">
+      <span class="etiq">Série</span>
+      <div class="chips">
+        <span class="chip serie">6º</span><span class="chip serie">7º</span><span class="chip serie">8º</span><span class="chip serie on">9º</span><span class="chip serie">1ª EM</span><span class="chip serie">2ª EM</span><span class="chip serie">3ª EM</span>
+      </div>
+    </div>
+
+    <div class="grupo">
+      <span class="etiq">Componente</span>
+      <div class="chips">
+        <span class="chip comp"><span class="sigla c-hi">HI</span>História</span>
+        <span class="chip comp"><span class="sigla c-ge">GE</span>Geografia</span>
+        <span class="chip comp"><span class="sigla c-fl">FL</span>Filosofia</span>
+        <span class="chip comp"><span class="sigla c-so">SO</span>Sociologia</span>
+        <span class="chip comp"><span class="sigla c-cn">CN</span>Ciências</span>
+        <span class="chip comp"><span class="sigla c-bi">BI</span>Biologia</span>
+        <span class="chip comp"><span class="sigla c-fs">FS</span>Física</span>
+        <span class="chip comp"><span class="sigla c-qu">QU</span>Química</span>
+        <span class="chip comp"><span class="sigla c-co">CO</span>Computação</span>
+        <span class="chip comp"><span class="sigla c-pt">PT</span>Língua Portuguesa</span>
+        <span class="chip comp"><span class="sigla c-ar">AR</span>Arte</span>
+        <span class="chip comp"><span class="sigla c-ef">EF</span>Educação Física</span>
+        <span class="chip comp"><span class="sigla c-in">IN</span>Língua Inglesa</span>
+        <span class="chip comp on"><span class="sigla c-ma">MA</span>Matemática</span>
+      </div>
+    </div>
+
+    <div class="grupo">
+      <span class="etiq">Metodologia</span>
+      <div class="chips">
+        <span class="chip">A Escrita Através do Currículo</span>
+        <span class="chip">Aprendizagem Baseada em Equipes</span>
+        <span class="chip">Aprendizagem Baseada em Jogos</span>
+        <span class="chip on">Aprendizagem Baseada em Problemas</span>
+        <span class="chip">Aprendizagem Baseada em Projetos</span>
+        <span class="chip">Aprendizagem por Pares</span>
+        <span class="chip">Design Thinking</span>
+        <span class="chip">Ensino Sob Medida</span>
+        <span class="mais">mais 8</span>
+      </div>
+    </div>
+
+    <div class="faixa"><span>3 planos</span><span class="limpar">✕ Limpar filtros</span></div>
+
+    <div class="lista">
+      <div class="ficha">
+        <div class="ficha-topo"><span class="sigla c-ma">MA</span><div><div class="ficha-kicker">Matemática · 9º ano</div><h3>Juros compostos na conta do mercado</h3></div></div>
+        <div class="ficha-meta"><span class="tagm">ABP</span>2 aulas <code>EF09MA05</code></div>
+        <div class="bt-baixar">⤓ Baixar plano</div>
+      </div>
+      <div class="ficha">
+        <div class="ficha-topo"><span class="sigla c-ma">MA</span><div><div class="ficha-kicker">Matemática · 9º ano</div><h3>Quem paga a conta da escola?</h3></div></div>
+        <div class="ficha-meta"><span class="tagm">ABP</span>Sequência didática <code>EF09MA14</code></div>
+        <div class="bt-baixar">⤓ Baixar plano</div>
+      </div>
+      <div class="ficha">
+        <div class="ficha-topo"><span class="sigla c-ma">MA</span><div><div class="ficha-kicker">Matemática · 9º ano</div><h3>O metro quadrado da quadra</h3></div></div>
+        <div class="ficha-meta"><span class="tagm">ABP</span>1 aula <code>EF09MA19</code></div>
+        <div class="bt-baixar">⤓ Baixar plano</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="compara">
+  <div><h3>A favor</h3><ul>
+    <li>Toca só <code>FiltrosPlanos.tsx</code> e <code>chip.tsx</code>. Hook, URL, API e e2e ficam como estão.</li>
+    <li>Todo componente à vista, com a cor: o professor bate o olho e acha a matéria.</li>
+    <li>Escala: 40 metodologias são a mesma linha e "mais 32".</li>
+    <li>No celular, é a mesma tela empilhada, sem gaveta nem estado extra.</li>
+  </ul></div>
+  <div><h3>Contra</h3><ul>
+    <li>Ainda são ~300px de filtro antes do primeiro card. Em monitor baixo, o primeiro plano fica abaixo da dobra.</li>
+    <li>Com 30 componentes, a grade de chips vira 4 linhas. Dobra não cabe bem aí: a matéria não pode ficar escondida.</li>
+    <li>"mais 8" esconde metodologias que ninguém sabe que existem. Quem não conhece o termo não expande.</li>
+  </ul></div>
+</div>
+
+<!-- ============================================================ OPÇÃO B -->
+<div class="rotulo-dir"><span class="tag">Opção B</span><h2>Coluna lateral, o catálogo</h2></div>
+<p class="rotulo-nota">No desktop, o filtro vira uma coluna de 272px à esquerda e os planos ocupam o resto, do topo. Cada grupo é uma lista vertical com caixa de marcar, o número de planos ao lado e um dobrar por grupo. Série continua régua, porque são 7 casas fixas. No celular, a coluna vira gaveta atrás de um botão "Filtros", e a seleção atual aparece em pílulas acima da lista.</p>
+
+<div class="moldura">
+  <div class="moldura-barra">planoteca.com.br/biblioteca — 1180 × conteúdo</div>
+  <div class="palco">
+    <h1 class="pagina">Biblioteca</h1>
+    <p class="sub">Prontos para levar para a sala. Filtre por série, componente ou metodologia.</p>
+
+    <div class="b-layout">
+      <aside class="b-aside">
+        <div class="busca">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="7" cy="7" r="5"/><path d="M11 11l3.5 3.5"/></svg>
+          Assunto, autoria…
+        </div>
+
+        <div class="b-grupo">
+          <div class="b-cabeca"><span>Série</span></div>
+          <div class="b-serie"><span>6º</span><span>7º</span><span>8º</span><span class="on">9º</span><span>1ªEM</span><span>2ªEM</span><span>3ªEM</span></div>
+        </div>
+
+        <div class="b-grupo">
+          <div class="b-cabeca"><span>Componente <span class="n">· 14</span></span><span class="seta">▾</span></div>
+          <ul class="b-lista">
+            <li class="on"><span class="caixa"></span><span class="sigla c-ma">MA</span>Matemática<span class="qtd">12</span></li>
+            <li><span class="caixa"></span><span class="sigla c-hi">HI</span>História<span class="qtd">9</span></li>
+            <li><span class="caixa"></span><span class="sigla c-ge">GE</span>Geografia<span class="qtd">7</span></li>
+            <li><span class="caixa"></span><span class="sigla c-cn">CN</span>Ciências<span class="qtd">6</span></li>
+            <li><span class="caixa"></span><span class="sigla c-pt">PT</span>Língua Portuguesa<span class="qtd">6</span></li>
+            <li><span class="caixa"></span><span class="sigla c-bi">BI</span>Biologia<span class="qtd">4</span></li>
+            <li><span class="caixa"></span><span class="sigla c-fl">FL</span>Filosofia<span class="qtd">3</span></li>
+            <li><span class="caixa"></span><span class="sigla c-ar">AR</span>Arte<span class="qtd">2</span></li>
+          </ul>
+          <div class="b-mais"><span class="mais" style="min-height:0">mais 6</span></div>
+        </div>
+
+        <div class="b-grupo">
+          <div class="b-cabeca"><span>Metodologia <span class="n">· 16</span></span><span class="seta">▾</span></div>
+          <ul class="b-lista">
+            <li class="on"><span class="caixa"></span>Aprendizagem Baseada em Problemas<span class="qtd">5</span></li>
+            <li><span class="caixa"></span>Rotação por Estações<span class="qtd">4</span></li>
+            <li><span class="caixa"></span>Sala de Aula Invertida<span class="qtd">4</span></li>
+            <li><span class="caixa"></span>Estudo de Casos<span class="qtd">3</span></li>
+            <li><span class="caixa"></span>Gamificação<span class="qtd">3</span></li>
+            <li><span class="caixa"></span>Design Thinking<span class="qtd">2</span></li>
+          </ul>
+          <div class="b-mais"><span class="mais" style="min-height:0">mais 10</span></div>
+        </div>
+      </aside>
+
+      <div class="b-main">
+        <div class="b-selecao">
+          <span class="pill">9º ano <i>✕</i></span>
+          <span class="pill">Matemática <i>✕</i></span>
+          <span class="pill">Aprendizagem Baseada em Problemas <i>✕</i></span>
+          <span class="mais" style="min-height:0">Limpar</span>
+        </div>
+        <div class="faixa"><span>3 planos</span><span style="font-weight:500;color:var(--tinta-300)">ordenados pelos mais recentes</span></div>
+        <div class="lista" style="grid-template-columns:repeat(2,1fr)">
+          <div class="ficha">
+            <div class="ficha-topo"><span class="sigla c-ma">MA</span><div><div class="ficha-kicker">Matemática · 9º ano</div><h3>Juros compostos na conta do mercado</h3></div></div>
+            <div class="ficha-meta"><span class="tagm">ABP</span>2 aulas <code>EF09MA05</code></div>
+            <div class="bt-baixar">⤓ Baixar plano</div>
+          </div>
+          <div class="ficha">
+            <div class="ficha-topo"><span class="sigla c-ma">MA</span><div><div class="ficha-kicker">Matemática · 9º ano</div><h3>Quem paga a conta da escola?</h3></div></div>
+            <div class="ficha-meta"><span class="tagm">ABP</span>Sequência didática <code>EF09MA14</code></div>
+            <div class="bt-baixar">⤓ Baixar plano</div>
+          </div>
+          <div class="ficha">
+            <div class="ficha-topo"><span class="sigla c-ma">MA</span><div><div class="ficha-kicker">Matemática · 9º ano</div><h3>O metro quadrado da quadra</h3></div></div>
+            <div class="ficha-meta"><span class="tagm">ABP</span>1 aula <code>EF09MA19</code></div>
+            <div class="bt-baixar">⤓ Baixar plano</div>
+          </div>
+          <div class="reticencia">· · ·</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="rotulo-nota">No celular a coluna não cabe. À esquerda, a lista com o botão que abre a gaveta; à direita, a gaveta aberta. A seleção fica visível nas pílulas mesmo com a gaveta fechada.</p>
+
+<div class="celular">
+  <div class="tela">
+    <div class="moldura-barra">390 × 844 — gaveta fechada</div>
+    <div class="palco">
+      <h1 class="pagina" style="font-size:24px">Biblioteca</h1>
+      <p class="sub" style="font-size:13px">Prontos para levar para a sala.</p>
+      <div class="bt-filtros">Filtros <span>3 ATIVOS ▸</span></div>
+      <div class="b-selecao">
+        <span class="pill">9º <i>✕</i></span><span class="pill">Matemática <i>✕</i></span><span class="pill">ABP <i>✕</i></span>
+      </div>
+      <div class="faixa"><span>3 planos</span></div>
+      <div class="lista">
+        <div class="ficha">
+          <div class="ficha-topo"><span class="sigla c-ma">MA</span><div><div class="ficha-kicker">Matemática · 9º ano</div><h3>Juros compostos na conta do mercado</h3></div></div>
+          <div class="ficha-meta"><span class="tagm">ABP</span>2 aulas <code>EF09MA05</code></div>
+          <div class="bt-baixar">⤓ Baixar plano</div>
+        </div>
+        <div class="ficha">
+          <div class="ficha-topo"><span class="sigla c-ma">MA</span><div><div class="ficha-kicker">Matemática · 9º ano</div><h3>Quem paga a conta da escola?</h3></div></div>
+          <div class="ficha-meta"><span class="tagm">ABP</span>Sequência didática <code>EF09MA14</code></div>
+          <div class="bt-baixar">⤓ Baixar plano</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tela fundo-esc">
+    <div class="moldura-barra">390 × 844 — gaveta aberta</div>
+    <div style="height:60px"></div>
+    <div class="gaveta">
+      <div class="gaveta-topo">Filtros <span style="font-family:var(--corpo);font-weight:500;font-size:14px">✕</span></div>
+      <div class="b-grupo">
+        <div class="b-cabeca"><span>Série</span></div>
+        <div class="b-serie"><span>6º</span><span>7º</span><span>8º</span><span class="on">9º</span><span>1ªEM</span><span>2ªEM</span><span>3ªEM</span></div>
+      </div>
+      <div class="b-grupo">
+        <div class="b-cabeca"><span>Componente <span class="n">· 14</span></span><span class="seta">▾</span></div>
+        <ul class="b-lista">
+          <li class="on"><span class="caixa"></span><span class="sigla c-ma">MA</span>Matemática<span class="qtd">12</span></li>
+          <li><span class="caixa"></span><span class="sigla c-hi">HI</span>História<span class="qtd">9</span></li>
+          <li><span class="caixa"></span><span class="sigla c-ge">GE</span>Geografia<span class="qtd">7</span></li>
+          <li><span class="caixa"></span><span class="sigla c-cn">CN</span>Ciências<span class="qtd">6</span></li>
+        </ul>
+        <div class="b-mais"><span class="mais" style="min-height:0">mais 10</span></div>
+      </div>
+      <div class="b-grupo">
+        <div class="b-cabeca"><span>Metodologia <span class="n">· 16</span></span><span class="seta">▸</span></div>
+      </div>
+      <div class="gaveta-pe"><span class="chip">Limpar</span><span class="chip on">Ver 3 planos</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="compara">
+  <div><h3>A favor</h3><ul>
+    <li>Os planos aparecem no topo, ao lado do filtro. Nada fica abaixo da dobra por causa de chip.</li>
+    <li>Lista vertical escala sem limite: 40 metodologias são rolagem dentro da coluna, não altura da página.</li>
+    <li>O número ao lado de cada item diz de antemão o que vai devolver. Adeus chip que resulta em lista vazia.</li>
+    <li>É a forma que o professor já conhece de qualquer catálogo.</li>
+  </ul></div>
+  <div><h3>Contra</h3><ul>
+    <li>Mexe em <code>PaginaBiblioteca</code>, ganha gaveta no celular (estado aberto/fechado, foco, Escape) e pílulas de seleção. Três componentes novos.</li>
+    <li>A contagem por item pede um endpoint novo na API (facetas). Sem ele, a coluna fica sem número, que é parte do apelo.</li>
+    <li>O e2e muda: chip vira caixa de marcar, o papel ARIA muda de <code>button</code> para <code>checkbox</code>.</li>
+    <li>Passa pelo <code>frontend-design</code> antes de codar. É desenho novo, não correção.</li>
+  </ul></div>
+</div>
+
+</div>
+</body>
+</html>
