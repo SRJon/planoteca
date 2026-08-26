@@ -2264,7 +2264,7 @@ git commit -m "feat(biblioteca): painel de filtro que compõe régua e grupos"
 - Produces: `CLASSE_GAVETA: string` exportada de `components/ui/dialog.tsx`.
 - Produces: `GavetaFiltros(props: PainelFiltrosProps & { totalAtivos: number; totalPlanos: number; aoLimpar: () => void })`
 
-- [ ] **Step 1: Escrever o teste que falha**
+- [x] **Step 1: Escrever o teste que falha**
 
 ```tsx
 import { render, screen } from '@testing-library/react'
@@ -2377,7 +2377,7 @@ describe('GavetaFiltros', () => {
 })
 ```
 
-- [ ] **Step 2: Executar e confirmar a falha**
+- [x] **Step 2: Executar e confirmar a falha**
 
 ```bash
 cd planoteca-web && npx vitest run src/features/filtrar-planos/GavetaFiltros.test.tsx
@@ -2385,7 +2385,7 @@ cd planoteca-web && npx vitest run src/features/filtrar-planos/GavetaFiltros.tes
 
 Esperado: `Failed to resolve import "./GavetaFiltros"`.
 
-- [ ] **Step 3: Acrescentar a variante de gaveta ao `dialog.tsx`**
+- [x] **Step 3: Acrescentar a variante de gaveta ao `dialog.tsx`**
 
 Sem dependência nova: `DialogContent` já é um `Dialog.Content` do Radix com
 `className` aberto. A gaveta é a mesma peça com outra geometria — colada ao
@@ -2423,7 +2423,7 @@ const CLASSE_GAVETA =
 
 E acrescente `CLASSE_GAVETA` à lista de `export { ... }` do fim do arquivo.
 
-- [ ] **Step 4: Escrever `GavetaFiltros`**
+- [x] **Step 4: Escrever `GavetaFiltros`**
 
 ```tsx
 import { useState } from 'react'
@@ -2536,13 +2536,13 @@ export function GavetaFiltros({
 }
 ```
 
-- [ ] **Step 5: Exportar pelo índice da fatia**
+- [x] **Step 5: Exportar pelo índice da fatia**
 
 ```ts
 export { GavetaFiltros } from './GavetaFiltros'
 ```
 
-- [ ] **Step 6: Executar e confirmar que passa**
+- [x] **Step 6: Executar e confirmar que passa**
 
 ```bash
 cd planoteca-web && npx vitest run src/features/filtrar-planos/GavetaFiltros.test.tsx
@@ -2550,7 +2550,7 @@ cd planoteca-web && npx vitest run src/features/filtrar-planos/GavetaFiltros.tes
 
 Esperado: `8 passed`.
 
-- [ ] **Step 7: Confirmar que nenhuma dependência entrou**
+- [x] **Step 7: Confirmar que nenhuma dependência entrou**
 
 ```bash
 cd planoteca-web && git diff --stat package.json package-lock.json
@@ -2559,7 +2559,7 @@ cd planoteca-web && git diff --stat package.json package-lock.json
 Esperado: saída vazia. A restrição global da spec diz "sem dependência nova no
 front"; qualquer linha aqui significa que a gaveta virou biblioteca.
 
-- [ ] **Step 8: Commitar**
+- [x] **Step 8: Commitar**
 
 ```bash
 git add planoteca-web/src/components/ui/dialog.tsx planoteca-web/src/features/filtrar-planos
