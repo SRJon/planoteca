@@ -91,16 +91,16 @@ MSW e Playwright.
 - `planoteca-api/src/SaraivaTech.Planoteca.Application.Core/Services/PlanoAppService.cs` — forma do AppService e do mapeamento para DTO
 
 **Files:**
-- Create: `src/SaraivaTech.Planoteca.Application/Dto/FacetasDto.cs`
-- Modify: `src/SaraivaTech.Planoteca.Domain/Repositories/Interfaces/IPlanoRepository.cs`
-- Modify: `src/SaraivaTech.Planoteca.Application/Services/IPlanoAppService.cs`
+- Create: `planoteca-api/src/SaraivaTech.Planoteca.Application/Dto/FacetasDto.cs`
+- Modify: `planoteca-api/src/SaraivaTech.Planoteca.Domain/Repositories/Interfaces/IPlanoRepository.cs`
+- Modify: `planoteca-api/src/SaraivaTech.Planoteca.Application/Services/IPlanoAppService.cs`
 
 **Interfaces:**
 - Produces: `Task<ContagemFacetas> ContarFacetasAsync(FiltroPlano filtro)`
 - Produces: `Task<FacetasDto> ObterFacetasAsync(FiltroPlano filtro)`
 - Produces: `ContagemFacetas` — três `IReadOnlyList<FacetaContada>` de `(Guid Id, int Total)`
 
-- [ ] **Step 1: Escrever o DTO de saída**
+- [x] **Step 1: Escrever o DTO de saída**
 
 `FacetasDto` é o corpo de `GET /lesson-plans/facets` do RF-01. Ele é só
 contagem: nome, sigla e cor já chegam por `GET /vocabulary`. Repeti-los aqui
@@ -138,7 +138,7 @@ namespace SaraivaTech.Planoteca.Application.Dto
 }
 ```
 
-- [ ] **Step 2: Escrever o tipo de domínio da contagem**
+- [x] **Step 2: Escrever o tipo de domínio da contagem**
 
 `ContarFacetasAsync` não pode devolver `FacetasDto`: o repositório mora no
 Domain, e o DTO mora no Application. `ContagemFacetas` vive ao lado de
@@ -184,7 +184,7 @@ E dentro de `IPlanoRepository`, depois de `BuscarAsync`:
         Task<ContagemFacetas> ContarFacetasAsync(FiltroPlano filtro);
 ```
 
-- [ ] **Step 3: Ampliar a interface do AppService**
+- [x] **Step 3: Ampliar a interface do AppService**
 
 Em `IPlanoAppService`, depois de `ListarAsync`:
 
@@ -194,7 +194,7 @@ Em `IPlanoAppService`, depois de `ListarAsync`:
         Task<FacetasDto> ObterFacetasAsync(FiltroPlano filtro);
 ```
 
-- [ ] **Step 4: Compilar e confirmar a falha esperada**
+- [x] **Step 4: Compilar e confirmar a falha esperada**
 
 ```bash
 cd planoteca-api && dotnet build
@@ -204,7 +204,7 @@ Esperado: erro `CS0535` em `PlanoRepository` e em `PlanoAppService`, porque
 nenhum dos dois implementa ainda o método novo da sua interface. As Tasks 2 e 3
 fecham cada um.
 
-- [ ] **Step 5: Commitar**
+- [x] **Step 5: Commitar**
 
 ```bash
 git add planoteca-api/src
@@ -226,7 +226,7 @@ git commit -m "feat(plano): contrato de facetas no domínio e na aplicação"
 - `planoteca-api/tests/SaraivaTech.Planoteca.Test/Integracao/BaseBancoReal.cs` — conexão, limpeza por prefixo `[teste-integracao]`
 
 **Files:**
-- Modify: `src/SaraivaTech.Planoteca.Infra.Data/Repositories/PlanoRepository.cs`
+- Modify: `planoteca-api/src/SaraivaTech.Planoteca.Infra.Data/Repositories/PlanoRepository.cs`
 - Test: `tests/SaraivaTech.Planoteca.Test/Integracao/PlanoRepositorioTest.cs`
 
 **Interfaces:**
@@ -534,7 +534,7 @@ git commit -m "feat(plano): conta as facetas do filtro no repositório"
 - `planoteca-api/tests/SaraivaTech.Planoteca.Test/Application/PlanoRemocaoTest.cs` — forma do teste de AppService com NSubstitute
 
 **Files:**
-- Modify: `src/SaraivaTech.Planoteca.Application.Core/Services/PlanoAppService.cs`
+- Modify: `planoteca-api/src/SaraivaTech.Planoteca.Application.Core/Services/PlanoAppService.cs`
 - Test: `tests/SaraivaTech.Planoteca.Test/Application/PlanoFacetasTest.cs`
 
 **Interfaces:**
@@ -705,7 +705,7 @@ git commit -m "feat(plano): traduz a contagem de facetas para DTO"
 - `docs/specs/2026-08-26-filtros-biblioteca.md` — RF-01
 
 **Files:**
-- Modify: `src/SaraivaTech.Planoteca.Api/Controllers/LessonPlansController.cs`
+- Modify: `planoteca-api/src/SaraivaTech.Planoteca.Api/Controllers/LessonPlansController.cs`
 
 **Interfaces:**
 - Consumes: `IPlanoAppService.ObterFacetasAsync` da Task 3.
@@ -807,14 +807,14 @@ git commit -m "feat(api): expõe GET /lesson-plans/facets"
 - `planoteca-web/e2e/simulacao.ts` — o roteador do Playwright e a lógica de filtro da simulação
 
 **Files:**
-- Modify: `src/entities/plano/modelo.ts`
-- Modify: `src/entities/plano/api.ts`
-- Create: `src/entities/plano/useFacetas.ts`
-- Modify: `src/entities/plano/index.ts`
-- Modify: `src/teste/planos.ts`
-- Modify: `src/teste/servidor.ts`
-- Modify: `e2e/simulacao.ts`
-- Test: `src/entities/plano/useFacetas.test.tsx`
+- Modify: `planoteca-web/src/entities/plano/modelo.ts`
+- Modify: `planoteca-web/src/entities/plano/api.ts`
+- Create: `planoteca-web/src/entities/plano/useFacetas.ts`
+- Modify: `planoteca-web/src/entities/plano/index.ts`
+- Modify: `planoteca-web/src/teste/planos.ts`
+- Modify: `planoteca-web/src/teste/servidor.ts`
+- Modify: `planoteca-web/e2e/simulacao.ts`
+- Test: `planoteca-web/src/entities/plano/useFacetas.test.tsx`
 
 **Interfaces:**
 - Consumes: `GET /api/v1/lesson-plans/facets` das Tasks 1 a 4.
@@ -1162,8 +1162,8 @@ git commit -m "feat(biblioteca): busca as contagens por item do vocabulário"
 - `planoteca-web/src/entities/vocabulario/modelo.ts` — tipos de `Vocabulario`, `classeCorComponente` e os quatro tokens de cor
 
 **Files:**
-- Create: `src/features/filtrar-planos/ReguaSeries.tsx`
-- Test: `src/features/filtrar-planos/ReguaSeries.test.tsx`
+- Create: `planoteca-web/src/features/filtrar-planos/ReguaSeries.tsx`
+- Test: `planoteca-web/src/features/filtrar-planos/ReguaSeries.test.tsx`
 
 **Interfaces:**
 - Consumes: `Serie` de `@/entities/vocabulario`, `Chip` de `@/components/ui/chip`.
@@ -1344,9 +1344,9 @@ git commit -m "feat(biblioteca): régua de série como componente próprio"
 - `planoteca-web/src/components/ui/chip.tsx` — o chip da régua de série
 
 **Files:**
-- Create: `src/components/ui/caixa-marcar.tsx`
-- Create: `src/features/filtrar-planos/GrupoFiltro.tsx`
-- Test: `src/features/filtrar-planos/GrupoFiltro.test.tsx`
+- Create: `planoteca-web/src/components/ui/caixa-marcar.tsx`
+- Create: `planoteca-web/src/features/filtrar-planos/GrupoFiltro.tsx`
+- Test: `planoteca-web/src/features/filtrar-planos/GrupoFiltro.test.tsx`
 
 **Interfaces:**
 - Consumes: `ContagemFaceta` de `@/entities/plano`, `classeCorComponente` de `@/entities/vocabulario`.
@@ -1750,8 +1750,8 @@ git commit -m "feat(biblioteca): grupo de filtro com contagem e dobra"
 - `planoteca-web/src/entities/vocabulario/modelo.ts` — tipos de `Vocabulario`, `classeCorComponente` e os quatro tokens de cor
 
 **Files:**
-- Create: `src/features/filtrar-planos/SelecaoAtiva.tsx`
-- Test: `src/features/filtrar-planos/SelecaoAtiva.test.tsx`
+- Create: `planoteca-web/src/features/filtrar-planos/SelecaoAtiva.tsx`
+- Test: `planoteca-web/src/features/filtrar-planos/SelecaoAtiva.test.tsx`
 
 **Interfaces:**
 - Consumes: `Vocabulario` de `@/entities/vocabulario`.
@@ -2002,9 +2002,9 @@ git commit -m "feat(biblioteca): pílulas da seleção ativa"
 - `planoteca-web/src/components/ui/chip.tsx` — o chip da régua de série
 
 **Files:**
-- Create: `src/features/filtrar-planos/PainelFiltros.tsx`
-- Modify: `src/features/filtrar-planos/index.ts`
-- Test: `src/features/filtrar-planos/PainelFiltros.test.tsx`
+- Create: `planoteca-web/src/features/filtrar-planos/PainelFiltros.tsx`
+- Modify: `planoteca-web/src/features/filtrar-planos/index.ts`
+- Test: `planoteca-web/src/features/filtrar-planos/PainelFiltros.test.tsx`
 
 **Interfaces:**
 - Consumes: `ReguaSeries` (Task 6), `GrupoFiltro` (Task 7), `Facetas` (Task 5).
@@ -2247,10 +2247,10 @@ git commit -m "feat(biblioteca): painel de filtro que compõe régua e grupos"
 - `planoteca-web/scripts/verifica-tokens.mjs` — o que o lint reprova em classe e cor
 
 **Files:**
-- Modify: `src/components/ui/dialog.tsx`
-- Create: `src/features/filtrar-planos/GavetaFiltros.tsx`
-- Modify: `src/features/filtrar-planos/index.ts`
-- Test: `src/features/filtrar-planos/GavetaFiltros.test.tsx`
+- Modify: `planoteca-web/src/components/ui/dialog.tsx`
+- Create: `planoteca-web/src/features/filtrar-planos/GavetaFiltros.tsx`
+- Modify: `planoteca-web/src/features/filtrar-planos/index.ts`
+- Test: `planoteca-web/src/features/filtrar-planos/GavetaFiltros.test.tsx`
 
 **Interfaces:**
 - Consumes: `PainelFiltros` (Task 9), `Dialog` de `@/components/ui/dialog`.
@@ -2577,10 +2577,10 @@ git commit -m "feat(biblioteca): gaveta de filtro no celular sobre o Dialog"
 - `planoteca-web/scripts/verifica-tokens.mjs` — o que o lint reprova em classe e cor
 
 **Files:**
-- Modify: `src/pages/biblioteca/PaginaBiblioteca.tsx`
+- Modify: `planoteca-web/src/pages/biblioteca/PaginaBiblioteca.tsx`
 - Delete: `src/features/filtrar-planos/FiltrosPlanos.tsx`
-- Modify: `src/features/filtrar-planos/index.ts`
-- Test: `src/pages/biblioteca/PaginaBiblioteca.test.tsx`
+- Modify: `planoteca-web/src/features/filtrar-planos/index.ts`
+- Test: `planoteca-web/src/pages/biblioteca/PaginaBiblioteca.test.tsx`
 
 **Interfaces:**
 - Consumes: `PainelFiltros`, `SelecaoAtiva`, `GavetaFiltros`, `useFacetas`.
@@ -2975,7 +2975,7 @@ git commit -m "feat(biblioteca): filtro em coluna lateral, gaveta no celular"
 - `design/2026-08-26-filtros-biblioteca-opcoes.html` — o desenho aprovado da opção B, desktop e celular
 
 **Files:**
-- Modify: `e2e/biblioteca.spec.ts`
+- Modify: `planoteca-web/e2e/biblioteca.spec.ts`
 
 **Interfaces:**
 - Consumes: a tela da Task 11 e o handler de facetas da Task 5.
