@@ -77,6 +77,7 @@ export const TOKENS_COR_MARCA = [
   'ok', 'ok-bg', 'warn', 'warn-bg', 'err', 'err-bg', 'info', 'info-bg',
   'side-bg', 'side-ink', 'side-ativo-bg', 'side-ativo-ink', 'side-marca',
   'inverso-bg', 'inverso-bg-2', 'inverso-ink', 'inverso-ink-2', 'inverso-linha',
+  'campo',
 ] as const
 
 /**

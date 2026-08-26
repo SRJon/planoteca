@@ -68,3 +68,22 @@ test('no celular, tocar no card abre os componentes da área', async ({ page }) 
   await expect(cabecalho).toHaveAttribute('aria-expanded', 'true')
   await expect(page.getByRole('link', { name: 'História' })).toBeVisible()
 })
+
+/** O único publicado da fixture — ver `POSTS_FIXTURE` em `src/teste/planos.ts`. */
+const POST_PUBLICADO = {
+  id: '70000000-0000-0000-0000-000000000001',
+  titulo: 'Escape Room na aula de Química',
+}
+
+test('o título de um relato na landing leva à ficha do texto no Blog', async ({ page }) => {
+  await instalarSimulacao(page)
+  await page.goto('/')
+
+  const titulo = page.getByRole('link', { name: POST_PUBLICADO.titulo })
+  await expect(titulo).toBeVisible()
+
+  await titulo.click()
+
+  await expect(page).toHaveURL(new RegExp(`/blog/${POST_PUBLICADO.id}$`))
+  await expect(page.getByRole('heading', { name: POST_PUBLICADO.titulo })).toBeVisible()
+})

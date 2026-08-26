@@ -74,3 +74,12 @@ nova só fecha depois de OLHAR a captura — desktop, estado aberto e 390px.
 **`getByRole('button', { expanded: false }).first()` não é "o primeiro
 card".** Pegou o menu de acessibilidade da barra, que também é
 `aria-expanded`. Selecione pelo nome acessível.
+
+**Classe de token inexistente passa em silêncio.** `bg-campo` estava
+prometida num comentário do `tema.css`, mas `--color-campo` nunca foi
+declarada no `@theme`. O Tailwind ignora a classe, o `verifica-tokens`
+não acusa (ele caça valor cru, não nome sem dono), e o campo ficou
+transparente sobre o hero. Antes de usar `bg-<nome>` novo, confira
+`grep -- "--color-<nome>" tema.css`. Duas capturas seguidas mostraram o
+campo escuro e eu li "confirmado" na primeira — captura se lê com atenção,
+não de relance.

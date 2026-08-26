@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event'
 import { MemoryRouter, Route, Routes, useLocation } from 'react-router'
 import { describe, expect, it } from 'vitest'
 import { criarCliente } from '@/shared/api'
-import { COMPONENTES_FIXTURE } from '@/teste/planos'
+import { COMPONENTES_FIXTURE, POSTS_FIXTURE } from '@/teste/planos'
 import { PaginaInicio } from './PaginaInicio'
 
 const BASE = 'https://api.teste'
@@ -45,6 +45,10 @@ const AREAS_ESPERADAS = [...new Set(COMPONENTES_FIXTURE.map((c) => c.area))]
 const HUMANAS = COMPONENTES_FIXTURE.filter(
   (c) => c.area === 'Ciências Humanas e Sociais Aplicadas',
 )
+
+/** Mesma razão: os publicados saem da fixture. Um dia ela ganha um segundo
+ * relato, e o teste passa a cobri-lo sozinho. */
+const PUBLICADOS = POSTS_FIXTURE.filter((p) => p.situacao === 'publicado')
 
 describe('PaginaInicio', () => {
   it('mostra um card por área do conhecimento do vocabulário', async () => {
@@ -99,5 +103,30 @@ describe('PaginaInicio', () => {
       'href',
       '/biblioteca',
     )
+  })
+
+  it('mostra os últimos textos PUBLICADOS do blog, no máximo três', async () => {
+    renderizar()
+
+    // O teto vem da fixture, não do número 3 escrito aqui: hoje ela tem um
+    // publicado só, e uma asserção fixa em 3 estaria mentindo. O que a
+    // seção promete é "no máximo três", e é isso que se afirma.
+    const esperados = PUBLICADOS.slice(0, 3)
+    expect(esperados.length).toBeGreaterThan(0)
+
+    for (const post of esperados) {
+      expect(await screen.findByRole('link', { name: post.titulo })).toHaveAttribute(
+        'href',
+        `/blog/${post.id}`,
+      )
+    }
+
+    // Pendente, devolvido e arquivado não existem para quem chega de fora.
+    for (const post of POSTS_FIXTURE.filter((p) => p.situacao !== 'publicado')) {
+      expect(screen.queryByRole('link', { name: post.titulo })).not.toBeInTheDocument()
+    }
+
+    expect(screen.getAllByRole('link', { name: 'Ler o relato →' })).toHaveLength(esperados.length)
+    expect(esperados.length).toBeLessThanOrEqual(3)
   })
 })

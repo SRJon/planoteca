@@ -325,4 +325,7 @@ que não existe.
 - [x] `PaginaInicio`: hero, busca, `CardArea` (hover/foco/toque abre filhos), régua de séries, faixa do blog
 - [x] Comentário de propósito de `PaginaInicio` e `README` acompanham a mudança de regra
 - [x] Testes: `LayoutPublico.test`, `PaginaInicio.test`, e2e `landing.spec.ts`
-- [ ] Portão: lint, test, build, e2e; `detectar.py` do sem-plastico
+- [x] Portão: lint, test, build, e2e; `detectar.py` do sem-plastico
+- [x] Campo de busca do hero em papel (`--color-campo` declarado no tema — a classe `bg-campo` era morta)
+- [x] Seção "Do Blog" com os últimos relatos publicados, entre a faixa "Escreve também?" e o rodapé
+- [x] Dois posts de exemplo inseridos no Postgres de teste (`docker exec planoteca-api-db-1 psql`)

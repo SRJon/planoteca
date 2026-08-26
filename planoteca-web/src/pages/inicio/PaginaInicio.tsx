@@ -4,6 +4,7 @@ import { agruparPorArea, useVocabulario } from '@/entities/vocabulario'
 import { Container } from '@/components/container'
 import { CardArea } from './CardArea'
 import { HeroAcervo } from './HeroAcervo'
+import { UltimosDoBlog } from './UltimosDoBlog'
 
 /**
  * A landing pública — a primeira tela de quem chega.
@@ -33,6 +34,11 @@ import { HeroAcervo } from './HeroAcervo'
  * sem deploy, e uma área nova nasce sozinha do dado. Enquanto o vocabulário
  * está em voo ele é vazio, e as duas seções somem — melhor do que reservar
  * espaço para uma lista que talvez não venha.
+ *
+ * Os últimos textos do Blog fecham a página porque a faixa "Escreve
+ * também?" convida sem provar nada: três relatos com nome e data mostram
+ * que o Blog está vivo, e quem escreveu vê o próprio texto já na porta da
+ * Planoteca, não escondido a um clique de distância.
  */
 export function PaginaInicio({ cliente }: { cliente: Cliente }) {
   const { vocabulario } = useVocabulario(cliente)
@@ -108,6 +114,8 @@ export function PaginaInicio({ cliente }: { cliente: Cliente }) {
           </div>
         </Container>
       </section>
+
+      <UltimosDoBlog cliente={cliente} />
     </div>
   )
 }

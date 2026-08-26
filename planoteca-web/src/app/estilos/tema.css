@@ -197,6 +197,7 @@
      A borda é traço, como todo contorno da direção B. O fundo do campo
      continua vindo de `--campo`, por `bg-campo`. */
   --color-input: var(--traco-suave);
+  --color-campo: var(--campo);
   --color-ring: var(--brand);
   --color-overlay: var(--veu);
 
