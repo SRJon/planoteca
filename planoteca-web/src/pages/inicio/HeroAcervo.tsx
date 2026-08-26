@@ -40,13 +40,16 @@ export function HeroAcervo() {
 
   return (
     <section className="relative isolate flex min-h-[35rem] items-center overflow-hidden bg-inverso-bg max-md:min-h-[28rem]">
+      {/* `object-[62%_center]`: o mural e o nome da escola vivem na metade
+          direita da foto, e é o que o véu deixa aparecer. Centralizar
+          mostraria parede lisa e cortaria justamente o assunto. */}
       <img
-        src="/hero-sala-de-aula.webp"
-        srcSet="/hero-sala-de-aula-960.webp 960w, /hero-sala-de-aula.webp 1920w"
+        src="/hero-escola.webp"
+        srcSet="/hero-escola-960.webp 960w, /hero-escola.webp 1600w"
         sizes="100vw"
         alt=""
         fetchPriority="high"
-        className="absolute inset-0 size-full object-cover object-[70%_center]"
+        className="absolute inset-0 size-full object-cover object-[62%_center]"
       />
       {/* O véu. Denso à esquerda, onde o texto passa, e quase aberto à
           direita, onde a foto precisa aparecer. Medido: o par
