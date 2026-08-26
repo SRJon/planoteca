@@ -3109,7 +3109,7 @@ git commit -m "test(biblioteca): cobre a gaveta de filtro em 390px"
 **Interfaces:**
 - Consumes: tudo o que as Tasks 5 a 12 entregaram.
 
-- [ ] **Step 1: Executar o portão de front, na ordem**
+- [x] **Step 1: Executar o portão de front, na ordem**
 
 ```bash
 cd planoteca-web && npm run lint && npm run test && npm run build && npm run e2e
@@ -3119,7 +3119,7 @@ Esperado: código 0 nos quatro. A ordem importa: o `lint` inclui
 `verifica-tokens`. Uma classe crua reprovada ali é mais barata de achar antes
 de a suíte inteira executar.
 
-- [ ] **Step 2: Executar o detector de plástico nos arquivos novos**
+- [x] **Step 2: Executar o detector de plástico nos arquivos novos**
 
 ```bash
 cd planoteca-web && python ~/.claude/skills/sem-plastico/scripts/detectar.py \
@@ -3138,7 +3138,7 @@ quadrado pequeno de fundo sólido passa de propósito, porque é swatch de cor,
 não ícone em caixinha. Se o detector o acusar mesmo assim, a diretiva de
 escape vai na linha anterior, com o motivo escrito.
 
-- [ ] **Step 3: Confirmar que nenhuma dependência entrou**
+- [x] **Step 3: Confirmar que nenhuma dependência entrou**
 
 ```bash
 cd planoteca-web && git diff --stat main -- package.json package-lock.json
@@ -3146,7 +3146,7 @@ cd planoteca-web && git diff --stat main -- package.json package-lock.json
 
 Esperado: saída vazia. A gaveta reusa o Radix Dialog que já estava lá.
 
-- [ ] **Step 4: Confirmar que o hook do filtro não se alterou**
+- [x] **Step 4: Confirmar que o hook do filtro não se alterou**
 
 ```bash
 cd planoteca-web && git diff --stat main -- src/features/filtrar-planos/useFiltroPlanos.ts src/features/filtrar-planos/useFiltroPlanos.test.tsx
@@ -3155,7 +3155,7 @@ cd planoteca-web && git diff --stat main -- src/features/filtrar-planos/useFiltr
 Esperado: saída vazia. É restrição global da spec: a URL continua a fonte da
 verdade. A coluna só consome o contrato que o hook já expunha.
 
-- [ ] **Step 5: Confirmar que o acervo continua público**
+- [x] **Step 5: Confirmar que o acervo continua público**
 
 ```bash
 cd planoteca-web && npx vitest run src/app/rotas/guarda.test.tsx
@@ -3164,7 +3164,7 @@ cd planoteca-web && npx vitest run src/app/rotas/guarda.test.tsx
 Esperado: o bloco "o acervo é público" verde. Nenhuma peça desta entrega entrou
 em `RotaProtegida`, e o endpoint de facetas nasceu sem `[Authorize]`.
 
-- [ ] **Step 6: Commitar o que sobrar**
+- [x] **Step 6: Commitar o que sobrar**
 
 ```bash
 git add planoteca-web
