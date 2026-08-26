@@ -2988,7 +2988,7 @@ git commit -m "feat(biblioteca): filtro em coluna lateral, gaveta no celular"
 **Interfaces:**
 - Consumes: a tela da Task 11 e o handler de facetas da Task 5.
 
-- [ ] **Step 1: Trocar os seletores de componente e metodologia**
+- [x] **Step 1: Trocar os seletores de componente e metodologia**
 
 Nos dois primeiros testes, componente virou caixa de marcar. Série continua
 botão. As trocas, uma a uma:
@@ -3018,7 +3018,7 @@ O comentário de cabeçalho do primeiro teste cita `subject=math`, que não exis
 mais desde que o vocabulário virou GUID. Corrija-o para dizer que a
 querystring carrega o id do vocabulário.
 
-- [ ] **Step 2: Escrever o teste de 390px**
+- [x] **Step 2: Escrever o teste de 390px**
 
 Ele cobre o RF-11 inteiro. Acrescente ao fim de `e2e/biblioteca.spec.ts`:
 
@@ -3065,7 +3065,7 @@ test('no celular, a gaveta filtra e a pílula fica visível com ela fechada', as
 })
 ```
 
-- [ ] **Step 3: Executar e confirmar que passa**
+- [x] **Step 3: Executar e confirmar que passa**
 
 ```bash
 cd planoteca-web && npx playwright test e2e/biblioteca.spec.ts
@@ -3076,7 +3076,7 @@ se o handler de facetas entrou ANTES do `match` de `/lesson-plans/:id` em
 `e2e/simulacao.ts`. Sem ele a coluna monta, mas a chamada de facetas devolve
 501 e a consulta fica em erro.
 
-- [ ] **Step 4: Confirmar que a guarda do acervo público continua verde**
+- [x] **Step 4: Confirmar que a guarda do acervo público continua verde**
 
 ```bash
 cd planoteca-web && npx vitest run src/app/rotas/guarda.test.tsx
@@ -3085,7 +3085,7 @@ cd planoteca-web && npx vitest run src/app/rotas/guarda.test.tsx
 Esperado: o bloco "o acervo é público" verde. Nenhum passo do teste de 390px faz
 login, e é assim que ele fica.
 
-- [ ] **Step 5: Commitar**
+- [x] **Step 5: Commitar**
 
 ```bash
 git add planoteca-web/e2e
