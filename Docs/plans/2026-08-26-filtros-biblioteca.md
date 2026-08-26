@@ -2592,7 +2592,7 @@ git commit -m "feat(biblioteca): gaveta de filtro no celular sobre o Dialog"
 **Interfaces:**
 - Consumes: `PainelFiltros`, `SelecaoAtiva`, `GavetaFiltros`, `useFacetas`.
 
-- [ ] **Step 1: Ajustar os testes de página que dependem do chip**
+- [x] **Step 1: Ajustar os testes de página que dependem do chip**
 
 Os testes de `PaginaBiblioteca.test.tsx` acham componente e metodologia por
 `getByRole('button', { name: 'Matemática' })`. Componente virou caixa de marcar;
@@ -2638,7 +2638,7 @@ it('a pílula da seleção some quando o item é desmarcado', async () => {
 })
 ```
 
-- [ ] **Step 2: Executar e confirmar a falha**
+- [x] **Step 2: Executar e confirmar a falha**
 
 ```bash
 cd planoteca-web && npx vitest run src/pages/biblioteca
@@ -2648,7 +2648,7 @@ Esperado: falha em cada caso que busca `checkbox`. A página ainda desenha
 `FiltrosPlanos`, e a mensagem é `Unable to find an accessible element with the
 role "checkbox"`.
 
-- [ ] **Step 3: Reescrever a página em duas colunas**
+- [x] **Step 3: Reescrever a página em duas colunas**
 
 O grid é `grid-cols-[272px_minmax(0,1fr)] max-lg:grid-cols-1` (RF-05). O `minmax(0,1fr)` e não
 `1fr`: sem ele, um título longo de plano estoura a coluna. O mínimo implícito
@@ -2927,7 +2927,7 @@ painéis existem na árvore ao mesmo tempo, o que faria `getByRole('checkbox')`
 achar dois elementos. Não faz, porque a gaveta só monta o painel quando o
 `Dialog` abre — o Radix não renderiza o conteúdo fechado.
 
-- [ ] **Step 4: Remover `FiltrosPlanos`**
+- [x] **Step 4: Remover `FiltrosPlanos`**
 
 ```bash
 cd planoteca-web && git rm src/features/filtrar-planos/FiltrosPlanos.tsx
@@ -2943,7 +2943,7 @@ export { GavetaFiltros } from './GavetaFiltros'
 export { useFiltroPlanos, TAMANHO_PAGINA } from './useFiltroPlanos'
 ```
 
-- [ ] **Step 5: Confirmar que ninguém mais importa o componente removido**
+- [x] **Step 5: Confirmar que ninguém mais importa o componente removido**
 
 ```bash
 cd planoteca-web && npx tsc --noEmit -p tsconfig.json
@@ -2952,7 +2952,7 @@ cd planoteca-web && npx tsc --noEmit -p tsconfig.json
 Esperado: nenhuma saída. Um erro `Cannot find module './FiltrosPlanos'` significa
 que outra tela ainda o consome, e ela precisa passar a `PainelFiltros`.
 
-- [ ] **Step 6: Executar o portão de front**
+- [x] **Step 6: Executar o portão de front**
 
 ```bash
 cd planoteca-web && npm run lint && npx vitest run src/pages/biblioteca && npm run build
@@ -2962,7 +2962,7 @@ Esperado: código 0 nos três. `useFiltroPlanos.test.tsx` continua verde sem
 alteração. A restrição global diz que o hook não se altera, e nada nesta task
 o tocou.
 
-- [ ] **Step 7: Commitar**
+- [x] **Step 7: Commitar**
 
 ```bash
 git add planoteca-web/src
