@@ -831,7 +831,7 @@ git commit -m "feat(api): expõe GET /lesson-plans/facets"
 - Produces: `useFacetas(cliente, filtro?)`
 - Produces: `contarFacetas(parametros, todos): Facetas` em `src/teste/planos.ts`
 
-- [ ] **Step 1: Escrever o teste que falha**
+- [x] **Step 1: Escrever o teste que falha**
 
 O teste cobre as duas metades do RF-04. Primeiro, que `obterFacetas` chama a
 rota sem `page` nem `perPage`. Repetir a paginação faria a chave de cache
@@ -928,7 +928,7 @@ describe('facetas', () => {
 })
 ```
 
-- [ ] **Step 2: Executar e confirmar a falha**
+- [x] **Step 2: Executar e confirmar a falha**
 
 ```bash
 cd planoteca-web && npx vitest run src/entities/plano/useFacetas.test.tsx
@@ -936,7 +936,7 @@ cd planoteca-web && npx vitest run src/entities/plano/useFacetas.test.tsx
 
 Esperado: `Failed to resolve import "./useFacetas"` — o módulo ainda não existe.
 
-- [ ] **Step 3: Declarar `Facetas` no modelo**
+- [x] **Step 3: Declarar `Facetas` no modelo**
 
 Acrescente ao fim de `src/entities/plano/modelo.ts`:
 
@@ -976,7 +976,7 @@ export const FACETAS_VAZIAS: Facetas = {
 }
 ```
 
-- [ ] **Step 4: Escrever `obterFacetas`**
+- [x] **Step 4: Escrever `obterFacetas`**
 
 Em `src/entities/plano/api.ts`, acrescente o import de `Facetas` e a função. O
 `paraParametros` já existe e serve: o que se remove é a paginação, e não os
@@ -1008,7 +1008,7 @@ import type { Facetas, Plano, PlanoDetalhe } from './modelo'
 import { FACETAS_VAZIAS } from './modelo'
 ```
 
-- [ ] **Step 5: Escrever `useFacetas`**
+- [x] **Step 5: Escrever `useFacetas`**
 
 Arquivo novo `src/entities/plano/useFacetas.ts`:
 
@@ -1041,7 +1041,7 @@ export function useFacetas(cliente: Cliente, filtro?: FiltroPlano) {
 }
 ```
 
-- [ ] **Step 6: Exportar pelo índice da fatia**
+- [x] **Step 6: Exportar pelo índice da fatia**
 
 Em `src/entities/plano/index.ts`, acrescente às linhas existentes:
 
@@ -1052,7 +1052,7 @@ export { obterFacetas } from './api'
 export { useFacetas } from './useFacetas'
 ```
 
-- [ ] **Step 7: Escrever `contarFacetas` na fixture compartilhada**
+- [x] **Step 7: Escrever `contarFacetas` na fixture compartilhada**
 
 Em `src/teste/planos.ts`, depois de `paginarPlanos`. É a regra do RF-02
 implementada uma vez, para as duas simulações. Escrevê-la duas vezes deixaria
@@ -1111,7 +1111,7 @@ export function contarFacetas(
 }
 ```
 
-- [ ] **Step 8: Acrescentar o handler MSW**
+- [x] **Step 8: Acrescentar o handler MSW**
 
 Em `src/teste/servidor.ts`, importe `contarFacetas` do bloco de import que já
 traz `paginarPlanos`. Acrescente o handler ANTES do handler de
@@ -1126,7 +1126,7 @@ traz `paginarPlanos`. Acrescente o handler ANTES do handler de
   ),
 ```
 
-- [ ] **Step 9: Acrescentar o mesmo handler à simulação do Playwright**
+- [x] **Step 9: Acrescentar o mesmo handler à simulação do Playwright**
 
 Em `e2e/simulacao.ts`, importe `contarFacetas` junto de `paginarPlanos` e
 acrescente o bloco ANTES do `const fichaPlano = caminho.match(...)`, pela mesma
@@ -1139,7 +1139,7 @@ razão de ordem:
     }
 ```
 
-- [ ] **Step 10: Executar e confirmar que passa**
+- [x] **Step 10: Executar e confirmar que passa**
 
 ```bash
 cd planoteca-web && npx vitest run src/entities/plano/useFacetas.test.tsx
@@ -1147,7 +1147,7 @@ cd planoteca-web && npx vitest run src/entities/plano/useFacetas.test.tsx
 
 Esperado: `3 passed`.
 
-- [ ] **Step 11: Commitar**
+- [x] **Step 11: Commitar**
 
 ```bash
 git add planoteca-web/src planoteca-web/e2e
