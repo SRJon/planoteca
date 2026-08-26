@@ -175,7 +175,7 @@
   <p>Item de vocabulário ausente da resposta vale zero. A resposta só lista ids com pelo menos um plano, o que reduz o corpo. O front cruza com <code>useVocabulario</code> para nome, sigla e cor.</p>
 
   <h3>A tela no desktop</h3>
-  <p>Acima de <code>lg</code>, <code>PaginaBiblioteca</code> vira um <code>grid</code> de <code>272px</code> mais <code>minmax(0,1fr)</code>. A coluna da esquerda é um <code>aside</code> com borda de 2px. A da direita leva pílulas de seleção, a faixa de contagem e a lista de fichas em duas colunas até <code>xl</code>, três a partir daí.</p>
+  <p>Dentro do <code>Container</code>, <code>PaginaBiblioteca</code> vira um <code>grid</code> de <code>grid-cols-[272px_minmax(0,1fr)] gap-6 max-lg:grid-cols-1</code>. A coluna da esquerda é um <code>aside</code> com borda de 2px. A da direita leva pílulas de seleção, a faixa de contagem e a lista de fichas em <code>grid-cols-2 max-sm:grid-cols-1</code>.</p>
   <p>Dentro da coluna:</p>
   <ul>
     <li><strong>Busca</strong>: o <code>CampoBusca</code> atual, sem borda própria, separado por traço.</li>
@@ -228,6 +228,18 @@
     <p>O endpoint de facetas é público. Nada na Biblioteca fica atrás de <code>RotaProtegida</code> nem de <code>[Authorize]</code>. O teste de guarda existente continua valendo.</p>
   </div>
 
+  <div class="st-callout st-callout--azure">
+    <div class="st-callout-label">O padrão da landing manda</div>
+    <p>Os commits <code>567a164</code> a <code>d2fb704</code> deram às telas públicas um padrão que a Biblioteca precisa falar. Ele não se renegocia aqui — a Biblioteca se ajusta a ele.</p>
+    <ul>
+      <li><strong>Bloco escuro</strong> é <code>bg-inverso-bg text-inverso-ink</code>, nunca <code>bg-foreground</code>. A faixa de contagem passa a usá-lo.</li>
+      <li><strong>Breakpoint desce</strong>: <code>grid-cols-3 max-lg:grid-cols-2 max-sm:grid-cols-1</code>, e não <code>md:</code>/<code>xl:</code> subindo.</li>
+      <li><strong>Toda página pública</strong> abre com <code>&lt;Container className="py-8"&gt;</code> e organiza o miolo com <code>gap-8</code>.</li>
+      <li><strong>Bloco de sigla</strong> copia a receita de <code>CardArea.tsx</code>: <code>grid size-7 flex-none place-items-center font-display text-xs font-bold text-comp-texto</code> mais <code>classeCorComponente(componente)</code>, com <code>aria-hidden</code>.</li>
+      <li><strong>Subtítulo de página</strong> leva <code>max-w-[60ch]</code>, como em <code>PaginaBlog</code>.</li>
+    </ul>
+  </div>
+
   <h2><span class="st-section-num">06</span> Decisões</h2>
   <table>
     <thead><tr><th>Decisão</th><th>Alternativa descartada</th><th>Por quê</th></tr></thead>
@@ -241,6 +253,7 @@
       <tr><td>Gaveta sobre o <code>Dialog</code> existente</td><td>Instalar <code>Sheet</code> ou <code>Drawer</code></td><td>Sem dependência nova. Uma classe de variante resolve a posição.</td></tr>
       <tr><td>Série continua <code>button</code></td><td>Caixa de marcar como os outros</td><td>Sete células fixas cabem numa régua. A régua é a assinatura da direção B.</td></tr>
       <tr><td>Marcar aplica na hora, também na gaveta</td><td>Aplicar só no "Ver N planos"</td><td>A URL é a fonte da verdade. Um estado pendente na gaveta criaria uma segunda fonte.</td></tr>
+      <tr><td>Faixa em <code>bg-inverso-bg</code></td><td>Manter <code>bg-foreground</code></td><td>O token invertido nasceu na landing para o bloco escuro público. Dois pretos diferentes na mesma sessão de navegação leem como descuido.</td></tr>
       <tr><td>Busca fora da gaveta no celular</td><td>Busca dentro da gaveta</td><td>Digitar é a ação mais frequente. Não pode custar um toque a mais.</td></tr>
     </tbody>
   </table>

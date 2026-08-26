@@ -1,6 +1,6 @@
 <!-- gerado de docs/specs/2026-08-26-filtros-biblioteca.html
-     sha256 da fonte: a7805a7e7dee9bb2
-     em: 2026-08-26T09:43
+     sha256 da fonte: d57d0feb8520f7a2
+     em: 2026-08-26T11:10
      NAO ESCREVA NESTE ARQUIVO. Altere o HTML e regenere. -->
 
 # Filtros da Biblioteca em coluna lateral — contrato de máquina
@@ -17,6 +17,10 @@ uma gaveta no celular. Cada item mostra o número de planos.
 - `useFiltroPlanos.ts` e seus testes não se alteram. A URL continua a fonte da verdade do filtro.
 - O contrato de `GET /api/v1/lesson-plans` não se altera.
 - Sem dependência nova no front. A gaveta reusa o Radix Dialog de `components/ui/dialog.tsx`.
+- O padrão visual da landing manda. Bloco escuro público é `bg-inverso-bg text-inverso-ink`, nunca `bg-foreground`.
+- Breakpoint desce: `grid-cols-3 max-lg:grid-cols-2 max-sm:grid-cols-1`. Não use `md:`/`xl:` subindo.
+- Toda página pública abre com `<Container className="py-8">` e organiza o miolo com `gap-8`.
+- O bloco de sigla copia a receita de `CardArea.tsx`, com `aria-hidden`.
 - Cor literal em componente reprova no `npm run lint`. Use token. O bloco de sigla usa `classeCorComponente`.
 - Fixture nova entra em `src/teste/servidor.ts` e em `e2e/simulacao.ts`, nos dois.
 - Teste da API usa xUnit, NSubstitute e FluentAssertions. Teste de repositório roda contra PostgreSQL real e pula sem banco.
@@ -71,11 +75,12 @@ consulta anterior.
 
 ### RF-05 — Layout de duas colunas
 
-A partir de `lg` (1024px), `PaginaBiblioteca` é um grid de `272px` mais
-`minmax(0,1fr)`. A esquerda é um `aside` com borda de 2px. A direita tem
-pílulas de seleção, faixa de contagem e lista de fichas. A lista tem duas
-colunas até `xl` e três a partir daí. A faixa lê o total da listagem, não
-das facetas.
+`PaginaBiblioteca` mantém o `<Container className="py-8">` que já a envolve.
+Dentro dele, o miolo é `grid grid-cols-[272px_minmax(0,1fr)] gap-6 max-lg:grid-cols-1`.
+A esquerda é um `aside` com borda de 2px. A direita tem pílulas de seleção,
+faixa de contagem e lista de fichas em `grid-cols-2 max-sm:grid-cols-1`.
+A faixa usa `bg-inverso-bg text-inverso-ink`. Ela lê o total da listagem,
+não das facetas. O subtítulo do header leva `max-w-[60ch]`.
 
 ### RF-06 — Coluna de filtro
 
@@ -83,6 +88,7 @@ das facetas.
 - Série: régua de células iguais com o `Chip` atual. `button` com `aria-pressed`, rótulo acessível `rotuloCompleto`.
 - Componente e metodologia: `details` aberto por padrão, `summary` com nome do grupo e total de itens. Cada item é um `label` com `input type="checkbox"`. O componente leva o bloco de sigla colorido. A contagem fica à direita, em mono.
 - A caixa é o `CaixaMarcar` novo em `components/ui/`: o lint proíbe `input` cru fora dali.
+- O bloco de sigla é o de `CardArea.tsx`: `grid size-7 flex-none place-items-center font-display text-xs font-bold text-comp-texto` mais `classeCorComponente(componente)`.
 - Item com contagem zero fica visível e clicável.
 - Ordem dos itens é a ordem da API.
 
@@ -161,6 +167,10 @@ planos" fecha a gaveta. A pílula "Matemática" aparece na página.
 | `planoteca-web/e2e/biblioteca.spec.ts` | os três testes e os seletores que se alteram |
 | `planoteca-web/src/app/shell/LayoutPublico.tsx` | largura de 1180px e padding por breakpoint |
 | `planoteca-web/scripts/verifica-tokens.mjs` | o que o lint reprova em classe e cor |
+| `planoteca-web/src/pages/inicio/CardArea.tsx` | a receita do bloco de sigla e do menu por área |
+| `planoteca-web/src/pages/blog/PaginaBlog.tsx` | o padrão de página pública: `Container`, `gap-8`, grade de cards |
+| `planoteca-web/src/components/container/Container.tsx` | a coluna de 1180px que cada página pede |
+| `planoteca-web/src/app/shell/Rodape.tsx` | o bloco invertido com `bg-inverso-bg` |
 | `CLAUDE.md` | o portão antes de dizer "pronto" |
 
 ## Critérios de aceite

@@ -1,6 +1,6 @@
 <!-- gerado de docs/specs/2026-08-26-filtros-biblioteca.html
-     sha256 da fonte: a7805a7e7dee9bb2
-     em: 2026-08-26T09:43
+     sha256 da fonte: d57d0feb8520f7a2
+     em: 2026-08-26T11:10
      NAO ESCREVA NESTE ARQUIVO. Altere o HTML e regenere. -->
 
 # Filtros da Biblioteca em coluna lateral — Implementation Plan
@@ -28,6 +28,10 @@ MSW e Playwright.
 - `useFiltroPlanos.ts` e seus testes não se alteram. A URL continua a fonte da verdade do filtro.
 - O contrato de `GET /api/v1/lesson-plans` não se altera.
 - Sem dependência nova no front. A gaveta reusa o Radix Dialog de `components/ui/dialog.tsx`.
+- O padrão visual da landing manda. Bloco escuro público é `bg-inverso-bg text-inverso-ink`, nunca `bg-foreground`.
+- Breakpoint desce: `grid-cols-3 max-lg:grid-cols-2 max-sm:grid-cols-1`. Não use `md:`/`xl:` subindo.
+- Toda página pública abre com `<Container className="py-8">` e organiza o miolo com `gap-8`.
+- O bloco de sigla copia a receita de `CardArea.tsx`, com `aria-hidden`.
 - Cor literal em componente reprova no `npm run lint`. Use token. O bloco de sigla usa `classeCorComponente`.
 - Fixture nova entra em `src/teste/servidor.ts` e em `e2e/simulacao.ts`, nos dois.
 - Teste da API usa xUnit, NSubstitute e FluentAssertions. Teste de repositório executa contra PostgreSQL real e pula sem banco.
@@ -68,6 +72,10 @@ MSW e Playwright.
 | `planoteca-web/e2e/biblioteca.spec.ts` | os três testes e os seletores que se alteram |
 | `planoteca-web/src/app/shell/LayoutPublico.tsx` | largura de 1180px e padding por breakpoint |
 | `planoteca-web/scripts/verifica-tokens.mjs` | o que o lint reprova em classe e cor |
+| `planoteca-web/src/pages/inicio/CardArea.tsx` | a receita do bloco de sigla e do menu por área |
+| `planoteca-web/src/pages/blog/PaginaBlog.tsx` | o padrão de página pública: `Container`, `gap-8`, grade de cards |
+| `planoteca-web/src/components/container/Container.tsx` | a coluna de 1180px que cada página pede |
+| `planoteca-web/src/app/shell/Rodape.tsx` | o bloco invertido com `bg-inverso-bg` |
 | `CLAUDE.md` | o portão antes de dizer "pronto" |
 
 ---
@@ -1343,7 +1351,7 @@ git commit -m "feat(biblioteca): régua de série como componente próprio"
 **Interfaces:**
 - Consumes: `ContagemFaceta` de `@/entities/plano`, `classeCorComponente` de `@/entities/vocabulario`.
 - Produces: `CaixaMarcar(props: React.ComponentProps<'input'>)` em `components/ui`.
-- Produces: `type ItemFiltro = { id: string; nome: string; sigla?: string; cor?: string }`
+- Produces: `type ItemFiltro = { id: string; nome: string; sigla?: string; cor?: string }` — um `Componente` do vocabulário já o satisfaz.
 - Produces: `GrupoFiltro(props: { titulo, itens, selecionados, contagens, aoAlternar, comSigla? })`
 
 - [ ] **Step 1: Escrever o teste que falha**
@@ -1583,6 +1591,9 @@ export type ItemFiltro = {
   id: string
   nome: string
   sigla?: string
+  /** O token de cor do tema. O tipo é o mesmo que `classeCorComponente`
+   * consome, então um `Componente` do vocabulário JÁ satisfaz `ItemFiltro`
+   * — o painel passa a lista da API sem mapear campo a campo. */
   cor?: string
 }
 
@@ -1664,9 +1675,13 @@ export function GrupoFiltro({
                 /* `aria-hidden`: a sigla é pista VISUAL redundante — o nome
                    por extenso vem na mesma linha, e um leitor de tela que
                    anunciasse "MA, Matemática" leria duas vezes o mesmo. */
+                {/* A MESMA receita de `CardArea.tsx`, à letra: `size-7`,
+                    `place-items-center`, `text-xs`. O bloco de sigla é a
+                    assinatura da direção, e assinatura que muda de tamanho
+                    entre telas deixa de ser assinatura. */}
                 <span
-                  aria-hidden="true"
-                  className={`flex size-[22px] shrink-0 items-center justify-center border-2 border-traco font-display text-[11px] font-bold text-comp-texto ${classeCorComponente(
+                  aria-hidden
+                  className={`grid size-7 flex-none place-items-center font-display text-xs font-bold text-comp-texto ${classeCorComponente(
                     item.cor ? { cor: item.cor } : null,
                   )}`}
                 >
@@ -2628,7 +2643,7 @@ role "checkbox"`.
 
 - [ ] **Step 3: Reescrever a página em duas colunas**
 
-O grid é `lg:grid-cols-[272px_minmax(0,1fr)]` (RF-05). O `minmax(0,1fr)` e não
+O grid é `grid-cols-[272px_minmax(0,1fr)] max-lg:grid-cols-1` (RF-05). O `minmax(0,1fr)` e não
 `1fr`: sem ele, um título longo de plano estoura a coluna. O mínimo implícito
 de uma faixa de grid é `auto`, e não zero.
 
@@ -2765,13 +2780,17 @@ export function PaginaBiblioteca({ cliente }: { cliente: Cliente }) {
         </p>
       </header>
 
-      <div className="grid grid-cols-1 items-start gap-4 lg:grid-cols-[272px_minmax(0,1fr)]">
+      {/* Breakpoint DESCENDO, como na landing e no Blog: a forma larga é a
+          regra, e `max-lg` é a exceção. Misturar as duas direções no mesmo
+          repositório é o que faz uma tela destoar da outra sem ninguém saber
+          dizer por quê. */}
+      <div className="grid grid-cols-[272px_minmax(0,1fr)] items-start gap-6 max-lg:grid-cols-1">
         {/* A coluna do desktop. `aside` e não `div`: é conteúdo
             complementar à lista, e o leitor de tela o anuncia como
             landmark, o que dá um atalho para pular o filtro. */}
         <aside
           aria-label="Filtros"
-          className="hidden border-2 border-traco bg-card p-[13px] lg:block"
+          className="border-2 border-traco bg-card p-[13px] max-lg:hidden"
         >
           <PainelFiltros {...propriedadesDoPainel} />
         </aside>
@@ -2807,7 +2826,11 @@ export function PaginaBiblioteca({ cliente }: { cliente: Cliente }) {
             aoLimpar={limpar}
           />
 
-          <div className="flex items-center justify-between gap-3 bg-foreground px-[13px] py-2.5 text-background">
+          {/* `bg-inverso-bg`, o token que a landing criou para bloco escuro
+              público — hero, faixa do Blog, rodapé. `bg-foreground` era o
+              preto de texto usado como fundo, e ficava um tom fora dos
+              outros blocos escuros da mesma navegação. */}
+          <div className="flex items-center justify-between gap-3 bg-inverso-bg px-[13px] py-2.5 text-inverso-ink">
             {/* `aria-live="polite"`: a contagem muda por causa de um toque
                 em OUTRO elemento, e o foco continua na caixa ou na célula —
                 sem isto, quem usa leitor de tela não saberia que o resultado
@@ -2844,7 +2867,7 @@ export function PaginaBiblioteca({ cliente }: { cliente: Cliente }) {
                   espremeriam o título em quatro linhas. */}
               <ul
                 aria-label="Planos de aula"
-                className="grid list-none grid-cols-1 gap-3 p-0 md:grid-cols-2 xl:grid-cols-3"
+                className="grid list-none grid-cols-2 gap-3 p-0 max-sm:grid-cols-1"
               >
                 {itens.map((plano) => (
                   <li key={plano.id}>
