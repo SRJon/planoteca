@@ -1,4 +1,3 @@
-export { FiltrosPlanos } from './FiltrosPlanos'
 export { GavetaFiltros } from './GavetaFiltros'
 export { PainelFiltros } from './PainelFiltros'
 export { SelecaoAtiva } from './SelecaoAtiva'

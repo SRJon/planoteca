@@ -1,5 +1,39 @@
-import { expect, test } from '@playwright/test'
+import { expect, type Page, test } from '@playwright/test'
 import { instalarSimulacao } from './simulacao'
+
+/**
+ * A caixa de marcar de um componente ou de uma metodologia, na coluna de
+ * filtro.
+ *
+ * O nome acessível vem do `label` que embrulha a caixa (`GrupoFiltro.tsx`),
+ * e ele carrega a contagem da faceta na mesma linha — "Matemática 3" hoje,
+ * "Matemática 6" depois de marcar outro chip. Casar por substring é o que
+ * mantém o seletor preso ao NOME do item, e não a um número que muda a cada
+ * recorte. A sigla colorida ao lado não entra: ela é `aria-hidden`.
+ *
+ * **Por que os testes abaixo clicam, e não usam `check()`/`uncheck()`.**
+ * Essas duas releem o `checked` do DOM logo depois do clique e falham se ele
+ * ainda não mudou. Aqui ele demora: a caixa é CONTROLADA pela URL
+ * (`useFiltroPlanos`), então o estado só volta ao DOM depois da navegação do
+ * React Router e do re-render. O clique aplica o recorte — o que falha é a
+ * releitura imediata, não a tela. Um `expect(...).toBeChecked()` logo
+ * depois cobre o mesmo, e reexecuta até o estado chegar.
+ */
+function caixa(page: Page, nome: string) {
+  return page.getByRole('checkbox', { name: new RegExp(nome) })
+}
+
+/**
+ * Uma célula da régua de série.
+ *
+ * Continua `button` com `aria-pressed`, ao contrário de componente e
+ * metodologia: a régua desenha a sigla e põe o nome por extenso no
+ * `aria-label` (`ReguaSeries.tsx`), porque "6º" sozinho não diz de que
+ * etapa é.
+ */
+function serie(page: Page, rotuloCompleto: string) {
+  return page.getByRole('button', { name: rotuloCompleto, exact: true })
+}
 
 /**
  * A Biblioteca ponta a ponta, SEM LOGIN: abrir, filtrar por componente e
@@ -41,7 +75,7 @@ test('filtra a biblioteca por componente e pagina, sem entrar', async ({ page })
   // Filtrar por componente reinicia a paginação (`useFiltroPlanos` força
   // `page=1` a cada recorte) — sem isso, ficar na página 2 de um recorte de
   // 2 planos mostraria uma lista vazia com filtro aplicado.
-  await page.getByRole('button', { name: 'Matemática' }).click()
+  await caixa(page, 'Matemática').click()
   // O parâmetro carrega o ID do vocabulário, que vem de
   // `GET /api/v1/vocabulary` — não mais um slug traduzido no front.
   await expect(page).toHaveURL(/componente=20000000-0000-0000-0000-000000000001/)
@@ -58,24 +92,26 @@ test('filtra a biblioteca por componente e pagina, sem entrar', async ({ page })
   // faz "manda o link desse filtro" funcionar entre professores.
   await page.reload()
   await expect(page.getByText('3 planos')).toBeVisible()
-  await expect(page.getByRole('button', { name: 'Matemática' })).toHaveAttribute(
-    'aria-pressed',
-    'true',
-  )
+  await expect(caixa(page, 'Matemática')).toBeChecked()
 
-  // Tocar no chip já ativo desliga o recorte — o chip é o próprio botão de
+  // Desmarcar a caixa desliga o recorte — ela é o próprio controle de
   // desfazer (`useFiltroPlanos.alternar`).
-  await page.getByRole('button', { name: 'Matemática' }).click()
+  await caixa(page, 'Matemática').click()
   await expect(page.getByText('14 planos')).toBeVisible()
 })
 
 /**
- * Multisseleção: dois chips do MESMO grupo somam (OU); um chip de outro
+ * Multisseleção: dois itens do MESMO grupo somam (OU); um item de outro
  * grupo restringe (E). Prova também que a chave repetida sobrevive a um
  * recarregamento — a mesma exigência de "manda o link desse filtro" que o
  * teste acima cobre para um único valor.
+ *
+ * Os dois grupos aqui têm formas diferentes de controle de propósito, e o
+ * teste passa pelas duas: componente é caixa de marcar, série é célula de
+ * régua com `aria-pressed`. Se a semântica de um deles regredir, é aqui que
+ * aparece.
  */
-test('combina dois chips do mesmo grupo por OU, e grupos diferentes por E', async ({ page }) => {
+test('combina dois itens do mesmo grupo por OU, e grupos diferentes por E', async ({ page }) => {
   await instalarSimulacao(page)
 
   await page.goto('/biblioteca')
@@ -83,43 +119,36 @@ test('combina dois chips do mesmo grupo por OU, e grupos diferentes por E', asyn
 
   // Fixture cicla 5 componentes por índice: Matemática (0) pega 1/6/11,
   // Língua Portuguesa (1) pega 2/7/12 — seis planos ao todo, sem repetição.
-  await page.getByRole('button', { name: 'Matemática' }).click()
-  await page.getByRole('button', { name: 'Língua Portuguesa' }).click()
+  await caixa(page, 'Matemática').click()
+  // O segundo clique só depois do primeiro ter chegado à URL: sem esta
+  // espera, os dois competiriam pela mesma navegação e o segundo poderia
+  // partir de um estado que ainda não tem Matemática — a chave repetida
+  // nunca se formaria.
+  await expect(caixa(page, 'Matemática')).toBeChecked()
+  await caixa(page, 'Língua Portuguesa').click()
 
   await expect(page).toHaveURL(/componente=.*componente=/)
   await expect(page.getByText('6 planos')).toBeVisible()
-  await expect(page.getByRole('button', { name: 'Matemática' })).toHaveAttribute(
-    'aria-pressed',
-    'true',
-  )
-  await expect(page.getByRole('button', { name: 'Língua Portuguesa' })).toHaveAttribute(
-    'aria-pressed',
-    'true',
-  )
+  await expect(caixa(page, 'Matemática')).toBeChecked()
+  await expect(caixa(page, 'Língua Portuguesa')).toBeChecked()
 
   // A chave repetida sobrevive ao recarregamento — o mesmo mecanismo do
   // valor único, agora com dois ids na mesma chave.
   await page.reload()
   await expect(page.getByText('6 planos')).toBeVisible()
 
-  // Um chip de OUTRO grupo restringe (E): só quem casa (Matemática OU
+  // Um item de OUTRO grupo restringe (E): só quem casa (Matemática OU
   // Português) E 6º ano. Na fixture, Português nunca cai em 6º ano — sobra
   // só Matemática + 6º ano (índices 0, 5, 10), três planos.
-  await page.getByRole('button', { name: '6º ano do Ensino Fundamental' }).click()
+  await serie(page, '6º ano do Ensino Fundamental').click()
   await expect(page.getByText('3 planos')).toBeVisible()
 
-  // Remover um dos dois chips do grupo componente não derruba o outro nem a
+  // Remover um dos dois itens do grupo componente não derruba o outro nem a
   // série: tirar Português (que aqui não casava nada) deixa o resultado
   // igual — a prova de que os grupos continuam independentes.
-  await page.getByRole('button', { name: 'Língua Portuguesa' }).click()
-  await expect(page.getByRole('button', { name: 'Matemática' })).toHaveAttribute(
-    'aria-pressed',
-    'true',
-  )
-  await expect(page.getByRole('button', { name: '6º ano do Ensino Fundamental' })).toHaveAttribute(
-    'aria-pressed',
-    'true',
-  )
+  await caixa(page, 'Língua Portuguesa').click()
+  await expect(caixa(page, 'Matemática')).toBeChecked()
+  await expect(serie(page, '6º ano do Ensino Fundamental')).toHaveAttribute('aria-pressed', 'true')
   await expect(page.getByText('3 planos')).toBeVisible()
 })
 
@@ -162,4 +191,63 @@ test('abre a ficha de um plano a partir do card', async ({ page }) => {
   // E há saída de volta: quem abriu a ficha por engano não fica preso.
   await page.getByRole('link', { name: 'Voltar à Biblioteca' }).click()
   await expect(page).toHaveURL(/\/biblioteca$/)
+})
+
+/**
+ * A gaveta de filtro em 390px (RF-11).
+ *
+ * Abaixo de `lg` a coluna de filtro não cabe e vira gaveta atrás do botão
+ * "Filtros" (`features/filtrar-planos/GavetaFiltros.tsx`). Este é o único
+ * teste que a exercita num navegador de verdade: em jsdom o breakpoint não
+ * existe, e os dois painéis pareceriam estar na tela ao mesmo tempo.
+ *
+ * O que ele prova, e que nenhum teste de unidade alcança: que marcar dentro
+ * da gaveta aplica NA HORA — o rodapé "Ver N planos" só fecha — e que a
+ * seleção continua legível com a gaveta fechada, através da pílula. Sem a
+ * pílula, quem filtra no celular perde toda pista do recorte assim que a
+ * gaveta some.
+ *
+ * Sem login, como o resto do arquivo.
+ */
+test('filtra pela gaveta em 390px, e a pílula mostra o recorte com ela fechada', async ({
+  page,
+}) => {
+  await instalarSimulacao(page)
+  // 390px é o iPhone 12/13/14 — a largura de referência do desenho, e a
+  // menor que a Planoteca atende.
+  await page.setViewportSize({ width: 390, height: 844 })
+
+  await page.goto('/biblioteca')
+  await expect(page.getByText('14 planos')).toBeVisible()
+
+  // A coluna do desktop está escondida por `max-lg:hidden`, e a gaveta
+  // fechada não monta conteúdo nenhum (o Radix não renderiza `Dialog`
+  // fechado): nesta largura NÃO existe caixa de marcar na árvore.
+  await expect(caixa(page, 'Matemática')).toHaveCount(0)
+
+  const filtros = page.getByRole('button', { name: 'Filtros' })
+  await filtros.click()
+
+  const gaveta = page.getByRole('dialog')
+  await expect(gaveta).toBeVisible()
+
+  // Marcar aplica na hora: a contagem do rodapé acompanha, ainda com a
+  // gaveta aberta. É a prova de que não há estado temporário esperando um
+  // "Aplicar" — a URL continua a fonte única da verdade.
+  await caixa(page, 'Matemática').click()
+  const verPlanos = gaveta.getByRole('button', { name: 'Ver 3 planos' })
+  await expect(verPlanos).toBeVisible()
+
+  // O rodapé só FECHA. Nada de recorte acontece aqui.
+  await verPlanos.click()
+  await expect(gaveta).toBeHidden()
+
+  // E com a gaveta fechada, a pílula é a única leitura do recorte nesta
+  // largura. O rótulo acessível diz a AÇÃO, não só o nome — ver `Pilula`
+  // em `SelecaoAtiva.tsx`.
+  await expect(page.getByRole('button', { name: 'Remover Matemática' })).toBeVisible()
+  await expect(page.getByText('3 planos')).toBeVisible()
+  await expect(page.getByRole('list', { name: 'Planos de aula' }).getByRole('listitem')).toHaveCount(
+    3,
+  )
 })
