@@ -24,6 +24,8 @@ Navegação superior: **Início · Biblioteca · Blog**, mais o botão de entrar
 
 Landing page. Explica o que é a Planoteca e joga o professor para a Biblioteca o mais rápido possível. O caminho para o acervo é o elemento mais forte da página.
 
+Desenho de 2026-08-26: hero com foto de sala de aula e busca que cai direto na Biblioteca (`?q=`); quatro cards de área do conhecimento (Linguagens, Matemática, Ciências da Natureza, Ciências Humanas) que, ao passar o mouse, receber foco ou tocar, abrem os componentes de cada área com o filtro já aplicado; régua de séries; faixa do Blog; rodapé com navegação e contato (`planoteca.escola@gmail.com`). As áreas e os componentes vêm do vocabulário da API — um componente cadastrado no painel aparece no card certo sem deploy. Continua sem depoimento, contador e newsletter.
+
 ### Biblioteca
 
 O coração do produto. Listagem de planos com filtros por série, componente curricular, metodologia ativa, duração e código BNCC, mais busca por texto.

@@ -6,6 +6,7 @@ import { usePlanos } from '@/entities/plano'
 import { useVocabulario } from '@/entities/vocabulario'
 import { Button } from '@/components/ui/button'
 import { FiltrosPlanos, TAMANHO_PAGINA, useFiltroPlanos } from '@/features/filtrar-planos'
+import { Container } from '@/components/container'
 import { FichaPlano } from './FichaPlano'
 
 /**
@@ -86,87 +87,91 @@ export function PaginaBiblioteca({ cliente }: { cliente: Cliente }) {
   const temPaginaAnterior = pagina > 1
   const temProximaPagina = pagina * porPagina < total
 
+  // O `<main>` do `LayoutPublico` é só o palco, sem largura máxima: é a
+  // página que pede a coluna de leitura. Ver `components/container`.
   return (
-    <div className="flex flex-col gap-4">
-      <header className="flex flex-col gap-1">
-        <h1 className="text-[28px]">Biblioteca</h1>
-        <p className="text-muted-foreground">
-          Prontos para levar para a sala. Filtre por série, componente ou metodologia.
-        </p>
-      </header>
+    <Container className="py-8">
+      <div className="flex flex-col gap-4">
+        <header className="flex flex-col gap-1">
+          <h1 className="text-[28px]">Biblioteca</h1>
+          <p className="text-muted-foreground">
+            Prontos para levar para a sala. Filtre por série, componente ou metodologia.
+          </p>
+        </header>
 
-      <FiltrosPlanos
-        pesquisa={busca}
-        aoMudarPesquisa={definirBusca}
-        vocabulario={vocabulario}
-        componentesIds={componentesIds}
-        aoAlternarComponente={alternarComponente}
-        seriesIds={seriesIds}
-        aoAlternarSerie={alternarSerie}
-        metodologiasIds={metodologiasIds}
-        aoAlternarMetodologia={alternarMetodologia}
-        total={total}
-        temFiltro={temFiltro}
-        aoLimpar={limpar}
-      />
+        <FiltrosPlanos
+          pesquisa={busca}
+          aoMudarPesquisa={definirBusca}
+          vocabulario={vocabulario}
+          componentesIds={componentesIds}
+          aoAlternarComponente={alternarComponente}
+          seriesIds={seriesIds}
+          aoAlternarSerie={alternarSerie}
+          metodologiasIds={metodologiasIds}
+          aoAlternarMetodologia={alternarMetodologia}
+          total={total}
+          temFiltro={temFiltro}
+          aoLimpar={limpar}
+        />
 
-      {consulta.isError ? (
-        <p role="alert" className="border-2 border-traco bg-err-bg px-4 py-6 text-err">
-          {mensagemDe(consulta.error)}
-        </p>
-      ) : consulta.isPending ? (
-        // Sem `role="status"` de propósito: outro provedor já usa esse
-        // role para o aviso de expiração, e dois landmarks iguais
-        // simultâneos tornam `getByRole('status')` ambíguo em qualquer
-        // teste que monte esta página dentro da sessão.
-        <p className="px-2 py-6 text-muted-foreground">Carregando planos…</p>
-      ) : itens.length === 0 ? (
-        <VazioBiblioteca temFiltro={temFiltro} />
-      ) : (
-        <>
-          {/* `ul`/`li` e não um `div` de cards: é uma lista, e o leitor de
-              tela anuncia quantos itens são antes de percorrer. A `FichaPlano`
-              é um `article`, que aninha dentro do `li` sem conflito. */}
-          <ul
-            aria-label="Planos de aula"
-            className="grid list-none grid-cols-1 gap-3 p-0 md:grid-cols-2 xl:grid-cols-3"
-          >
-            {itens.map((plano) => (
-              <li key={plano.id}>
-                <FichaPlano plano={plano} />
-              </li>
-            ))}
-          </ul>
+        {consulta.isError ? (
+          <p role="alert" className="border-2 border-traco bg-err-bg px-4 py-6 text-err">
+            {mensagemDe(consulta.error)}
+          </p>
+        ) : consulta.isPending ? (
+          // Sem `role="status"` de propósito: outro provedor já usa esse
+          // role para o aviso de expiração, e dois landmarks iguais
+          // simultâneos tornam `getByRole('status')` ambíguo em qualquer
+          // teste que monte esta página dentro da sessão.
+          <p className="px-2 py-6 text-muted-foreground">Carregando planos…</p>
+        ) : itens.length === 0 ? (
+          <VazioBiblioteca temFiltro={temFiltro} />
+        ) : (
+          <>
+            {/* `ul`/`li` e não um `div` de cards: é uma lista, e o leitor de
+                tela anuncia quantos itens são antes de percorrer. A `FichaPlano`
+                é um `article`, que aninha dentro do `li` sem conflito. */}
+            <ul
+              aria-label="Planos de aula"
+              className="grid list-none grid-cols-1 gap-3 p-0 md:grid-cols-2 xl:grid-cols-3"
+            >
+              {itens.map((plano) => (
+                <li key={plano.id}>
+                  <FichaPlano plano={plano} />
+                </li>
+              ))}
+            </ul>
 
-          <nav aria-label="Paginação" className="flex items-center justify-between gap-3 border-t-2 border-traco pt-3">
-            <span className="font-mono text-[12px] text-muted-foreground">
-              Página {pagina} de {Math.max(1, Math.ceil(total / porPagina))}
-            </span>
-            <div className="flex gap-2">
-              <Button
-                type="button"
-                variant="outline"
-                disabled={!temPaginaAnterior}
-                onClick={() => irParaPagina(pagina - 1)}
-                className="min-h-11 gap-1 rounded-none border-2 border-traco"
-              >
-                <CaretLeft size={14} weight="bold" />
-                Anterior
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                disabled={!temProximaPagina}
-                onClick={() => irParaPagina(pagina + 1)}
-                className="min-h-11 gap-1 rounded-none border-2 border-traco"
-              >
-                Próxima
-                <CaretRight size={14} weight="bold" />
-              </Button>
-            </div>
-          </nav>
-        </>
-      )}
-    </div>
+            <nav aria-label="Paginação" className="flex items-center justify-between gap-3 border-t-2 border-traco pt-3">
+              <span className="font-mono text-[12px] text-muted-foreground">
+                Página {pagina} de {Math.max(1, Math.ceil(total / porPagina))}
+              </span>
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  disabled={!temPaginaAnterior}
+                  onClick={() => irParaPagina(pagina - 1)}
+                  className="min-h-11 gap-1 rounded-none border-2 border-traco"
+                >
+                  <CaretLeft size={14} weight="bold" />
+                  Anterior
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  disabled={!temProximaPagina}
+                  onClick={() => irParaPagina(pagina + 1)}
+                  className="min-h-11 gap-1 rounded-none border-2 border-traco"
+                >
+                  Próxima
+                  <CaretRight size={14} weight="bold" />
+                </Button>
+              </div>
+            </nav>
+          </>
+        )}
+      </div>
+    </Container>
   )
 }

@@ -56,3 +56,21 @@ saíram de subagente. Cada um documentou o defeito em vez de reportá-lo. Um pô
 `SaveChanges` no repositório para não injetar `IUnitOfWork`. Outro fixou
 `ordem: 1`, com comentário explicando o dano. O brief precisa dizer uma coisa:
 contornar defeito de outra camada devolve BLOQUEADO, nunca divergência.
+
+**`Button` do shadcn como cabeçalho de card esconde o texto.** A variante
+`default` é `bg-primary text-primary-foreground`; passar `bg-transparent
+text-foreground` por `className` não bastou — o nome da área saiu branco
+sobre card branco, e só a captura de tela denunciou (o teste unitário
+achava o texto no DOM). E a base do botão tem `whitespace-nowrap`: nome de
+duas linhas transbordou para o card vizinho. O caminho é `variant="ghost"`
+(não impõe cor) e `whitespace-normal` no FILHO, onde não disputa com a
+base. `<button>` nu é proibido pelo lint (`react/forbid-elements`), então a
+saída é a variante certa, não o elemento cru.
+
+**Captura de tela é portão, não enfeite.** Lint, 241 testes, build e 16
+e2e passaram com o nome da área invisível. Teste de DOM não vê cor. Tela
+nova só fecha depois de OLHAR a captura — desktop, estado aberto e 390px.
+
+**`getByRole('button', { expanded: false }).first()` não é "o primeiro
+card".** Pegou o menu de acessibilidade da barra, que também é
+`aria-expanded`. Selecione pelo nome acessível.

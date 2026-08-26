@@ -219,6 +219,15 @@
   --color-side-ativo-ink: var(--side-ativo-ink);
   --color-side-marca: var(--side-marca);
 
+  /* Bloco INVERTIDO — hero da landing, faixa do blog, rodapé. É caneta-900
+     com texto de papel: o único respiro escuro das telas públicas. Não é a
+     barra lateral (`side-*`), que é caneta-500 e pertence à área logada. */
+  --color-inverso-bg: var(--inverso-bg);
+  --color-inverso-bg-2: var(--inverso-bg-2);
+  --color-inverso-ink: var(--inverso-ink);
+  --color-inverso-ink-2: var(--inverso-ink-2);
+  --color-inverso-linha: var(--inverso-linha);
+
   /* A AÇÃO — terracota de mimeógrafo, exclusiva de "baixar plano".
      Não é `--primary`: a caneta é seleção (chip ativo, link, nav atual), e a
      terracota é o verbo. Misturar as duas apaga a hierarquia que a direção
@@ -336,6 +345,13 @@
   --side-linha: #2b4059;
   --side-marca: #c9a54a;
 
+  /* Bloco invertido das telas públicas — ver `--color-inverso-*`. */
+  --inverso-bg: #1b2739;      /* caneta-900 */
+  --inverso-bg-2: #2b4059;    /* caneta-700 */
+  --inverso-ink: #f2f0ec;     /* papel */
+  --inverso-ink-2: #c6cedb;
+  --inverso-linha: #3a5578;   /* caneta-500 */
+
   /* Raio — a escala é quase toda zero, de propósito. `--raio-3` é o mesmo
      valor de `--radius`, que o shadcn consome.
        raio-1  0     card, campo, botão, chip — a forma padrão da direção
@@ -445,6 +461,13 @@
   --side-ativo-ink: #ffffff;
   --side-linha: #2b4059;
   --side-marca: #c9a54a;
+
+  /* Bloco invertido das telas públicas — ver `--color-inverso-*`. */
+  --inverso-bg: #1b2739;      /* caneta-900 */
+  --inverso-bg-2: #2b4059;    /* caneta-700 */
+  --inverso-ink: #f2f0ec;     /* papel */
+  --inverso-ink-2: #c6cedb;
+  --inverso-linha: #3a5578;   /* caneta-500 */
 }
 
 /* ==========================================================================

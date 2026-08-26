@@ -11,6 +11,7 @@ import {
 } from '@/entities/post'
 import type { Cliente } from '@/shared/api'
 import { mensagemDe } from '@/shared/api'
+import { Container } from '@/components/container'
 
 /**
  * Um texto do blog.
@@ -26,6 +27,19 @@ import { mensagemDe } from '@/shared/api'
  * nesta única linha do produto.
  */
 export function PaginaPost({ cliente }: { cliente: Cliente }) {
+  // O `<main>` do `LayoutPublico` é só o palco, sem largura máxima: é a
+  // página que pede a coluna de leitura. Ver `components/container`.
+  return (
+    <Container className="py-8">
+      <ConteudoPost cliente={cliente} />
+    </Container>
+  )
+}
+
+/** Separado do componente exportado só para que os quatro ramos de
+ * estado — carregando, erro, ausente e a ficha — fiquem todos dentro do
+ * mesmo `<Container>`, sem repeti-lo em cada `return`. */
+function ConteudoPost({ cliente }: { cliente: Cliente }) {
   const { id } = useParams<{ id: string }>()
   const consulta = usePost(cliente, id)
 

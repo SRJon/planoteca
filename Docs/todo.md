@@ -307,3 +307,22 @@ caso é um órfão, que é invisível.
 Arquivo sem plano continua sem coleta. Hoje há pelo menos um, da
 catalogação que falhou com o `AccountId` errado. Não é urgente — o plano
 gratuito do R2 tem 10 GB — mas cresce com o uso.
+
+## Landing nova — hero com foto, cards de área, rodapé (2026-08-26)
+
+Referência de estrutura (não de cor): nova-es.org.br. Decisões: imagem
+estática no hero (sem vídeo, plano gratuito), 4 cards de área derivados de
+`agruparPorArea()` do vocabulário (nada fixo em código), busca no hero caindo
+em `/biblioteca?q=`, rodapé em 4 colunas com `planoteca.escola@gmail.com`
+(telefone fica de fora até existir). Sem newsletter e sem link para página
+que não existe.
+
+- [x] Foto do hero em `planoteca-web/public/hero-sala-de-aula{,-960}.webp` (Pexels 37811164, licença livre)
+- [x] Tokens `inverso-*` no `tema.css` + `tokensReferencia.ts`
+- [x] `components/container/Container` — a coluna de 1180px sai do `main`
+- [x] `LayoutPublico`: `main` sem container; rodapé novo em `shell/Rodape.tsx`
+- [x] Biblioteca, Plano, Blog e Post envolvem o conteúdo com `Container`
+- [x] `PaginaInicio`: hero, busca, `CardArea` (hover/foco/toque abre filhos), régua de séries, faixa do blog
+- [x] Comentário de propósito de `PaginaInicio` e `README` acompanham a mudança de regra
+- [x] Testes: `LayoutPublico.test`, `PaginaInicio.test`, e2e `landing.spec.ts`
+- [ ] Portão: lint, test, build, e2e; `detectar.py` do sem-plastico

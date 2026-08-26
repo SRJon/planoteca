@@ -6,6 +6,7 @@ import { rotuloDuracao, usePlano } from '@/entities/plano'
 import { classeCorComponente } from '@/entities/vocabulario'
 import type { Cliente } from '@/shared/api'
 import { mensagemDe } from '@/shared/api'
+import { Container } from '@/components/container'
 
 /** O rótulo em mono, caixa alta e espacejado que a direção usa nas seções. */
 function Etiqueta({ children }: { children: React.ReactNode }) {
@@ -74,6 +75,19 @@ function Roteiro({ plano }: { plano: PlanoDetalhe }) {
  * link direto para o arquivo no R2.
  */
 export function PaginaPlano({ cliente }: { cliente: Cliente }) {
+  // O `<main>` do `LayoutPublico` é só o palco, sem largura máxima: é a
+  // página que pede a coluna de leitura. Ver `components/container`.
+  return (
+    <Container className="py-8">
+      <ConteudoPlano cliente={cliente} />
+    </Container>
+  )
+}
+
+/** Separado do componente exportado só para que os quatro ramos de
+ * estado — carregando, erro, ausente e a ficha — fiquem todos dentro do
+ * mesmo `<Container>`, sem repeti-lo em cada `return`. */
+function ConteudoPlano({ cliente }: { cliente: Cliente }) {
   const { id } = useParams<{ id: string }>()
   const consulta = usePlano(cliente, id)
 

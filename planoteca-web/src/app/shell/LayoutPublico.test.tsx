@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { cleanup, render, screen } from '@testing-library/react'
+import { cleanup, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter, Route, Routes } from 'react-router'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -109,10 +109,46 @@ describe('LayoutPublico', () => {
     expect(sair).toHaveBeenCalled()
   })
 
+  it('o rodapé leva às quatro áreas e ao contato', () => {
+    renderizar()
+
+    const rodape = screen.getByRole('contentinfo')
+
+    // O único canal que existe de verdade. Sem telefone, sem rede social,
+    // sem newsletter — link para o vazio é pior que ausência.
+    expect(within(rodape).getByRole('link', { name: 'planoteca.escola@gmail.com' })).toHaveAttribute(
+      'href',
+      'mailto:planoteca.escola@gmail.com',
+    )
+
+    const destinos: Array<[string, string]> = [
+      ['Início', '/'],
+      ['Biblioteca', '/biblioteca'],
+      ['Blog', '/blog'],
+      ['Entrar', '/entrar'],
+    ]
+    for (const [nome, rota] of destinos) {
+      expect(within(rodape).getByRole('link', { name: nome })).toHaveAttribute('href', rota)
+    }
+  })
+
+  it('o rodapé antigo de uma linha some', () => {
+    renderizar()
+
+    // A frase corria solta num `<div>` de uma linha só. Ela virou a
+    // descrição da coluna da marca; o texto avulso não deve sobrar.
+    expect(
+      screen.queryByText(/Planoteca — acervo de planos de aula com metodologias ativas/),
+    ).not.toBeInTheDocument()
+  })
+
   it('quem não entrou vê o convite, não a mesa de trabalho', () => {
     renderizar(null)
 
-    expect(screen.getByRole('link', { name: 'Entrar' })).toHaveAttribute('href', '/entrar')
+    // Escopado à barra superior: o rodapé também leva a `/entrar`, e sem
+    // recorte a busca acha os dois.
+    const barra = screen.getByRole('banner')
+    expect(within(barra).getByRole('link', { name: 'Entrar' })).toHaveAttribute('href', '/entrar')
     expect(screen.queryByRole('button', { name: /Minha área/ })).not.toBeInTheDocument()
   })
 })

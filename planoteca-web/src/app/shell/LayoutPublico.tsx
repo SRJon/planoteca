@@ -17,6 +17,7 @@ import {
 import { cn } from '@/shared/lib/cn'
 import { useAutenticacao } from '../providers/AutenticacaoProvider'
 import { useTema } from '../providers/TemaProvider'
+import { Rodape } from './Rodape'
 
 /**
  * As três áreas do acervo, na ordem em que o produto as descreve.
@@ -189,16 +190,18 @@ export function LayoutPublico() {
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-[1180px] flex-1 px-6 py-8 max-md:px-4">
+      {/* Só o palco: sem `max-w`, sem goteira, sem `py`.
+          A coluna de 1180px morava AQUI, e isso prendia toda página a ela —
+          um hero ou uma faixa que sangre a largura da janela não cabe dentro
+          de um pai com `max-w`. Quem precisa da coluna agora a pede: cada
+          página envolve o próprio conteúdo com `<Container>`, que carrega as
+          mesmas medidas de antes. O `<header>` acima mantém a coluna interna
+          porque a barra superior nunca sangra: ela é sempre a mesma faixa. */}
+      <main className="flex-1">
         <Outlet />
       </main>
 
-      <footer className="border-t-2 border-traco bg-card">
-        <div className="mx-auto w-full max-w-[1180px] px-6 py-6 text-sm text-muted-foreground max-md:px-4">
-          Planoteca — acervo de planos de aula com metodologias ativas. De professor para
-          professor.
-        </div>
-      </footer>
+      <Rodape />
     </div>
   )
 }
