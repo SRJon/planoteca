@@ -525,6 +525,13 @@ git commit -m "feat(plano): conta as facetas do filtro no repositório"
 
 ### Task 3: A tradução para DTO no AppService
 
+> **Nota de execução, 2026-08-26.** O projeto de teste referencia
+> `Application.Core`, então o `CS0535` que a Task 1 deixou no `PlanoAppService`
+> impede QUALQUER teste de compilar — inclusive os da Task 2. Por isso esta
+> task foi executada logo depois da Task 2, e o portão da Task 2 só fechou
+> depois dela. Num próximo ciclo, o contrato do AppService deve nascer na
+> mesma task que o implementa.
+
 **Papel:** escrita
 **Verificação:** `cd planoteca-api && dotnet test --filter PlanoFacetasTest`
 
