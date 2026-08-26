@@ -13,6 +13,10 @@ namespace SaraivaTech.Planoteca.Application.Services
         /// <summary>A listagem da Biblioteca. `Total` vai no `X-Total-Count`.</summary>
         Task<(IEnumerable<PlanoResumoDto> Itens, int Total)> ListarAsync(FiltroPlano filtro);
 
+        /// <summary>As contagens que a coluna de filtro mostra. O `filtro`
+        /// chega da mesma querystring da listagem, sem paginação.</summary>
+        Task<FacetasDto> ObterFacetasAsync(FiltroPlano filtro);
+
         /// <summary>A ficha. `null` quando não existe ou quando é rascunho e
         /// quem pede não é administrador.</summary>
         Task<PlanoDetalheDto?> ObterAsync(Guid id, bool incluirRascunho = false);

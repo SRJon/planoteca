@@ -35,6 +35,26 @@ namespace SaraivaTech.Planoteca.Domain.Repositories.Interfaces
         public int TamanhoPagina { get; set; } = 12;
     }
 
+    /// <summary>Um item de vocabulário e quantos planos ele responde dentro
+    /// do recorte. `record struct` porque é par de valor sem identidade — não
+    /// há nada a rastrear nem a comparar por referência.</summary>
+    public readonly record struct FacetaContada(Guid Id, int Total);
+
+    /// <summary>As três contagens de uma consulta só.
+    ///
+    /// Três listas num tipo, e não três chamadas, porque a tela desenha as
+    /// três de uma vez: uma ida por grupo faria três viagens ao Render
+    /// gratuito a cada teclada da busca.
+    ///
+    /// Tipo de domínio, e não `FacetasDto`: o repositório não conhece a camada
+    /// de aplicação. A tradução é do AppService.</summary>
+    public class ContagemFacetas
+    {
+        public IReadOnlyList<FacetaContada> Series { get; init; } = [];
+        public IReadOnlyList<FacetaContada> Componentes { get; init; } = [];
+        public IReadOnlyList<FacetaContada> Metodologias { get; init; } = [];
+    }
+
     public interface IPlanoRepository : IRepository<Plano>
     {
         /// <summary>A listagem da Biblioteca, com o total para a paginação.</summary>
@@ -43,5 +63,16 @@ namespace SaraivaTech.Planoteca.Domain.Repositories.Interfaces
         /// <summary>Um plano com tudo que a ficha mostra: etapas ordenadas,
         /// componentes, séries, metodologias e códigos BNCC.</summary>
         Task<Plano?> ObterCompletoAsync(Guid id, bool incluirRascunho = false);
+
+        /// <summary>Quantos planos cada item do vocabulário responde.
+        ///
+        /// A contagem de um grupo IGNORA a seleção do próprio grupo, e aplica
+        /// a dos outros dois mais a busca e a duração (RF-02). É o que faz o
+        /// número ao lado de "História" dizer "quantos planos eu ganho se
+        /// marcar isto", em vez de repetir o total já filtrado.
+        ///
+        /// `Pagina` e `TamanhoPagina` do filtro são ignorados: a contagem é do
+        /// recorte inteiro, não da página à vista.</summary>
+        Task<ContagemFacetas> ContarFacetasAsync(FiltroPlano filtro);
     }
 }
