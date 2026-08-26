@@ -120,13 +120,31 @@ export function PaginaEntrar({
 
   return (
     <div className="grid min-h-dvh grid-cols-1 md:grid-cols-2">
-      <aside
-        className="hidden flex-col gap-6 p-10 md:flex"
-        style={{
-          background: 'linear-gradient(160deg, var(--marca-grad-de), var(--marca-grad-ate))',
-          color: 'var(--marca-ink)',
-        }}
-      >
+      {/* A mesma fachada do hero da landing, e não uma imagem só deste
+          painel: quem chega aqui vindo de "Entrar" reconhece a escola que
+          acabou de ver. O bloco escuro usa `bg-inverso-bg`, o token que a
+          landing criou para hero, faixa e rodapé.
+
+          `max-md:hidden` e não `md:flex`: o breakpoint desce, como no resto
+          das telas públicas. */}
+      <aside className="relative isolate flex flex-col gap-6 overflow-hidden bg-inverso-bg p-10 text-inverso-ink max-md:hidden">
+        <img
+          src="/hero-escola.webp"
+          srcSet="/hero-escola-960.webp 960w, /hero-escola.webp 1600w"
+          sizes="50vw"
+          alt=""
+          className="absolute inset-0 -z-10 size-full object-cover object-[62%_center]"
+        />
+        {/* O véu é VERTICAL, ao contrário do horizontal do hero: aqui o
+            texto mora no rodapé do painel, não na lateral. Aberto em cima,
+            onde só há foto, e fechado embaixo, onde a frase precisa de
+            contraste. Sem o `via` mais escuro do meio: ele apagava o mural,
+            que é a razão de a foto estar aqui. */}
+        <div
+          aria-hidden
+          className="absolute inset-0 -z-10 bg-gradient-to-b from-inverso-bg/45 via-inverso-bg/60 to-inverso-bg"
+        />
+
         <Link to="/" className="flex w-fit items-center gap-3 text-base font-bold">
           <Marca tamanho={32} />
           <span>Planoteca</span>
@@ -135,13 +153,13 @@ export function PaginaEntrar({
         <div className="mt-auto max-w-[440px]">
           {/* Parágrafo, não `h1`: o título desta página é "Entrar". Um
               segundo `h1` duplicaria o topo da árvore de cabeçalhos. */}
-          <p className="mb-3 text-xs tracking-wide uppercase opacity-75">
+          <p className="mb-3 font-mono text-xs tracking-[0.1em] text-inverso-ink-2 uppercase">
             De professor para professor
           </p>
           <p className="text-2xl leading-snug">
             Entrar serve para escrever no blog e cuidar do acervo.
           </p>
-          <p className="mt-4 opacity-80">
+          <p className="mt-4 text-inverso-ink-2">
             Para baixar um plano você não precisa de conta — a Biblioteca é aberta.
           </p>
         </div>
