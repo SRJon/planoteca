@@ -1176,7 +1176,7 @@ git commit -m "feat(biblioteca): busca as contagens por item do vocabulário"
 - Consumes: `Serie` de `@/entities/vocabulario`, `Chip` de `@/components/ui/chip`.
 - Produces: `ReguaSeries(props: { series: Serie[]; selecionadas: string[]; aoAlternar: (id: string) => void })`
 
-- [ ] **Step 1: Escrever o teste que falha**
+- [x] **Step 1: Escrever o teste que falha**
 
 ```tsx
 import { render, screen } from '@testing-library/react'
@@ -1231,7 +1231,7 @@ describe('ReguaSeries', () => {
 })
 ```
 
-- [ ] **Step 2: Executar e confirmar a falha**
+- [x] **Step 2: Executar e confirmar a falha**
 
 ```bash
 cd planoteca-web && npx vitest run src/features/filtrar-planos/ReguaSeries.test.tsx
@@ -1239,7 +1239,7 @@ cd planoteca-web && npx vitest run src/features/filtrar-planos/ReguaSeries.test.
 
 Esperado: `Failed to resolve import "./ReguaSeries"`.
 
-- [ ] **Step 3: Implementar**
+- [x] **Step 3: Implementar**
 
 ```tsx
 import type { Serie } from '@/entities/vocabulario'
@@ -1300,7 +1300,7 @@ export function ReguaSeries({ series, selecionadas, aoAlternar }: ReguaSeriesPro
 }
 ```
 
-- [ ] **Step 4: Extrair `EtiquetaGrupo`**
+- [x] **Step 4: Extrair `EtiquetaGrupo`**
 
 O rótulo em mono, caixa alta e espacejado vivia dentro de `FiltrosPlanos.tsx`,
 que sai na Task 11. Três componentes o usam agora, então ele passa a ter arquivo
@@ -1320,7 +1320,7 @@ export function EtiquetaGrupo({ children }: { children: React.ReactNode }) {
 }
 ```
 
-- [ ] **Step 5: Executar e confirmar que passa**
+- [x] **Step 5: Executar e confirmar que passa**
 
 ```bash
 cd planoteca-web && npx vitest run src/features/filtrar-planos/ReguaSeries.test.tsx
@@ -1328,7 +1328,7 @@ cd planoteca-web && npx vitest run src/features/filtrar-planos/ReguaSeries.test.
 
 Esperado: `4 passed`.
 
-- [ ] **Step 6: Commitar**
+- [x] **Step 6: Commitar**
 
 ```bash
 git add planoteca-web/src/features/filtrar-planos
@@ -1361,7 +1361,7 @@ git commit -m "feat(biblioteca): régua de série como componente próprio"
 - Produces: `type ItemFiltro = { id: string; nome: string; sigla?: string; cor?: string }` — um `Componente` do vocabulário já o satisfaz.
 - Produces: `GrupoFiltro(props: { titulo, itens, selecionados, contagens, aoAlternar, comSigla? })`
 
-- [ ] **Step 1: Escrever o teste que falha**
+- [x] **Step 1: Escrever o teste que falha**
 
 Ele cobre os dois critérios de aceite do RF-07: com 12 itens mostra 8 e "mais
 4". O item marcado na posição 11 aparece sem ninguém expandir.
@@ -1523,7 +1523,7 @@ describe('GrupoFiltro', () => {
 })
 ```
 
-- [ ] **Step 2: Executar e confirmar a falha**
+- [x] **Step 2: Executar e confirmar a falha**
 
 ```bash
 cd planoteca-web && npx vitest run src/features/filtrar-planos/GrupoFiltro.test.tsx
@@ -1531,7 +1531,7 @@ cd planoteca-web && npx vitest run src/features/filtrar-planos/GrupoFiltro.test.
 
 Esperado: `Failed to resolve import "./GrupoFiltro"`.
 
-- [ ] **Step 3: Escrever `CaixaMarcar` em `components/ui/`**
+- [x] **Step 3: Escrever `CaixaMarcar` em `components/ui/`**
 
 `react/forbid-elements` proíbe `<input>` cru fora de `src/components/ui/`
 (`eslint.config.js`, bloco `files: ['src/components/ui/**/*.tsx']`), e o projeto
@@ -1579,7 +1579,7 @@ function CaixaMarcar({ className, ...props }: Omit<React.ComponentProps<'input'>
 export { CaixaMarcar }
 ```
 
-- [ ] **Step 4: Escrever `GrupoFiltro`**
+- [x] **Step 4: Escrever `GrupoFiltro`**
 
 ```tsx
 import { useState } from 'react'
@@ -1719,7 +1719,7 @@ export function GrupoFiltro({
 }
 ```
 
-- [ ] **Step 5: Executar e confirmar que passa**
+- [x] **Step 5: Executar e confirmar que passa**
 
 ```bash
 cd planoteca-web && npx vitest run src/features/filtrar-planos/GrupoFiltro.test.tsx
@@ -1727,7 +1727,7 @@ cd planoteca-web && npx vitest run src/features/filtrar-planos/GrupoFiltro.test.
 
 Esperado: `8 passed`.
 
-- [ ] **Step 6: Confirmar que o lint aceita a caixa e as classes**
+- [x] **Step 6: Confirmar que o lint aceita a caixa e as classes**
 
 ```bash
 cd planoteca-web && npx eslint src/components/ui/caixa-marcar.tsx src/features/filtrar-planos/GrupoFiltro.tsx && node scripts/verifica-tokens.mjs
@@ -1737,7 +1737,7 @@ Esperado: nenhuma saída do `eslint`, e `ok — N arquivo(s) verificado(s)` do
 verificador. Se `react/forbid-elements` acusar o `<input>`, a caixa está no
 arquivo errado: ela precisa morar em `src/components/ui/`.
 
-- [ ] **Step 7: Commitar**
+- [x] **Step 7: Commitar**
 
 ```bash
 git add planoteca-web/src/components/ui/caixa-marcar.tsx planoteca-web/src/features/filtrar-planos
@@ -1764,7 +1764,7 @@ git commit -m "feat(biblioteca): grupo de filtro com contagem e dobra"
 - Consumes: `Vocabulario` de `@/entities/vocabulario`.
 - Produces: `SelecaoAtiva(props: { vocabulario, componentesIds, seriesIds, metodologiasIds, aoAlternarComponente, aoAlternarSerie, aoAlternarMetodologia, aoLimpar })`
 
-- [ ] **Step 1: Escrever o teste que falha**
+- [x] **Step 1: Escrever o teste que falha**
 
 O critério de aceite: o ✕ de uma pílula chama o callback do grupo certo com o
 id certo.
@@ -1862,7 +1862,7 @@ describe('SelecaoAtiva', () => {
 })
 ```
 
-- [ ] **Step 2: Executar e confirmar a falha**
+- [x] **Step 2: Executar e confirmar a falha**
 
 ```bash
 cd planoteca-web && npx vitest run src/features/filtrar-planos/SelecaoAtiva.test.tsx
@@ -1870,7 +1870,7 @@ cd planoteca-web && npx vitest run src/features/filtrar-planos/SelecaoAtiva.test
 
 Esperado: `Failed to resolve import "./SelecaoAtiva"`.
 
-- [ ] **Step 3: Implementar**
+- [x] **Step 3: Implementar**
 
 ```tsx
 import { X } from '@phosphor-icons/react/dist/csr/X'
@@ -1980,7 +1980,7 @@ export function SelecaoAtiva({
 }
 ```
 
-- [ ] **Step 4: Executar e confirmar que passa**
+- [x] **Step 4: Executar e confirmar que passa**
 
 ```bash
 cd planoteca-web && npx vitest run src/features/filtrar-planos/SelecaoAtiva.test.tsx
@@ -1988,7 +1988,7 @@ cd planoteca-web && npx vitest run src/features/filtrar-planos/SelecaoAtiva.test
 
 Esperado: `6 passed`.
 
-- [ ] **Step 5: Commitar**
+- [x] **Step 5: Commitar**
 
 ```bash
 git add planoteca-web/src/features/filtrar-planos
