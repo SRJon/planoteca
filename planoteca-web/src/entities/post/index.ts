@@ -33,3 +33,4 @@ export {
   useDesarquivarPost,
   CHAVE_POSTS,
 } from './usePosts'
+export { CardPost } from './CardPost'

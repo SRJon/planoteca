@@ -1,34 +1,16 @@
 import { Link } from 'react-router'
-import { usePosts, dataDoPost } from '@/entities/post'
-import type { Post } from '@/entities/post'
+import { CardPost, usePosts } from '@/entities/post'
 import type { Cliente } from '@/shared/api'
 import { mensagemDe } from '@/shared/api'
 import { Container } from '@/components/container'
 
-/** Um texto na lista. O título é o link — o card inteiro não, pelo mesmo
- * motivo da ficha do plano: alvos de toque sobrepostos. */
-function ItemPost({ post }: { post: Post }) {
-  return (
-    <article className="flex flex-col gap-1.5 border-b-2 border-traco-suave pb-5 last:border-b-0">
-      <p className="font-mono text-[11px] tracking-[0.08em] text-muted-foreground uppercase">
-        {post.autorNome} · {dataDoPost(post)}
-      </p>
-      <h2 className="text-xl leading-tight">
-        <Link to={`/blog/${post.id}`} className="hover:underline focus-visible:underline">
-          {post.titulo}
-        </Link>
-      </h2>
-      {post.resumo && <p className="max-w-[64ch] text-muted-foreground">{post.resumo}</p>}
-    </article>
-  )
-}
-
 /**
  * O Blog — relato de sala de aula, de professor para professor.
  *
- * Lista editorial, e não grade de cards: um texto se apresenta pelo título e
- * pelo resumo, não por uma miniatura. Cards iguais lado a lado fariam três
- * relatos distintos parecerem a mesma coisa.
+ * Grade de cards, e não lista editorial (decisão de 2026-08-26): a lista
+ * de título e resumo soltos lia como texto corrido, e nada nela dizia que
+ * dava para clicar. O card (`CardPost`, o mesmo da landing) dá contorno,
+ * kicker e um "Ler o relato →" a cada texto — cada um vira uma porta.
  *
  * Só textos publicados. Pendente, devolvido e recusado não existem para quem
  * chega de fora — a API nem os devolve.
@@ -71,11 +53,13 @@ export function PaginaBlog({ cliente }: { cliente: Cliente }) {
             </Link>
           </div>
         ) : (
-          <div className="flex flex-col gap-5">
+          <ul className="grid grid-cols-3 gap-4 max-lg:grid-cols-2 max-sm:grid-cols-1">
             {posts.map((post) => (
-              <ItemPost key={post.id} post={post} />
+              <li key={post.id} className="flex">
+                <CardPost post={post} />
+              </li>
             ))}
-          </div>
+          </ul>
         )}
       </div>
     </Container>

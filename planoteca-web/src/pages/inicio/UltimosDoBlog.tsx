@@ -1,44 +1,11 @@
 import { Link } from 'react-router'
-import { dataDoPost, usePosts } from '@/entities/post'
-import type { Post } from '@/entities/post'
+import { CardPost, usePosts } from '@/entities/post'
 import type { Cliente } from '@/shared/api'
 import { Container } from '@/components/container'
 
 /** Quantos relatos cabem na landing. Três é uma linha da grade, e a landing
  * mostra amostra — quem quiser a lista inteira tem o link ao lado. */
 const QUANTOS = 3
-
-/**
- * Um relato na landing.
- *
- * Card aqui, e lista editorial no Blog, de propósito: lá os textos são o
- * conteúdo da página e se leem em sequência; aqui são três amostras entre
- * duas outras seções, e precisam de contorno para não virar prosa solta no
- * meio da landing.
- *
- * O título é o link, o card inteiro não — a mesma regra de `ItemPost`: um
- * card clicável com um link dentro cria alvos de toque sobrepostos.
- */
-function CardPost({ post }: { post: Post }) {
-  return (
-    <article className="flex w-full flex-col gap-2 border-2 border-traco bg-card p-5">
-      <p className="font-mono text-[11px] tracking-[0.08em] text-muted-foreground uppercase">
-        {post.autorNome} · {dataDoPost(post)}
-      </p>
-      <h3 className="font-display text-lg leading-tight font-bold">
-        <Link to={`/blog/${post.id}`} className="hover:underline focus-visible:underline">
-          {post.titulo}
-        </Link>
-      </h3>
-      {post.resumo && <p className="line-clamp-3 text-muted-foreground">{post.resumo}</p>}
-      <p className="mt-auto pt-2">
-        <Link to={`/blog/${post.id}`} className="font-bold underline underline-offset-4">
-          Ler o relato →
-        </Link>
-      </p>
-    </article>
-  )
-}
 
 /**
  * Os últimos relatos publicados, na landing.
