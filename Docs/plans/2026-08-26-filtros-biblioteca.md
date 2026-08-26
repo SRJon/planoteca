@@ -83,7 +83,7 @@ MSW e Playwright.
 ### Task 1: O contrato de facetas — DTO, domínio e assinaturas
 
 **Papel:** escrita
-**Verificação:** `cd planoteca-api && dotnet build`
+**Verificação:** `cd planoteca-api && dotnet build src/SaraivaTech.Planoteca.Application/SaraivaTech.Planoteca.Application.csproj`
 
 **Fontes:**
 - `planoteca-api/src/SaraivaTech.Planoteca.Application/Dto/VocabularioDto.cs` — forma de um DTO de leitura
