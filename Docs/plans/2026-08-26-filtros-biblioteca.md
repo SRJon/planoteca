@@ -216,7 +216,7 @@ git commit -m "feat(plano): contrato de facetas no domínio e na aplicação"
 ### Task 2: A contagem no repositório, contra o PostgreSQL real
 
 **Papel:** analise
-**Verificação:** `cd planoteca-api && dotnet test --filter PlanoRepositorioTest`
+**Verificação:** `cd planoteca-api && dotnet test tests/SaraivaTech.Planoteca.Test/SaraivaTech.Planoteca.Test.csproj --filter PlanoRepositorioTest`
 
 **Fontes:**
 - `planoteca-api/src/SaraivaTech.Planoteca.Infra.Data/Repositories/PlanoRepository.cs` — como o filtro composto se aplica em LINQ; o `Any()` nas junções
@@ -227,13 +227,13 @@ git commit -m "feat(plano): contrato de facetas no domínio e na aplicação"
 
 **Files:**
 - Modify: `planoteca-api/src/SaraivaTech.Planoteca.Infra.Data/Repositories/PlanoRepository.cs`
-- Test: `tests/SaraivaTech.Planoteca.Test/Integracao/PlanoRepositorioTest.cs`
+- Test: `planoteca-api/tests/SaraivaTech.Planoteca.Test/Integracao/PlanoRepositorioTest.cs`
 
 **Interfaces:**
 - Consumes: `ContagemFacetas` e `FacetaContada` da Task 1.
 - Produces: `Task<ContagemFacetas> ContarFacetasAsync(FiltroPlano filtro)`
 
-- [ ] **Step 1: Escrever os testes que falham**
+- [x] **Step 1: Escrever os testes que falham**
 
 Três testes novos no fim de `PlanoRepositorioTest`, antes do fecho da classe.
 O primeiro prova a regra do RF-02 nos dois sentidos. O segundo prova que
@@ -352,7 +352,7 @@ componente vale para o grupo série.
         }
 ```
 
-- [ ] **Step 2: Executar e confirmar a falha**
+- [x] **Step 2: Executar e confirmar a falha**
 
 ```bash
 cd planoteca-api && dotnet test --filter PlanoRepositorioTest
@@ -361,7 +361,7 @@ cd planoteca-api && dotnet test --filter PlanoRepositorioTest
 Esperado: falha de compilação, porque `ContarFacetasAsync` ainda não existe em
 `PlanoRepository`.
 
-- [ ] **Step 3: Extrair o filtro base de `BuscarAsync`**
+- [x] **Step 3: Extrair o filtro base de `BuscarAsync`**
 
 `BuscarAsync` e as três consultas de faceta aplicam a mesma coisa: situação,
 busca, duração e os grupos de vocabulário. Duplicar isso quatro vezes garante
@@ -454,7 +454,7 @@ E `BuscarAsync` passa a começar por:
 O resto do corpo de `BuscarAsync` — a paginação, o `OrderByDescending` e os
 `Include` — não se altera.
 
-- [ ] **Step 4: Implementar `ContarFacetasAsync`**
+- [x] **Step 4: Implementar `ContarFacetasAsync`**
 
 Três consultas, uma por grupo. Cada uma parte do recorte sem o próprio grupo,
 desce à tabela de ligação por `SelectMany` e agrupa pelo id.
@@ -496,7 +496,7 @@ desce à tabela de ligação por `SelectMany` e agrupa pelo id.
         }
 ```
 
-- [ ] **Step 5: Executar e confirmar que passa**
+- [x] **Step 5: Executar e confirmar que passa**
 
 ```bash
 cd planoteca-api && dotnet test --filter PlanoRepositorioTest
@@ -505,7 +505,7 @@ cd planoteca-api && dotnet test --filter PlanoRepositorioTest
 Esperado: `Passed!` e código 0. Sem banco de pé, os testes saem como
 `Skipped` — é o comportamento de `BaseBancoReal`, e continua sendo código 0.
 
-- [ ] **Step 6: Confirmar que a listagem não se alterou**
+- [x] **Step 6: Confirmar que a listagem não se alterou**
 
 ```bash
 cd planoteca-api && dotnet test
@@ -514,7 +514,7 @@ cd planoteca-api && dotnet test
 Esperado: `Passed!`. Os oito testes anteriores de `PlanoRepositorioTest` executam
 contra o `Recorte` extraído, e provam que a extração preservou o comportamento.
 
-- [ ] **Step 7: Commitar**
+- [x] **Step 7: Commitar**
 
 ```bash
 git add planoteca-api/src planoteca-api/tests
@@ -535,7 +535,7 @@ git commit -m "feat(plano): conta as facetas do filtro no repositório"
 
 **Files:**
 - Modify: `planoteca-api/src/SaraivaTech.Planoteca.Application.Core/Services/PlanoAppService.cs`
-- Test: `tests/SaraivaTech.Planoteca.Test/Application/PlanoFacetasTest.cs`
+- Test: `planoteca-api/tests/SaraivaTech.Planoteca.Test/Application/PlanoFacetasTest.cs`
 
 **Interfaces:**
 - Consumes: `ContarFacetasAsync` da Task 2 e `FacetasDto` da Task 1.
