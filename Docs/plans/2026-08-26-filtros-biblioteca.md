@@ -3186,7 +3186,7 @@ git commit -m "chore(biblioteca): fecha o portão da coluna de filtro"
 - [x] Todo bloco de código usa cerca, nunca indentação de quatro espaços.
 - [x] Nenhuma task depende de arquivo que nenhuma task anterior criou.
 
-O item acima teve UMA exceção, registrada na nota da Task 3: o contrato do
-`IPlanoAppService` nasceu na Task 1 e só foi implementado na Task 3. Como o
+O item acima teve UMA exceção, registrada na nota da Task 3. O contrato do
+`IPlanoAppService` nasceu na Task 1. Só a Task 3 o implementou. Como o
 projeto de teste referencia `Application.Core`, nenhum teste compilava nesse
 intervalo. Num próximo ciclo, contrato e implementação vão na mesma task.
