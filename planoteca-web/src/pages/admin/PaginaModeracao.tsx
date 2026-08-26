@@ -168,6 +168,17 @@ function ItemModeracao({
 
       {aberto && (
         <div className="flex flex-col gap-4">
+          {/* O corpo é HTML rico do editor Tiptap, e no ramo de sucesso
+              abaixo ele aparece RENDERIZADO: quem modera decide sobre o
+              texto que o leitor vai ver, e um moderador lendo `<h3>` cru
+              avalia outra coisa. Antes era `{detalhe.data?.corpo}`, e as
+              tags vazavam na tela.
+
+              O `dangerouslySetInnerHTML` é aceitável pela MESMA razão de
+              `PaginaPost`: a garantia é do servidor. `PostAppService.
+              ObterAsync` roda o `HtmlSanitizerService` na LEITURA —
+              inclusive para post não publicado, que é o caso desta tela —,
+              então o que chega aqui já passou pela lista de permissão. */}
           {detalhe.isPending ? (
             <p className="text-sm text-muted-foreground">Carregando o texto…</p>
           ) : detalhe.isError ? (
@@ -175,9 +186,10 @@ function ItemModeracao({
               {mensagemDe(detalhe.error)}
             </p>
           ) : (
-            <div className="max-w-[68ch] border-y-2 border-traco-suave py-3 leading-[1.7] whitespace-pre-line">
-              {detalhe.data?.corpo}
-            </div>
+            <div
+              className="max-w-[68ch] border-y-2 border-traco-suave py-3 leading-[1.7] [&_h2]:mt-4 [&_h2]:text-xl [&_h2]:font-bold [&_h3]:mt-3 [&_h3]:text-lg [&_h3]:font-bold [&_p]:mt-3 [&_p:first-child]:mt-0 [&_ul]:mt-3 [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:mt-3 [&_ol]:list-decimal [&_ol]:pl-6 [&_a]:text-primary [&_a]:underline"
+              dangerouslySetInnerHTML={{ __html: detalhe.data?.corpo ?? '' }}
+            />
           )}
 
           {/* Arquivado está fora da moderação: decidir publicar, devolver

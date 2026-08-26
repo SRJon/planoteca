@@ -351,7 +351,10 @@ export const POSTS_FIXTURE: PostFixture[] = [
     id: '70000000-0000-0000-0000-000000000002',
     titulo: 'Rotação por estações em turma grande',
     resumo: null,
-    corpo: 'Texto aguardando aprovação.',
+    // HTML rico, como a API devolve de verdade: o corpo vem do editor
+    // Tiptap e chega sanitizado. Texto puro aqui esconderia o defeito de
+    // uma tela que mostra a tag em vez de renderizá-la.
+    corpo: '<h3>Texto aguardando aprovação.</h3><p>Primeiro parágrafo.</p>',
     autorNome: 'Professor Bruno',
     situacao: 'pendente',
     publicadoEm: null,

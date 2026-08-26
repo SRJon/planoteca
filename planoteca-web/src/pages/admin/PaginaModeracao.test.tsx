@@ -46,8 +46,17 @@ describe('PaginaModeracao', () => {
 
     // Moderar é ler e decidir. Navegar de ida e volta para cada texto de uma
     // fila de vinte é o atrito que faz a fila não andar.
-    expect(await screen.findByText('Texto aguardando aprovação.')).toBeInTheDocument()
+    const titulo = await screen.findByText('Texto aguardando aprovação.')
+    expect(titulo).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Publicar' })).toBeInTheDocument()
+
+    // O corpo é HTML rico, e precisa aparecer RENDERIZADO. A tela mostrava
+    // `<h3>…</h3><p>…</p>` como texto, e quem modera lia a tag junto com a
+    // frase. `tagName` prova o que `findByText` sozinho não pega: o texto
+    // está DENTRO do elemento, e não é o elemento inteiro escrito à mão.
+    expect(titulo.tagName).toBe('H3')
+    expect(screen.getByText('Primeiro parágrafo.').tagName).toBe('P')
+    expect(screen.queryByText(/<h3>/)).not.toBeInTheDocument()
   })
 
   it('recusa devolver sem comentário, antes de tocar na rede', async () => {

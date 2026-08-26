@@ -24,7 +24,8 @@ import { Container } from '@/components/container'
  * mudança, ou um `corpo` inserido direto no banco, passa pelo filtro antes
  * de chegar aqui. É essa garantia do SERVIDOR — não algo que este
  * componente verifica — que torna `dangerouslySetInnerHTML` aceitável
- * nesta única linha do produto.
+ * aqui e na tela de moderação, os dois únicos lugares do produto que o
+ * usam.
  */
 export function PaginaPost({ cliente }: { cliente: Cliente }) {
   // O `<main>` do `LayoutPublico` é só o palco, sem largura máxima: é a
