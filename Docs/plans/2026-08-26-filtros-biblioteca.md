@@ -2017,7 +2017,7 @@ git commit -m "feat(biblioteca): pílulas da seleção ativa"
 - Consumes: `ReguaSeries` (Task 6), `GrupoFiltro` (Task 7), `Facetas` (Task 5).
 - Produces: `PainelFiltros(props: { pesquisa, aoMudarPesquisa, vocabulario, facetas, componentesIds, aoAlternarComponente, seriesIds, aoAlternarSerie, metodologiasIds, aoAlternarMetodologia, comBusca? })`
 
-- [ ] **Step 1: Escrever o teste que falha**
+- [x] **Step 1: Escrever o teste que falha**
 
 ```tsx
 import { render, screen } from '@testing-library/react'
@@ -2089,7 +2089,7 @@ describe('PainelFiltros', () => {
 })
 ```
 
-- [ ] **Step 2: Executar e confirmar a falha**
+- [x] **Step 2: Executar e confirmar a falha**
 
 ```bash
 cd planoteca-web && npx vitest run src/features/filtrar-planos/PainelFiltros.test.tsx
@@ -2097,7 +2097,7 @@ cd planoteca-web && npx vitest run src/features/filtrar-planos/PainelFiltros.tes
 
 Esperado: `Failed to resolve import "./PainelFiltros"`.
 
-- [ ] **Step 3: Implementar**
+- [x] **Step 3: Implementar**
 
 ```tsx
 import { useId } from 'react'
@@ -2212,7 +2212,7 @@ export function PainelFiltros({
 }
 ```
 
-- [ ] **Step 4: Exportar pelo índice da fatia**
+- [x] **Step 4: Exportar pelo índice da fatia**
 
 `src/features/filtrar-planos/index.ts` passa a exportar o painel ao lado do
 componente antigo. `FiltrosPlanos` só sai na Task 11, quando a página deixar
@@ -2225,7 +2225,7 @@ export { SelecaoAtiva } from './SelecaoAtiva'
 export { useFiltroPlanos, TAMANHO_PAGINA } from './useFiltroPlanos'
 ```
 
-- [ ] **Step 5: Executar e confirmar que passa**
+- [x] **Step 5: Executar e confirmar que passa**
 
 ```bash
 cd planoteca-web && npx vitest run src/features/filtrar-planos/PainelFiltros.test.tsx
@@ -2233,7 +2233,7 @@ cd planoteca-web && npx vitest run src/features/filtrar-planos/PainelFiltros.tes
 
 Esperado: `4 passed`.
 
-- [ ] **Step 6: Commitar**
+- [x] **Step 6: Commitar**
 
 ```bash
 git add planoteca-web/src/features/filtrar-planos
