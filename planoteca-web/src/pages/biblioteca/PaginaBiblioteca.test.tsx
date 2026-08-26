@@ -46,7 +46,11 @@ describe('PaginaBiblioteca', () => {
   it('cada ficha traz a sigla do componente, a autoria e o botão de baixar', async () => {
     renderizar()
 
-    const primeira = (await screen.findAllByRole('listitem'))[0]!
+    // Ancorado na lista NOMEADA: a coluna de filtro também é uma lista de
+    // `li`, e um `findAllByRole('listitem')` solto pegaria os itens dela
+    // primeiro.
+    const lista = await screen.findByRole('list', { name: 'Planos de aula' })
+    const primeira = within(lista).getAllByRole('listitem')[0]!
     // A sigla é `aria-hidden` (pista visual redundante), então a busca é
     // por texto, não por role. Ela vem do BANCO agora, não de um mapa
     // fechado em TypeScript.
@@ -65,16 +69,13 @@ describe('PaginaBiblioteca', () => {
     renderizar()
 
     await screen.findByText('14 planos')
-    await usuario.click(screen.getByRole('button', { name: 'Matemática' }))
+    await usuario.click(await screen.findByRole('checkbox', { name: /Matemática/ }))
 
     // O chip carrega o GUID que veio de `GET /api/v1/vocabulary`, e não mais
     // um slug traduzido por um mapa no front. É o que permite cadastrar um
     // componente novo no painel sem deploy.
     expect(await screen.findByText('3 planos')).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Matemática' })).toHaveAttribute(
-      'aria-pressed',
-      'true',
-    )
+    expect(await screen.findByRole('checkbox', { name: /Matemática/ })).toBeChecked()
   })
 
   it('o filtro por componente acha a prática em que ele é SECUNDÁRIO', async () => {
@@ -82,7 +83,7 @@ describe('PaginaBiblioteca', () => {
     renderizar()
 
     await screen.findByText('14 planos')
-    await usuario.click(screen.getByRole('button', { name: 'Arte' }))
+    await usuario.click(await screen.findByRole('checkbox', { name: /Arte/ }))
 
     // Três planos: dois em que Arte é o componente PRINCIPAL, e um — o
     // interdisciplinar — em que ela é secundária. Se o filtro olhasse só o
@@ -92,8 +93,10 @@ describe('PaginaBiblioteca', () => {
     // A prova direta de que o interdisciplinar entrou: o card dele mostra
     // Química no bloco (o principal), e só aparece nesta busca porque Arte
     // é um dos secundários.
-    const fichas = await screen.findAllByRole('listitem')
-    const titulos = fichas.map((f) => f.textContent ?? '')
+    const lista = await screen.findByRole('list', { name: 'Planos de aula' })
+    const titulos = within(lista)
+      .getAllByRole('listitem')
+      .map((f) => f.textContent ?? '')
     expect(titulos.some((t) => t.includes('Plano003') && t.includes('QU'))).toBe(true)
   })
 
@@ -141,10 +144,11 @@ describe('PaginaBiblioteca', () => {
     // Plano003 (índice 2) é o interdisciplinar: 8º e 9º ano, Química
     // principal + Arte secundária. Só ele casa 9º ano E Arte ao mesmo tempo.
     await usuario.click(screen.getByRole('button', { name: '9º ano do Ensino Fundamental' }))
-    await usuario.click(screen.getByRole('button', { name: 'Arte' }))
+    await usuario.click(await screen.findByRole('checkbox', { name: /Arte/ }))
 
     expect(await screen.findByText('1 plano')).toBeInTheDocument()
-    const ficha = (await screen.findAllByRole('listitem'))[0]!
+    const lista = await screen.findByRole('list', { name: 'Planos de aula' })
+    const ficha = within(lista).getAllByRole('listitem')[0]!
     expect(within(ficha).getByRole('heading', { name: /Plano003/ })).toBeInTheDocument()
   })
 
@@ -177,14 +181,8 @@ describe('PaginaBiblioteca', () => {
     renderizar(`/biblioteca?componente=${matematica.id}&componente=${portugues.id}`)
 
     await screen.findByText('6 planos')
-    expect(screen.getByRole('button', { name: 'Matemática' })).toHaveAttribute(
-      'aria-pressed',
-      'true',
-    )
-    expect(screen.getByRole('button', { name: 'Língua Portuguesa' })).toHaveAttribute(
-      'aria-pressed',
-      'true',
-    )
+    expect(await screen.findByRole('checkbox', { name: /Matemática/ })).toBeChecked()
+    expect(await screen.findByRole('checkbox', { name: /Língua Portuguesa/ })).toBeChecked()
   })
 
   it('tocar no chip já ativo desliga o recorte', async () => {
@@ -194,7 +192,7 @@ describe('PaginaBiblioteca', () => {
 
     expect(await screen.findByText('3 planos')).toBeInTheDocument()
 
-    await usuario.click(screen.getByRole('button', { name: 'Matemática' }))
+    await usuario.click(await screen.findByRole('checkbox', { name: /Matemática/ }))
 
     expect(await screen.findByText('14 planos')).toBeInTheDocument()
   })
@@ -206,14 +204,18 @@ describe('PaginaBiblioteca', () => {
     //
     // O resultado é a lista VAZIA, e não a biblioteca inteira: o back-end
     // recebe um recorte que não casa nada e responde 204. É o mesmo que
-    // acontece com qualquer filtro sem resultado, e a tela já sabe mostrar
-    // — com o botão de limpar à mão. O que importa é não quebrar nem
-    // devolver erro para quem só colou um link.
+    // acontece com qualquer filtro sem resultado, e a tela já sabe mostrar.
+    // O que importa é não quebrar nem devolver erro para quem só colou um
+    // link.
     renderizar('/biblioteca?componente=matematica')
 
     expect(
       await screen.findByRole('heading', { name: 'Nenhum plano com esses filtros' }),
     ).toBeInTheDocument()
+    // O "Limpar filtros" TEM de estar na tela. O id não casa com nenhum item
+    // do vocabulário, então não há pílula para oferecê-lo — e sem ele quem
+    // colou um link antigo ficaria com a lista vazia e nenhuma saída além de
+    // editar a URL à mão. Quem o desenha aqui é o `VazioBiblioteca`.
     expect(screen.getByRole('button', { name: 'Limpar filtros' })).toBeInTheDocument()
   })
 
@@ -222,10 +224,10 @@ describe('PaginaBiblioteca', () => {
 
     await screen.findByText('14 planos')
     // O seed traz 41 linhas, entre metodologias, técnicas e ferramentas. Só
-    // as metodologias viram chip: uma grade com "Kahoot" e "Google Forms"
-    // encheria a tela de recortes que quase nunca casam.
-    expect(screen.getByRole('button', { name: 'Escape Room' })).toBeInTheDocument()
-    expect(screen.queryByRole('button', { name: 'Kahoot' })).not.toBeInTheDocument()
+    // as metodologias viram caixa de marcar: uma coluna com "Kahoot" e
+    // "Google Forms" encheria a tela de recortes que quase nunca casam.
+    expect(screen.getByRole('checkbox', { name: /Escape Room/ })).toBeInTheDocument()
+    expect(screen.queryByRole('checkbox', { name: /Kahoot/ })).not.toBeInTheDocument()
   })
 
   it('mostra o estado vazio com saída quando o filtro não casa nada', async () => {
@@ -234,10 +236,10 @@ describe('PaginaBiblioteca', () => {
     expect(
       await screen.findByRole('heading', { name: 'Nenhum plano com esses filtros' }),
     ).toBeInTheDocument()
-    // Um único "Limpar filtros" na tela, o do painel de filtro. O estado
-    // vazio aponta para ele em vez de repetir o controle — dois botões de
-    // mesmo nome seriam indistinguíveis num leitor de tela.
-    expect(screen.getAllByRole('button', { name: 'Limpar filtros' })).toHaveLength(1)
+    // A busca não vira pílula, então a seleção ativa não desenha nada — e é
+    // por isso que o "Limpar filtros" precisa estar AQUI. É a única saída de
+    // quem buscou um termo sem resultado, e o nome deste teste a exige.
+    expect(screen.getByRole('button', { name: 'Limpar filtros' })).toBeInTheDocument()
   })
 
   it('distingue biblioteca vazia de filtro sem resultado', async () => {
@@ -262,5 +264,21 @@ describe('PaginaBiblioteca', () => {
     renderizar()
 
     expect(await screen.findByRole('alert')).toHaveTextContent('Falha ao consultar planos.')
+  })
+
+  it('a pílula da seleção some quando o item é desmarcado', async () => {
+    const usuario = userEvent.setup()
+    renderizar()
+
+    await usuario.click(await screen.findByRole('checkbox', { name: /Matemática/ }))
+    expect(
+      await screen.findByRole('button', { name: 'Remover Matemática' }),
+    ).toBeInTheDocument()
+
+    await usuario.click(screen.getByRole('button', { name: 'Remover Matemática' }))
+    expect(
+      screen.queryByRole('button', { name: 'Remover Matemática' }),
+    ).not.toBeInTheDocument()
+    expect(await screen.findByText('14 planos')).toBeInTheDocument()
   })
 })
