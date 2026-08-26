@@ -1166,7 +1166,7 @@ git commit -m "feat(biblioteca): busca as contagens por item do vocabulário"
 - `design/2026-08-26-filtros-biblioteca-opcoes.html` — o desenho aprovado da opção B, desktop e celular
 - `design/DirecaoB.dc.html` — a régua de série e o bloco de sigla como assinatura
 - `planoteca-web/src/components/ui/chip.tsx` — o chip da régua de série
-- `planoteca-web/src/features/filtrar-planos/FiltrosPlanos.tsx` — o componente que sai; os comentários de acessibilidade que ficam (removido pela Task 11, RF-12: leia em `git show 5756ac3:planoteca-web/src/features/filtrar-planos/FiltrosPlanos.tsx`)
+- `Docs/plans/2026-08-26-filtros-biblioteca.md` — o `FiltrosPlanos.tsx` que era a fonte aqui saiu na Task 11 (RF-12); o Step 1 desta task traz o trecho que importa, e o arquivo inteiro está em `git show 5756ac3:planoteca-web/src/features/filtrar-planos/FiltrosPlanos.tsx`
 - `planoteca-web/src/entities/vocabulario/modelo.ts` — tipos de `Vocabulario`, `classeCorComponente` e os quatro tokens de cor
 
 **Files:**
@@ -1754,7 +1754,7 @@ git commit -m "feat(biblioteca): grupo de filtro com contagem e dobra"
 
 **Fontes:**
 - `design/2026-08-26-filtros-biblioteca-opcoes.html` — o desenho aprovado da opção B, desktop e celular
-- `planoteca-web/src/features/filtrar-planos/FiltrosPlanos.tsx` — o componente que sai; os comentários de acessibilidade que ficam (removido pela Task 11, RF-12: leia em `git show 5756ac3:planoteca-web/src/features/filtrar-planos/FiltrosPlanos.tsx`)
+- `Docs/plans/2026-08-26-filtros-biblioteca.md` — o `FiltrosPlanos.tsx` que era a fonte aqui saiu na Task 11 (RF-12); o Step 1 desta task traz o trecho que importa, e o arquivo inteiro está em `git show 5756ac3:planoteca-web/src/features/filtrar-planos/FiltrosPlanos.tsx`
 - `planoteca-web/src/entities/vocabulario/modelo.ts` — tipos de `Vocabulario`, `classeCorComponente` e os quatro tokens de cor
 
 **Files:**
@@ -2005,7 +2005,7 @@ git commit -m "feat(biblioteca): pílulas da seleção ativa"
 
 **Fontes:**
 - `design/2026-08-26-filtros-biblioteca-opcoes.html` — o desenho aprovado da opção B, desktop e celular
-- `planoteca-web/src/features/filtrar-planos/FiltrosPlanos.tsx` — o componente que sai; os comentários de acessibilidade que ficam (removido pela Task 11, RF-12: leia em `git show 5756ac3:planoteca-web/src/features/filtrar-planos/FiltrosPlanos.tsx`)
+- `Docs/plans/2026-08-26-filtros-biblioteca.md` — o `FiltrosPlanos.tsx` que era a fonte aqui saiu na Task 11 (RF-12); o Step 1 desta task traz o trecho que importa, e o arquivo inteiro está em `git show 5756ac3:planoteca-web/src/features/filtrar-planos/FiltrosPlanos.tsx`
 - `planoteca-web/src/entities/vocabulario/modelo.ts` — tipos de `Vocabulario`, `classeCorComponente` e os quatro tokens de cor
 - `planoteca-web/src/components/ui/chip.tsx` — o chip da régua de série
 
@@ -2578,7 +2578,7 @@ git commit -m "feat(biblioteca): gaveta de filtro no celular sobre o Dialog"
 
 **Fontes:**
 - `planoteca-web/src/pages/biblioteca/PaginaBiblioteca.tsx` — o layout atual: header, filtros, lista, paginação
-- `planoteca-web/src/features/filtrar-planos/FiltrosPlanos.tsx` — o componente que sai; os comentários de acessibilidade que ficam (removido pela Task 11, RF-12: leia em `git show 5756ac3:planoteca-web/src/features/filtrar-planos/FiltrosPlanos.tsx`)
+- `Docs/plans/2026-08-26-filtros-biblioteca.md` — o `FiltrosPlanos.tsx` que era a fonte aqui saiu na Task 11 (RF-12); o Step 1 desta task traz o trecho que importa, e o arquivo inteiro está em `git show 5756ac3:planoteca-web/src/features/filtrar-planos/FiltrosPlanos.tsx`
 - `planoteca-web/src/features/filtrar-planos/useFiltroPlanos.ts` — o contrato de seleção que a coluna consome, sem alteração
 - `planoteca-web/src/app/shell/LayoutPublico.tsx` — largura de 1180px e padding por breakpoint
 - `design/2026-08-26-filtros-biblioteca-opcoes.html` — o desenho aprovado da opção B, desktop e celular
