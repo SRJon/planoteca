@@ -548,7 +548,7 @@ git commit -m "feat(plano): conta as facetas do filtro no repositório"
 - Consumes: `ContarFacetasAsync` da Task 2 e `FacetasDto` da Task 1.
 - Produces: `Task<FacetasDto> ObterFacetasAsync(FiltroPlano filtro)`
 
-- [ ] **Step 1: Escrever o teste que falha**
+- [x] **Step 1: Escrever o teste que falha**
 
 O AppService não tem regra própria aqui: ele traduz. O teste prova que a
 tradução preserva id e total nos três grupos. Prova também que a paginação da
@@ -648,7 +648,7 @@ namespace SaraivaTech.Planoteca.Test.Application
 }
 ```
 
-- [ ] **Step 2: Executar e confirmar a falha**
+- [x] **Step 2: Executar e confirmar a falha**
 
 ```bash
 cd planoteca-api && dotnet test --filter PlanoFacetasTest
@@ -657,7 +657,7 @@ cd planoteca-api && dotnet test --filter PlanoFacetasTest
 Esperado: falha de compilação, porque `ObterFacetasAsync` ainda não existe em
 `PlanoAppService`.
 
-- [ ] **Step 3: Implementar no AppService**
+- [x] **Step 3: Implementar no AppService**
 
 Em `PlanoAppService`, logo depois de `ListarAsync`:
 
@@ -684,7 +684,7 @@ Em `PlanoAppService`, logo depois de `ListarAsync`:
 `PlanoAppService.cs` já importa `System.Collections.Generic`, `System.Linq` e
 `SaraivaTech.Planoteca.Application.Dto`. Nenhum `using` novo entra.
 
-- [ ] **Step 4: Executar e confirmar que passa**
+- [x] **Step 4: Executar e confirmar que passa**
 
 ```bash
 cd planoteca-api && dotnet test --filter PlanoFacetasTest
@@ -692,7 +692,7 @@ cd planoteca-api && dotnet test --filter PlanoFacetasTest
 
 Esperado: `Passed! - Failed: 0, Passed: 3` e código 0.
 
-- [ ] **Step 5: Commitar**
+- [x] **Step 5: Commitar**
 
 ```bash
 git add planoteca-api/src planoteca-api/tests

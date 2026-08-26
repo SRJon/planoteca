@@ -50,6 +50,24 @@ namespace SaraivaTech.Planoteca.Application.Core.Services
             return plano is null ? null : _mapper.ParaDetalhe(plano);
         }
 
+        public async Task<FacetasDto> ObterFacetasAsync(FiltroPlano filtro)
+        {
+            var contagem = await _repositorio.ContarFacetasAsync(filtro);
+
+            // Tradução direta, sem `PlanoMapper`: o mapeador existe para
+            // achatar as coleções de ligação de um plano, e aqui não há plano
+            // nenhum — só par de id e número.
+            return new FacetasDto
+            {
+                Series = ParaDto(contagem.Series),
+                Componentes = ParaDto(contagem.Componentes),
+                Metodologias = ParaDto(contagem.Metodologias),
+            };
+        }
+
+        private static List<ContagemDto> ParaDto(IReadOnlyList<FacetaContada> facetas) =>
+            facetas.Select(f => new ContagemDto { Id = f.Id, Total = f.Total }).ToList();
+
         public async Task<Result<UploadAssinado>> AssinarUploadAsync(string nomeArquivo, string tipoConteudo)
         {
             if (string.IsNullOrWhiteSpace(nomeArquivo))
