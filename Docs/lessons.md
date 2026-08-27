@@ -83,3 +83,30 @@ transparente sobre o hero. Antes de usar `bg-<nome>` novo, confira
 `grep -- "--color-<nome>" tema.css`. Duas capturas seguidas mostraram o
 campo escuro e eu li "confirmado" na primeira — captura se lê com atenção,
 não de relance.
+
+## 2026-08-27 — o `cn()` daqui não é tailwind-merge
+
+`shared/lib/cn.ts` é `classes.filter(Boolean).join(' ')`. Ele NÃO deduplica
+utilitário conflitante, ao contrário do `cn` que a maioria dos projetos
+shadcn tem. Consequência: passar `className` para um componente de
+`components/ui/` **não garante** que a classe de fora vença a do base. As
+duas vão para o atributo, e quem decide é a ordem no CSS gerado.
+
+Foi assim que a gaveta de filtro abriu meia tela à direita no celular. Ela
+passava `left-0 translate-x-0` contra o `left-1/2 -translate-x-1/2` do
+`DialogContent`. O `translate-x-0` venceu, o `left-0` perdeu — e sobrou o
+deslocamento sem a compensação que o anulava.
+
+O sintoma engana: a metade visível funciona, e o teste de comportamento
+passa. `e2e/biblioteca.spec.ts` exercitava a gaveta em 390px e ficou verde o
+tempo todo, porque testava clique e contagem, não geometria.
+
+Duas regras daqui em diante:
+
+1. Para variar o layout de um componente de `ui/`, use **prop de variante**
+   com conjuntos exclusivos, não sobreposição por `className`. Se os dois
+   valores nunca coexistem no DOM, não há disputa a perder.
+2. Teste de tela em largura de celular afere **posição**, não só presença.
+   `boundingBox()` com `x`, `width` e `scrollWidth <= innerWidth` pega o que
+   `toBeVisible()` deixa passar: o Playwright considera visível um elemento
+   fora do viewport.

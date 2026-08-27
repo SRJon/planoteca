@@ -251,3 +251,52 @@ test('filtra pela gaveta em 390px, e a pílula mostra o recorte com ela fechada'
     3,
   )
 })
+
+/**
+ * A geometria da gaveta em 390px.
+ *
+ * Separado do teste acima de propósito: aquele prova o COMPORTAMENTO —
+ * marcar aplica, o rodapé fecha, a pílula sobrevive — e passava intacto
+ * enquanto a gaveta abria deslocada meia tela para a direita, com o botão
+ * de aplicar fora do viewport. Comportamento correto em posição errada
+ * ainda é uma tela que o professor não consegue usar.
+ *
+ * A causa era de cascata: o `cn()` deste projeto é `join(' ')` sem
+ * tailwind-merge, então o `left-0` da gaveta não vencia o `left-1/2` do
+ * `DialogContent` — quem decidia era a ordem no CSS gerado. Hoje os dois
+ * posicionamentos são exclusivos por construção (`variante="gaveta"`), e
+ * este teste é o que impede a regressão silenciosa.
+ */
+test('a gaveta ocupa a largura da tela em 390px, sem vazar', async ({ page }) => {
+  await instalarSimulacao(page)
+  await page.setViewportSize({ width: 390, height: 844 })
+
+  await page.goto('/biblioteca')
+  await page.getByRole('button', { name: 'Filtros' }).click()
+
+  const gaveta = page.getByRole('dialog')
+  await expect(gaveta).toBeVisible()
+
+  const caixaGaveta = await gaveta.boundingBox()
+  if (!caixaGaveta) throw new Error('a gaveta não tem caixa')
+
+  // Colada na borda esquerda e ocupando a largura inteira. Com o bug isto
+  // era x:195, w:390 — metade dela fora da tela.
+  expect(caixaGaveta.x).toBe(0)
+  expect(caixaGaveta.width).toBe(390)
+
+  // Os dois botões do rodapé precisam estar ALCANÇÁVEIS, não só montados.
+  for (const nome of ['Limpar', 'Ver 14 planos']) {
+    const botao = await gaveta.getByRole('button', { name: nome }).boundingBox()
+    if (!botao) throw new Error(`o botão ${nome} não tem caixa`)
+    expect(botao.x).toBeGreaterThanOrEqual(0)
+    expect(botao.x + botao.width).toBeLessThanOrEqual(390)
+  }
+
+  // E a página não ganha rolagem horizontal por causa dela.
+  const largura = await page.evaluate(() => ({
+    documento: document.documentElement.scrollWidth,
+    janela: window.innerWidth,
+  }))
+  expect(largura.documento).toBeLessThanOrEqual(largura.janela)
+})

@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { Funnel } from '@phosphor-icons/react/dist/csr/Funnel'
 import { Button } from '@/components/ui/button'
 import {
-  CLASSE_GAVETA,
   Dialog,
   DialogContent,
   DialogTitle,
@@ -70,7 +69,7 @@ export function GavetaFiltros({
         </Button>
       </DialogTrigger>
 
-      <DialogContent className={CLASSE_GAVETA}>
+      <DialogContent variante="gaveta">
         <DialogTitle className="border-b-2 border-traco px-[13px] py-3 font-display text-[17px] font-bold">
           Filtros
         </DialogTitle>
